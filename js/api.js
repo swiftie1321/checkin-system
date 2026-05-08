@@ -131,6 +131,14 @@ export const api = {
     if (!res.ok) throw new Error(data.error);
     return data;
   },
+
+  async getAuditLog() {
+  const res = await fetch(`${WORKER_URL}/auditlog`, { headers: this.headers() });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+},
+  
 };
 
 export function requireAuth(minRole = "security") {

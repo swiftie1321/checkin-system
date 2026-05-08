@@ -44,13 +44,12 @@
   <button id="btn" onclick="doLogin()">כניסה</button>
   <div class="error" id="error"></div>
 </div>
-
 <script type="module">
   import { api } from "./js/api.js";
 
   // Redirect if already logged in
   if (api.token() && api.user()) {
-    window.location.href = "/dashboard.html";
+    window.location.href = "dashboard.html";
   }
 
   window.doLogin = async function() {
@@ -67,7 +66,7 @@
     errorEl.style.display = "none";
     try {
       await api.login(username, password);
-      window.location.href = "/dashboard.html";
+      window.location.href = "dashboard.html";
     } catch(e) {
       errorEl.textContent = e.message || "שם משתמש או סיסמה שגויים";
       errorEl.style.display = "block";

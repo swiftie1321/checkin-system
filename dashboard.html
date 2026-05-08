@@ -14,8 +14,7 @@
   .topbar h2 { font-size:1.1rem; font-weight:600; }
   .topbar-right { display:flex; gap:10px; }
   .link-btn { background:none; border:none; color:#007aff;
-    font-size:0.9rem; cursor:pointer; padding:6px 10px;
-    border-radius:8px; }
+    font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
   .link-btn:hover { background:#f0f0f0; }
   .card { background:white; border-radius:20px; padding:28px 24px;
     max-width:480px; margin:0 auto 20px;
@@ -41,23 +40,44 @@
   .emp-meta { color:#888; font-size:0.82rem; margin-top:4px; }
   label.loc-label { display:block; font-size:0.85rem; color:#555;
     font-weight:500; margin:16px 0 6px; }
-  select { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
+  select, input.field { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
     border-radius:12px; font-size:1rem; outline:none; background:white;
-    margin-bottom:16px; }
-  select:focus { border-color:#007aff; }
+    margin-bottom:12px; }
+  select:focus, input.field:focus { border-color:#007aff; }
   .action-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .btn-present { padding:14px; background:#34c759; color:white; border:none;
     border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
   .btn-absent  { padding:14px; background:#ff3b30; color:white; border:none;
     border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
-  .btn-present:disabled,.btn-absent:disabled { opacity:0.5; }
+  .btn-present:disabled,.btn-absent:disabled { opacity:0.5; cursor:not-allowed; }
   .btn-cancel  { width:100%; padding:12px; background:none; border:1.5px solid #ddd;
     border-radius:12px; font-size:0.95rem; color:#555; cursor:pointer; margin-top:8px; }
+  .btn-add { width:100%; padding:14px; background:#5856d6; color:white; border:none;
+    border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; margin-top:8px; }
+  .btn-add:disabled { opacity:0.5; }
   .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
     background:#1a1a1a; color:white; padding:12px 24px; border-radius:12px;
     font-size:0.95rem; opacity:0; transition:opacity 0.3s; pointer-events:none;
     white-space:nowrap; z-index:100; }
   .toast.show { opacity:1; }
+
+  /* Modal */
+  .modal-overlay { display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.5); z-index:200;
+    justify-content:center; align-items:center; padding:20px; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:white; border-radius:20px; padding:28px 24px;
+    width:100%; max-width:420px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+  .modal h3 { font-size:1.1rem; font-weight:700; margin-bottom:20px; color:#1a1a1a; }
+  .modal label { display:block; font-size:0.85rem; color:#555;
+    font-weight:500; margin-bottom:6px; }
+  .modal-actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+  .btn-confirm { padding:14px; background:#007aff; color:white; border:none;
+    border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
+  .btn-confirm:disabled { opacity:0.5; }
+  .btn-dismiss { padding:14px; background:#f0f2f5; color:#333; border:none;
+    border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -73,6 +93,7 @@
   </div>
 </div>
 
+<!-- Scanner card -->
 <div class="card" id="scanner-card">
   <h3>📷 סריקת QR</h3>
   <div id="reader"></div>
@@ -81,6 +102,7 @@
   </button>
 </div>
 
+<!-- Employee card -->
 <div class="card emp-card" id="emp-card">
   <div class="emp-header">
     <div class="emp-avatar">👤</div>
@@ -98,10 +120,28 @@
     <option value="">בחר מיקום...</option>
   </select>
   <div class="action-row">
-    <button class="btn-present" onclick="updateStatus('Green')">✅ נוכח</button>
-    <button class="btn-absent"  onclick="updateStatus('Red')">🔴 לא נוכח</button>
+    <button class="btn-present" id="btn-present" onclick="updateStatus('Green')">✅ נוכח</button>
+    <button class="btn-absent"  id="btn-absent"  onclick="updateStatus('Red')">🔴 לא נוכח</button>
   </div>
   <button class="btn-cancel" onclick="resetScanner()">ביטול</button>
+</div>
+
+<!-- Add Employee modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3>➕ הוספת עובד חדש</h3>
+    <label>שם מלא</label>
+    <input class="field" type="text" id="new-emp-name" placeholder="שם העובד">
+    <label>מסגרת</label>
+    <input class="field" type="text" id="new-emp-dept" placeholder="מספר או שם מסגרת">
+    <label>שירות</label>
+    <input class="field" type="text" id="new-emp-svc" placeholder="מספר או שם שירות">
+    <div class="modal-actions">
+      <button class="btn-confirm" id="confirm-add-btn" onclick="confirmAddEmployee()">הוסף</button>
+      <button class="btn-dismiss" onclick="closeAddModal()">ביטול</button>
+    </div>
+    <div id="add-emp-status" style="margin-top:12px;font-size:0.9rem;text-align:center;color:#555;"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -119,6 +159,12 @@
   }
   if (user.role === "admin") {
     document.getElementById("admin-btn").style.display = "block";
+    // Add employee button only for admins
+    const addBtn = document.createElement("button");
+    addBtn.className = "link-btn";
+    addBtn.textContent = "➕ עובד";
+    addBtn.onclick = () => openAddModal();
+    document.getElementById("admin-btn").after(addBtn);
   }
 
   api.getLocations().then(data => {
@@ -132,8 +178,11 @@
 
   let scanner = null;
   let currentEmployee = null;
+  let scanning = false;
 
   window.startScan = async function() {
+    if (scanning) return;
+    scanning = true;
     document.getElementById("scan-btn").disabled = true;
     document.getElementById("scan-btn").textContent = "סורק...";
     scanner = new Html5Qrcode("reader");
@@ -145,18 +194,33 @@
       );
     } catch(e) {
       showToast("לא ניתן לגשת למצלמה");
+      scanning = false;
       resetScanner();
     }
   };
 
   async function onScanSuccess(text) {
+    // Prevent double-firing
+    if (!scanning) return;
+    scanning = false;
+
+    // Stop scanner
+    try { await scanner.stop(); } catch {}
+    scanner = null;
+
+    // Reset button states for fresh card
+    currentEmployee = null;
+    document.getElementById("btn-present").disabled = false;
+    document.getElementById("btn-absent").disabled = false;
+    document.getElementById("location-select").value = "";
+
+    // Extract code
     let code = text;
     try {
       const u = new URL(text);
       code = u.searchParams.get("code") || text;
     } catch {}
-    await scanner.stop();
-    scanner = null;
+
     try {
       const emp = await api.getEmployee(code);
       currentEmployee = emp;
@@ -191,27 +255,82 @@
       showToast("נא לבחור מיקום בעת יציאה");
       return;
     }
-    document.querySelectorAll(".btn-present,.btn-absent")
-      .forEach(b => b.disabled = true);
+    document.getElementById("btn-present").disabled = true;
+    document.getElementById("btn-absent").disabled = true;
     try {
       await api.updateStatus(currentEmployee.rowIndex, newStatus, location);
       showToast(newStatus === "Green" ? "✅ נוכחות עודכנה" : "🔴 יציאה עודכנה");
       setTimeout(resetScanner, 1500);
     } catch(e) {
       showToast(e.message || "שגיאה בעדכון");
-      document.querySelectorAll(".btn-present,.btn-absent")
-        .forEach(b => b.disabled = false);
+      document.getElementById("btn-present").disabled = false;
+      document.getElementById("btn-absent").disabled = false;
     }
   };
 
   window.resetScanner = function() {
     currentEmployee = null;
+    scanning = false;
     document.getElementById("emp-card").style.display = "none";
     document.getElementById("scanner-card").style.display = "block";
     document.getElementById("reader").innerHTML = "";
     document.getElementById("scan-btn").disabled = false;
     document.getElementById("scan-btn").innerHTML = "📷 התחל סריקה";
     document.getElementById("location-select").value = "";
+    document.getElementById("btn-present").disabled = false;
+    document.getElementById("btn-absent").disabled = false;
+    if (scanner) {
+      try { scanner.stop(); } catch {}
+      scanner = null;
+    }
+  };
+
+  // ── Add Employee modal ────────────────────────────────────
+  window.openAddModal = function() {
+    document.getElementById("new-emp-name").value = "";
+    document.getElementById("new-emp-dept").value = "";
+    document.getElementById("new-emp-svc").value = "";
+    document.getElementById("add-emp-status").textContent = "";
+    document.getElementById("add-modal").classList.add("show");
+  };
+
+  window.closeAddModal = function() {
+    document.getElementById("add-modal").classList.remove("show");
+  };
+
+  window.confirmAddEmployee = async function() {
+    const name = document.getElementById("new-emp-name").value.trim();
+    const dept = document.getElementById("new-emp-dept").value.trim();
+    const svc  = document.getElementById("new-emp-svc").value.trim();
+    const statusEl = document.getElementById("add-emp-status");
+    const btn = document.getElementById("confirm-add-btn");
+
+    if (!name || !dept || !svc) {
+      statusEl.textContent = "נא למלא את כל השדות";
+      statusEl.style.color = "#ff3b30";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "מוסיף...";
+    statusEl.textContent = "מוסיף לגיליון...";
+    statusEl.style.color = "#007aff";
+
+    try {
+      await api.addEmployee(name, dept, svc);
+      statusEl.textContent = `✅ ${name} נוסף בהצלחה! יש לייצר QR חדש דרך הכלי.`;
+      statusEl.style.color = "#34c759";
+      btn.textContent = "הוסף";
+      btn.disabled = false;
+      document.getElementById("new-emp-name").value = "";
+      document.getElementById("new-emp-dept").value = "";
+      document.getElementById("new-emp-svc").value = "";
+    } catch(e) {
+      statusEl.textContent = e.message || "שגיאה בהוספה";
+      statusEl.style.color = "#ff3b30";
+      btn.textContent = "הוסף";
+      btn.disabled = false;
+    }
   };
 
   function showToast(msg) {

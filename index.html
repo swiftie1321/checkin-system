@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כניסה למערכת</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    background:#f0f2f5; min-height:100vh; display:flex;
+    justify-content:center; align-items:center; }
+  .card { background:white; border-radius:20px; padding:40px 32px;
+    width:100%; max-width:420px; margin:20px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.10); }
+  .logo { text-align:center; font-size:2.5rem; margin-bottom:8px; }
+  h1 { text-align:center; font-size:1.5rem; font-weight:600;
+    color:#1a1a1a; margin-bottom:6px; }
+  .subtitle { text-align:center; color:#666; font-size:0.9rem; margin-bottom:32px; }
+  label { display:block; font-size:0.85rem; color:#555;
+    margin-bottom:6px; font-weight:500; }
+  input { width:100%; padding:14px 16px; border:1.5px solid #e0e0e0;
+    border-radius:12px; font-size:1rem; outline:none;
+    transition:border-color 0.2s; margin-bottom:16px; }
+  input:focus { border-color:#007aff; }
+  button { width:100%; padding:16px; background:#007aff; color:white;
+    border:none; border-radius:14px; font-size:1.1rem; font-weight:600;
+    cursor:pointer; transition:opacity 0.2s; margin-top:8px; }
+  button:hover { opacity:0.9; }
+  button:disabled { opacity:0.6; cursor:not-allowed; }
+  .error { background:#fff0f0; color:#cc0000; border-radius:10px;
+    padding:12px 16px; font-size:0.9rem; margin-top:16px;
+    display:none; text-align:center; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🔐</div>
+  <h1>כניסה למערכת</h1>
+  <p class="subtitle">מערכת נוכחות ובטיחות</p>
+  <label>שם משתמש</label>
+  <input type="text" id="username" placeholder="הכנס שם משתמש" autocomplete="username">
+  <label>סיסמה</label>
+  <input type="password" id="password" placeholder="הכנס סיסמה" autocomplete="current-password">
+  <button id="btn" onclick="doLogin()">כניסה</button>
+  <div class="error" id="error"></div>
+</div>
+
+<script type="module">
+  import { api } from "./js/api.js";
+
+  // Redirect if already logged in
+  if (api.token() && api.user()) {
+    window.location.href = "/dashboard.html";
+  }
+
+  window.doLogin = async function() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    const btn      = document.getElementById("btn");
+    const errorEl  = document.getElementById("error");
+    if (!username || !password) {
+      errorEl.textContent = "נא למלא שם משתמש וסיסמה";
+      errorEl.style.display = "block"; return;
+    }
+    btn.disabled = true;
+    btn.textContent = "מתחבר...";
+    errorEl.style.display = "none";
+    try {
+      await api.login(username, password);
+      window.location.href = "/dashboard.html";
+    } catch(e) {
+      errorEl.textContent = e.message || "שם משתמש או סיסמה שגויים";
+      errorEl.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "כניסה";
+    }
+  };
+
+  document.getElementById("password").addEventListener("keydown", e => {
+    if (e.key === "Enter") window.doLogin();
+  });
+</script>
+</body>
+</html>

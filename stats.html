@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דשבורד נוכחות</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    background:#f0f2f5; min-height:100vh; padding:20px; }
+  .topbar { display:flex; justify-content:space-between; align-items:center;
+    max-width:900px; margin:0 auto 24px; }
+  .topbar h1 { font-size:1.3rem; font-weight:700; }
+  .topbar-right { display:flex; gap:10px; align-items:center; }
+  .link-btn { background:none; border:none; color:#007aff;
+    font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
+  .refresh-btn { background:#007aff; color:white; border:none;
+    border-radius:10px; padding:8px 16px; font-size:0.9rem; cursor:pointer; }
+  .last-update { color:#999; font-size:0.8rem; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:16px; max-width:900px; margin:0 auto 24px; }
+  .stat-card { background:white; border-radius:16px; padding:20px 24px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+  .stat-label { color:#888; font-size:0.85rem; margin-bottom:6px; }
+  .stat-value { font-size:2.2rem; font-weight:700; }
+  .stat-green { color:#34c759; }
+  .stat-red   { color:#ff3b30; }
+  .stat-pct   { color:#007aff; }
+
+  .charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:20px; max-width:900px; margin:0 auto 24px; }
+  .chart-card { background:white; border-radius:16px; padding:24px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+  .chart-card h3 { font-size:1rem; font-weight:600; color:#333; margin-bottom:20px; }
+  .chart-wrap { position:relative; height:240px; }
+
+  .dept-table { max-width:900px; margin:0 auto; background:white;
+    border-radius:16px; padding:24px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+  .dept-table h3 { font-size:1rem; font-weight:600; margin-bottom:16px; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:right; padding:10px 12px; color:#888;
+    font-size:0.85rem; border-bottom:2px solid #f0f0f0; }
+  td { padding:12px; border-bottom:1px solid #f5f5f5; font-size:0.95rem; }
+  tr:last-child td { border-bottom:none; }
+  .pct-bar { height:6px; border-radius:3px; background:#e8f5e9; margin-top:4px; }
+  .pct-fill { height:100%; border-radius:3px; background:#34c759;
+    transition:width 0.6s ease; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>📊 דשבורד נוכחות</h1>
+  <div class="topbar-right">
+    <span class="last-update" id="last-update"></span>
+    <button class="refresh-btn" onclick="loadStats()">🔄 רענן</button>
+    <button class="link-btn" onclick="window.location.href='/dashboard.html'">⬅ חזרה</button>
+    <button class="link-btn" onclick="api.logout()">יציאה</button>
+  </div>
+</div>
+
+<!-- Summary cards -->
+<div class="grid">
+  <div class="stat-card">
+    <div class="stat-label">נוכחים ביחידה</div>
+    <div class="stat-value stat-green" id="total-present">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">לא נוכחים</div>
+    <div class="stat-value stat-red" id="total-absent">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">סה"כ עובדים</div>
+    <div class="stat-value" id="total-all">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">אחוז נוכחות</div>
+    <div class="stat-value stat-pct" id="pct-present">—</div>
+  </div>
+</div>
+
+<!-- Pie charts -->
+<div class="charts-grid">
+  <div class="chart-card">
+    <h3>נוכחות כללית</h3>
+    <div class="chart-wrap"><canvas id="chart-overall"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>מיקום הנעדרים</h3>
+    <div class="chart-wrap"><canvas id="chart-locations"></canvas></div>
+  </div>
+</div>
+
+<!-- Department table -->
+<div class="dept-table">
+  <h3>נוכחות לפי מסגרת</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>מסגרת</th>
+        <th>נוכחים</th>
+        <th>סה"כ</th>
+        <th>אחוז</th>
+      </tr>
+    </thead>
+    <tbody id="dept-tbody"></tbody>
+  </table>
+</div>
+
+<script type="module">
+  import { api, requireAuth } from "./js/api.js";
+  window.api = api;
+  requireAuth("manager");
+
+  const COLORS = [
+    "#007aff","#34c759","#ff9500","#ff3b30","#5856d6",
+    "#ff2d55","#00c7be","#30b0c7","#32ade6","#64d2ff",
+  ];
+
+  let chartOverall  = null;
+  let chartLocation = null;
+
+  window.loadStats = async function() {
+    document.getElementById("last-update").textContent = "טוען...";
+    try {
+      const data = await api.getStats();
+      const total = data.totalPresent + data.totalAbsent;
+
+      document.getElementById("total-present").textContent = data.totalPresent;
+      document.getElementById("total-absent").textContent  = data.totalAbsent;
+      document.getElementById("total-all").textContent     = total;
+      document.getElementById("pct-present").textContent   =
+        total ? Math.round(data.totalPresent/total*100)+"%" : "0%";
+
+      // Overall pie
+      const overallCtx = document.getElementById("chart-overall").getContext("2d");
+      if (chartOverall) chartOverall.destroy();
+      chartOverall = new Chart(overallCtx, {
+        type:"doughnut",
+        data:{
+          labels:["נוכחים","לא נוכחים"],
+          datasets:[{ data:[data.totalPresent, data.totalAbsent],
+            backgroundColor:["#34c759","#ff3b30"],
+            borderWidth:2, borderColor:"#fff" }]
+        },
+        options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%" }
+      });
+
+      // Location pie
+      const locLabels = Object.keys(data.locationStats);
+      const locValues = Object.values(data.locationStats);
+      const locCtx = document.getElementById("chart-locations").getContext("2d");
+      if (chartLocation) chartLocation.destroy();
+      if (locLabels.length) {
+        chartLocation = new Chart(locCtx, {
+          type:"doughnut",
+          data:{
+            labels: locLabels,
+            datasets:[{ data:locValues,
+              backgroundColor: COLORS.slice(0,locLabels.length),
+              borderWidth:2, borderColor:"#fff" }]
+          },
+          options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%" }
+        });
+      }
+
+      // Department table
+      const tbody = document.getElementById("dept-tbody");
+      tbody.innerHTML = "";
+      for (const [dept, s] of Object.entries(data.deptStats)) {
+        const pct = s.total ? Math.round(s.present/s.total*100) : 0;
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${dept}</strong></td>
+            <td style="color:#34c759;font-weight:600">${s.present}</td>
+            <td>${s.total}</td>
+            <td>
+              <span style="font-weight:600">${pct}%</span>
+              <div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div>
+            </td>
+          </tr>`;
+      }
+
+      document.getElementById("last-update").textContent =
+        "עודכן: " + new Date().toLocaleTimeString("he-IL");
+    } catch(e) {
+      document.getElementById("last-update").textContent = "שגיאה בטעינה";
+    }
+  };
+
+  // Auto-refresh every 30 seconds
+  loadStats();
+  setInterval(loadStats, 30000);
+</script>
+</body>
+</html>

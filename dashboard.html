@@ -27,8 +27,6 @@
     cursor:pointer; display:flex; align-items:center;
     justify-content:center; gap:8px; }
   .scan-btn:disabled { opacity:0.6; }
-
-  /* Employee card */
   .emp-card { display:none; }
   .emp-header { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
   .emp-avatar { width:56px; height:56px; border-radius:50%;
@@ -41,7 +39,6 @@
   .status-green { background:#e6ffee; color:#006600; }
   .status-red   { background:#ffeeee; color:#990000; }
   .emp-meta { color:#888; font-size:0.82rem; margin-top:4px; }
-
   label.loc-label { display:block; font-size:0.85rem; color:#555;
     font-weight:500; margin:16px 0 6px; }
   select { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
@@ -56,7 +53,6 @@
   .btn-present:disabled,.btn-absent:disabled { opacity:0.5; }
   .btn-cancel  { width:100%; padding:12px; background:none; border:1.5px solid #ddd;
     border-radius:12px; font-size:0.95rem; color:#555; cursor:pointer; margin-top:8px; }
-
   .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
     background:#1a1a1a; color:white; padding:12px 24px; border-radius:12px;
     font-size:0.95rem; opacity:0; transition:opacity 0.3s; pointer-events:none;
@@ -70,14 +66,13 @@
   <h2 id="greeting">שלום</h2>
   <div class="topbar-right">
     <button class="link-btn" id="stats-btn" style="display:none"
-      onclick="window.location.href='/stats.html'">📊 סטטיסטיקה</button>
+      onclick="window.location.href='stats.html'">📊 סטטיסטיקה</button>
     <button class="link-btn" id="admin-btn" style="display:none"
-      onclick="window.location.href='/admin.html'">⚙️ ניהול</button>
+      onclick="window.location.href='admin.html'">⚙️ ניהול</button>
     <button class="link-btn" onclick="api.logout()">יציאה</button>
   </div>
 </div>
 
-<!-- Scanner -->
 <div class="card" id="scanner-card">
   <h3>📷 סריקת QR</h3>
   <div id="reader"></div>
@@ -86,7 +81,6 @@
   </button>
 </div>
 
-<!-- Employee card -->
 <div class="card emp-card" id="emp-card">
   <div class="emp-header">
     <div class="emp-avatar">👤</div>
@@ -96,16 +90,13 @@
       <div class="emp-meta" id="emp-meta"></div>
     </div>
   </div>
-
   <div style="margin-bottom:12px">
     סטטוס נוכחי: <span class="status-badge" id="status-badge"></span>
   </div>
-
   <label class="loc-label">📍 מיקום (בעת יציאה)</label>
   <select id="location-select">
     <option value="">בחר מיקום...</option>
   </select>
-
   <div class="action-row">
     <button class="btn-present" onclick="updateStatus('Green')">✅ נוכח</button>
     <button class="btn-absent"  onclick="updateStatus('Red')">🔴 לא נוכח</button>
@@ -130,7 +121,6 @@
     document.getElementById("admin-btn").style.display = "block";
   }
 
-  // Load locations
   api.getLocations().then(data => {
     const sel = document.getElementById("location-select");
     data.locations.forEach(loc => {
@@ -160,16 +150,13 @@
   };
 
   async function onScanSuccess(text) {
-    // Extract code from URL or use raw text
     let code = text;
     try {
       const u = new URL(text);
       code = u.searchParams.get("code") || text;
     } catch {}
-
     await scanner.stop();
     scanner = null;
-
     try {
       const emp = await api.getEmployee(code);
       currentEmployee = emp;

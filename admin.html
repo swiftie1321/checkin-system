@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ניהול משתמשים</title>
+<title>ניהול מערכת</title>
 <style>
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
     background:#f0f2f5; min-height:100vh; padding:20px; }
   .topbar { display:flex; justify-content:space-between; align-items:center;
-    max-width:640px; margin:0 auto 24px; }
+    max-width:680px; margin:0 auto 24px; flex-wrap:wrap; gap:8px; }
   .topbar h1 { font-size:1.3rem; font-weight:700; }
+  .topbar-right { display:flex; gap:8px; }
   .link-btn { background:none; border:none; color:#007aff;
     font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
   .link-btn:hover { background:#f0f0f0; }
+  .link-btn.danger { color:#ff3b30; }
 
   .badge { display:inline-flex; align-items:center; justify-content:center;
     background:#ff3b30; color:white; border-radius:20px; font-size:0.75rem;
@@ -21,27 +23,26 @@
     margin-right:4px; vertical-align:middle; }
 
   .card { background:white; border-radius:16px; padding:24px;
-    max-width:640px; margin:0 auto 20px;
+    max-width:680px; margin:0 auto 20px;
     box-shadow:0 2px 12px rgba(0,0,0,0.07); }
   .card h3 { font-size:1rem; font-weight:600; margin-bottom:20px;
     display:flex; align-items:center; gap:8px; }
   label { display:block; font-size:0.85rem; color:#555;
     font-weight:500; margin-bottom:6px; }
-  input, select { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
-    border-radius:12px; font-size:1rem; outline:none; margin-bottom:14px;
-    background:white; }
-  input:focus, select:focus { border-color:#007aff; }
+  input, select, textarea { width:100%; padding:12px 14px;
+    border:1.5px solid #e0e0e0; border-radius:12px; font-size:1rem;
+    outline:none; margin-bottom:14px; background:white; font-family:inherit; }
+  input:focus, select:focus, textarea:focus { border-color:#007aff; }
+  textarea { resize:vertical; min-height:70px; }
+
   .btn-primary { width:100%; padding:14px; background:#007aff; color:white;
     border:none; border-radius:12px; font-size:1rem; font-weight:600;
     cursor:pointer; margin-top:4px; }
   .btn-primary:hover { background:#0066dd; }
+  .btn-danger { background:#ff3b30; }
+  .btn-danger:hover { background:#cc2200; }
 
-  /* User rows */
-  .user-row { display:flex; justify-content:space-between; align-items:center;
-    padding:14px 0; border-bottom:1px solid #f0f0f0; }
-  .user-row:last-child { border-bottom:none; }
-  .user-info .name { font-weight:600; font-size:0.95rem; }
-  .user-info .meta { color:#888; font-size:0.82rem; margin-top:2px; }
+  /* Role badges */
   .role-badge { padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; }
   .role-admin    { background:#fff3cd; color:#856404; }
   .role-manager  { background:#cce5ff; color:#004085; }
@@ -50,112 +51,214 @@
   /* Pending rows */
   .pending-row { padding:16px 0; border-bottom:1px solid #f0f0f0; }
   .pending-row:last-child { border-bottom:none; }
-  .pending-header { margin-bottom:12px; }
-  .pending-info .name { font-weight:600; font-size:0.95rem; color:#1a1a1a; }
-  .pending-info .meta { color:#888; font-size:0.82rem; margin-top:3px; }
-  .pending-info .email { color:#007aff; font-size:0.82rem; margin-top:2px; }
-  .pending-info .time { color:#aaa; font-size:0.78rem; margin-top:2px; }
-  .pending-actions { display:grid; grid-template-columns:1fr auto auto; gap:8px;
-    align-items:center; }
+  .pending-info .pname { font-weight:600; font-size:0.95rem; color:#1a1a1a; }
+  .pending-info .pmeta { color:#888; font-size:0.82rem; margin-top:3px; }
+  .pending-info .pemail { color:#007aff; font-size:0.82rem; margin-top:2px; }
+  .pending-info .ptime { color:#aaa; font-size:0.78rem; margin-top:2px; }
+  .pending-actions { display:grid; grid-template-columns:1fr auto auto;
+    gap:8px; align-items:center; margin-top:10px; }
   .pending-role-select { padding:8px 12px; border:1.5px solid #e0e0e0;
     border-radius:10px; font-size:0.9rem; outline:none; background:white;
     margin-bottom:0; width:100%; }
-  .pending-role-select:focus { border-color:#007aff; }
   .btn-approve { padding:10px 16px; background:#34c759; color:white; border:none;
-    border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer;
-    white-space:nowrap; }
-  .btn-approve:hover { background:#28a745; }
-  .btn-reject { padding:10px 14px; background:#ff3b30; color:white; border:none;
+    border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .btn-reject  { padding:10px 14px; background:#ff3b30; color:white; border:none;
     border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; }
-  .btn-reject:hover { background:#dc2626; }
-  .empty-msg { color:#aaa; text-align:center; padding:20px 0; font-size:0.9rem; }
+
+  /* Temp access rows */
+  .temp-row { padding:14px 0; border-bottom:1px solid #f0f0f0; }
+  .temp-row:last-child { border-bottom:none; }
+  .temp-header { display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:8px; }
+  .temp-name { font-weight:600; font-size:0.95rem; }
+  .temp-reason { color:#666; font-size:0.85rem; margin-top:3px; }
+  .temp-time { color:#aaa; font-size:0.78rem; margin-top:2px; }
+  .temp-status-badge { padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; }
+  .temp-pending  { background:#fff3cd; color:#856404; }
+  .temp-active   { background:#d4edda; color:#155724; }
+  .temp-expired  { background:#f0f0f0; color:#888; }
+  .temp-rejected { background:#fff0f0; color:#cc0000; }
+  .temp-actions  { display:flex; gap:8px; margin-top:8px; }
+  .temp-timer-text { font-size:0.82rem; color:#5856d6; font-weight:600; margin-top:4px; }
+
+  /* User rows */
+  .user-row { display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; border-bottom:1px solid #f0f0f0; cursor:pointer;
+    transition:background 0.15s; border-radius:8px; padding:12px 8px; }
+  .user-row:hover { background:#f8f9fa; }
+  .user-row:last-child { border-bottom:none; }
+  .user-info .uname { font-weight:600; font-size:0.95rem; }
+  .user-info .umeta { color:#888; font-size:0.82rem; margin-top:2px; }
+  .user-row-right { display:flex; align-items:center; gap:10px; }
+  .chevron { color:#ccc; font-size:1.1rem; }
+
+  /* Dept delete */
+  .dept-delete-row { display:grid; grid-template-columns:1fr auto;
+    gap:10px; align-items:flex-end; }
 
   /* Audit log */
-  .log-scroll { max-height:400px; overflow-y:auto;
+  .log-scroll { max-height:380px; overflow-y:auto;
     scrollbar-width:thin; scrollbar-color:#ddd transparent; }
   .log-scroll::-webkit-scrollbar { width:4px; }
   .log-scroll::-webkit-scrollbar-thumb { background:#ddd; border-radius:4px; }
-  .log-entry { display:flex; gap:12px; padding:12px 0;
+  .log-entry { display:flex; gap:12px; padding:11px 0;
     border-bottom:1px solid #f5f5f5; align-items:flex-start; }
   .log-entry:last-child { border-bottom:none; }
-  .log-icon { width:36px; height:36px; border-radius:50%;
+  .log-icon { width:34px; height:34px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    font-size:1rem; flex-shrink:0; }
-  .log-icon.green { background:#e6ffee; }
-  .log-icon.red   { background:#ffeeee; }
+    font-size:0.9rem; flex-shrink:0; }
+  .log-icon.green   { background:#e6ffee; }
+  .log-icon.red     { background:#ffeeee; }
+  .log-icon.warning { background:#fff3e0; }
   .log-body { flex:1; min-width:0; }
-  .log-main { font-size:0.9rem; color:#1a1a1a; line-height:1.5; }
+  .log-main { font-size:0.88rem; color:#1a1a1a; line-height:1.5; }
   .log-main strong { color:#007aff; }
-  .log-main .arrow { color:#aaa; margin:0 4px; }
-  .log-main .emp { color:#1a1a1a; font-weight:600; }
-  .log-status-green { color:#006600; font-weight:600; }
-  .log-status-red   { color:#990000; font-weight:600; }
-  .log-location { font-size:0.8rem; color:#888; margin-top:2px; }
-  .log-time { font-size:0.78rem; color:#bbb; margin-top:2px; }
-  .log-refresh { display:flex; justify-content:flex-end; margin-bottom:12px; }
+  .log-status-green   { color:#006600; font-weight:600; }
+  .log-status-red     { color:#990000; font-weight:600; }
+  .log-status-warning { color:#cc6600; font-weight:600; }
+  .log-time { font-size:0.76rem; color:#bbb; margin-top:2px; }
+  .log-refresh { display:flex; justify-content:flex-end; margin-bottom:10px; }
   .btn-refresh { background:none; border:1.5px solid #e0e0e0; color:#555;
     border-radius:10px; padding:6px 14px; font-size:0.85rem; cursor:pointer; }
-  .btn-refresh:hover { background:#f0f0f0; }
 
-  .error { background:#fff0f0; color:#cc0000; border-radius:10px;
+  .empty-msg { color:#aaa; text-align:center; padding:20px 0; font-size:0.9rem; }
+  .error   { background:#fff0f0; color:#cc0000; border-radius:10px;
     padding:12px; font-size:0.9rem; margin-top:12px; display:none; }
   .success { background:#f0fff4; color:#006600; border-radius:10px;
     padding:12px; font-size:0.9rem; margin-top:12px; display:none; }
+
+  /* Modal */
+  .modal-overlay { display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.5); z-index:200;
+    justify-content:center; align-items:center; padding:20px; overflow-y:auto; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:white; border-radius:20px; padding:28px 24px;
+    width:100%; max-width:460px; box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    max-height:90vh; overflow-y:auto; }
+  .modal h3 { font-size:1.1rem; font-weight:700; margin-bottom:20px; color:#1a1a1a; }
+  .modal-actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+  .btn-confirm { padding:14px; background:#007aff; color:white; border:none;
+    border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
+  .btn-confirm:disabled { opacity:0.5; }
+  .btn-dismiss { padding:14px; background:#f0f2f5; color:#333; border:none;
+    border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
+  .btn-delete-user { width:100%; padding:12px; background:#fff0f0;
+    color:#cc0000; border:1.5px solid #ffcccc; border-radius:12px;
+    font-size:0.95rem; font-weight:600; cursor:pointer; margin-top:8px; }
+
+  /* History in modal */
+  .history-scroll { max-height:200px; overflow-y:auto; margin-top:12px;
+    scrollbar-width:thin; }
+  .history-item { display:flex; gap:10px; padding:8px 0;
+    border-bottom:1px solid #f5f5f5; font-size:0.85rem; }
+  .history-item:last-child { border-bottom:none; }
+  .history-dot { width:8px; height:8px; border-radius:50%;
+    flex-shrink:0; margin-top:4px; }
+  .history-dot.green   { background:#34c759; }
+  .history-dot.red     { background:#ff3b30; }
+  .history-dot.warning { background:#ff9500; }
+  .history-body .hstatus { font-weight:600; color:#1a1a1a; }
+  .history-body .hmeta   { color:#aaa; font-size:0.78rem; margin-top:1px; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <h1>⚙️ ניהול משתמשים</h1>
-  <div>
+  <h1>⚙️ ניהול מערכת</h1>
+  <div class="topbar-right">
     <button class="link-btn" onclick="window.location.href='dashboard.html'">⬅ חזרה</button>
     <button class="link-btn" onclick="api.logout()">יציאה</button>
   </div>
 </div>
 
-<!-- Pending approvals -->
+<!-- Pending signups -->
 <div class="card">
   <h3>
-    🔔 בקשות הצטרפות ממתינות
+    🔔 בקשות הצטרפות
     <span class="badge" id="pending-badge" style="display:none">0</span>
   </h3>
   <div id="pending-list"><div class="empty-msg">טוען...</div></div>
 </div>
 
-<!-- Add user manually -->
+<!-- Temp access requests -->
 <div class="card">
-  <h3>➕ הוספת משתמש ידנית</h3>
-  <label>שם משתמש</label>
-  <input type="text" id="new-username" placeholder="שם משתמש">
-  <label>סיסמה</label>
-  <input type="password" id="new-password" placeholder="סיסמה (מינימום 8 תווים)">
-  <label>תפקיד</label>
-  <select id="new-role">
-    <option value="security">אבטחה (Security)</option>
-    <option value="manager">מנהל (Manager)</option>
-    <option value="admin">מנהל מערכת (Admin)</option>
-  </select>
-  <label>מסגרת (למנהלים בלבד)</label>
-  <input type="text" id="new-dept" placeholder="שם המסגרת">
-  <button class="btn-primary" onclick="addUser()">הוסף משתמש</button>
-  <div class="error"   id="add-error"></div>
-  <div class="success" id="add-success"></div>
+  <h3>
+    🔓 בקשות גישה זמנית
+    <span class="badge" id="temp-badge" style="display:none">0</span>
+  </h3>
+  <div id="temp-list"><div class="empty-msg">טוען...</div></div>
 </div>
 
-<!-- Existing users -->
+<!-- Users list -->
 <div class="card">
   <h3>👥 משתמשים קיימים</h3>
-  <div id="user-list">טוען...</div>
+  <div id="user-list"><div class="empty-msg">טוען...</div></div>
+</div>
+
+<!-- Delete department -->
+<div class="card">
+  <h3>🗑 מחיקת מסגרת שלמה</h3>
+  <p style="color:#888;font-size:0.88rem;margin-bottom:16px;line-height:1.6;">
+    פעולה זו תמחק את כל העובדים, המשתמשים והבקשות הממתינות של המסגרת לצמיתות.
+    יומן הפעולות ישמר ללא שינוי.
+  </p>
+  <div class="dept-delete-row">
+    <div>
+      <label>מספר / שם מסגרת למחיקה</label>
+      <input type="text" id="delete-dept-input" placeholder="הכנס מזהה מסגרת">
+    </div>
+    <button class="btn-primary btn-danger" onclick="deleteDepartment()"
+      style="margin-top:0;width:auto;padding:12px 20px;">מחק</button>
+  </div>
+  <div class="error"   id="dept-error"></div>
+  <div class="success" id="dept-success"></div>
 </div>
 
 <!-- Audit log -->
 <div class="card">
-  <h3>📋 יומן פעולות אחרון</h3>
+  <h3>📋 יומן פעולות</h3>
   <div class="log-refresh">
     <button class="btn-refresh" onclick="loadAuditLog()">🔄 רענן</button>
   </div>
   <div class="log-scroll" id="audit-log">
     <div class="empty-msg">טוען...</div>
+  </div>
+</div>
+
+<!-- User detail/edit modal -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <h3 id="user-modal-title">👤 פרטי משתמש</h3>
+
+    <label>תפקיד</label>
+    <select id="edit-role">
+      <option value="security">אבטחה</option>
+      <option value="manager">מנהל</option>
+      <option value="admin">מנהל מערכת</option>
+    </select>
+
+    <label>מסגרת</label>
+    <input type="text" id="edit-dept" placeholder="מסגרת (ריק = כל המסגרות)">
+
+    <label>הודעה למשתמש (תוצג בפעם הבאה שיתחבר)</label>
+    <textarea id="edit-message" placeholder="הודעה אופציונלית..."></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-confirm" onclick="saveUserEdit()">💾 שמור</button>
+      <button class="btn-dismiss" onclick="closeUserModal()">ביטול</button>
+    </div>
+
+    <button class="btn-delete-user" onclick="deleteUser()">🗑 מחק משתמש זה</button>
+
+    <!-- History -->
+    <div style="margin-top:20px;">
+      <div style="font-size:0.85rem;font-weight:600;color:#888;margin-bottom:8px;">
+        היסטוריית פעולות
+      </div>
+      <div class="history-scroll" id="user-history">
+        <div class="empty-msg">טוען...</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -165,38 +268,33 @@
   requireAuth("admin");
 
   const ROLE_LABELS = { admin:"מנהל מערכת", manager:"מנהל", security:"אבטחה" };
+  let editingUser = null;
 
-  // ── Pending ───────────────────────────────────────────────
+  // ── Pending signups ───────────────────────────────────────
   async function loadPending() {
     const list  = document.getElementById("pending-list");
     const badge = document.getElementById("pending-badge");
     try {
-      const data  = await api.getPending();
-      const items = data.pending || [];
-
-      if (!items.length) {
+      const { pending=[] } = await api.getPending();
+      if (!pending.length) {
         list.innerHTML = '<div class="empty-msg">אין בקשות ממתינות ✅</div>';
-        badge.style.display = "none";
-        return;
+        badge.style.display = "none"; return;
       }
-
-      badge.textContent  = items.length;
+      badge.textContent = pending.length;
       badge.style.display = "inline-flex";
-
-      list.innerHTML = items.map(p => `
+      list.innerHTML = pending.map(p => `
         <div class="pending-row" id="pending-row-${p.rowIndex}">
-          <div class="pending-header">
-            <div class="pending-info">
-              <div class="name">👤 ${p.fullName}</div>
-              <div class="meta">שם משתמש: <strong>${p.username}</strong></div>
-              <div class="email">✉️ ${p.email}</div>
-              <div class="meta">תפקיד מבוקש:
-                <span class="role-badge role-${p.requestedRole}">
-                  ${ROLE_LABELS[p.requestedRole] || p.requestedRole}
-                </span>
-              </div>
-              <div class="time">⏱ ${p.timestamp}</div>
+          <div class="pending-info">
+            <div class="pname">👤 ${p.fullName}</div>
+            <div class="pmeta">שם משתמש: <strong>${p.username}</strong>
+              ${p.dept ? ` • מסגרת: <strong>${p.dept}</strong>` : ""}</div>
+            <div class="pemail">✉️ ${p.email}</div>
+            <div class="pmeta">תפקיד מבוקש:
+              <span class="role-badge role-${p.requestedRole}">
+                ${ROLE_LABELS[p.requestedRole]||p.requestedRole}
+              </span>
             </div>
+            <div class="ptime">⏱ ${p.timestamp}</div>
           </div>
           <div class="pending-actions">
             <select class="pending-role-select" id="role-select-${p.rowIndex}">
@@ -205,13 +303,9 @@
               <option value="admin"    ${p.requestedRole==="admin"   ?"selected":""}>מנהל מערכת</option>
             </select>
             <button class="btn-approve"
-              onclick="approvePending(${p.rowIndex}, '${p.username}')">
-              ✅ אשר
-            </button>
+              onclick="approvePending(${p.rowIndex},'${p.username}','${p.dept||""}')">✅ אשר</button>
             <button class="btn-reject"
-              onclick="rejectPending(${p.rowIndex}, '${p.username}')">
-              ❌
-            </button>
+              onclick="rejectPending(${p.rowIndex},'${p.username}')">❌</button>
           </div>
         </div>`).join("");
     } catch(e) {
@@ -219,83 +313,217 @@
     }
   }
 
-  window.approvePending = async function(rowIndex, username) {
+  window.approvePending = async function(rowIndex, username, preDept) {
     const approvedRole = document.getElementById(`role-select-${rowIndex}`).value;
-    const dept = approvedRole === "manager"
-      ? prompt(`מה המסגרת של ${username}? (השאר ריק לכל המסגרות)`) || ""
-      : "";
+    let dept = preDept;
+    if (approvedRole === "manager" && !dept) {
+      dept = prompt(`מה המסגרת של ${username}?`) || "";
+    }
     try {
       await api.approvePending(rowIndex, approvedRole, dept);
-      showToast(`✅ ${username} אושר כ-${ROLE_LABELS[approvedRole]}`);
-      loadPending();
-      loadUsers();
-    } catch(e) {
-      showToast(`❌ שגיאה: ${e.message}`);
-    }
+      showToast(`✅ ${username} אושר`);
+      loadPending(); loadUsers();
+    } catch(e) { showToast(`❌ ${e.message}`); }
   };
 
   window.rejectPending = async function(rowIndex, username) {
     if (!confirm(`לדחות את הבקשה של ${username}?`)) return;
     try {
       await api.rejectPending(rowIndex);
-      showToast(`🗑 בקשת ${username} נדחתה`);
+      showToast(`🗑 ${username} נדחה`);
       loadPending();
+    } catch(e) { showToast(`❌ ${e.message}`); }
+  };
+
+  // ── Temp access ───────────────────────────────────────────
+  async function loadTempAccess() {
+    const list  = document.getElementById("temp-list");
+    const badge = document.getElementById("temp-badge");
+    try {
+      const { requests=[] } = await api.getTempAccess();
+      const pending = requests.filter(r => r.status === "pending");
+      const active  = requests.filter(r => r.status === "active");
+      const visible = [...pending, ...active];
+
+      if (!visible.length) {
+        list.innerHTML = '<div class="empty-msg">אין בקשות גישה זמנית ✅</div>';
+        badge.style.display = "none"; return;
+      }
+
+      badge.textContent = pending.length || null;
+      badge.style.display = pending.length ? "inline-flex" : "none";
+
+      list.innerHTML = visible.map(r => {
+        const isPending = r.status === "pending";
+        const isActive  = r.status === "active";
+        const now       = new Date();
+        const expires   = r.expiresAt ? new Date(r.expiresAt) : null;
+        const msLeft    = expires ? Math.max(0, expires - now) : 0;
+        const hLeft     = Math.floor(msLeft/3600000);
+        const mLeft     = Math.floor((msLeft%3600000)/60000);
+        const timerText = isActive && msLeft > 0
+          ? `⏱ נותר: ${hLeft}ש ${mLeft}ד` : "";
+
+        return `
+          <div class="temp-row" id="temp-row-${r.rowIndex}">
+            <div class="temp-header">
+              <div>
+                <div class="temp-name">👤 ${r.username}</div>
+                <div class="temp-reason">סיבה: ${r.reason}</div>
+                <div class="temp-time">נשלח: ${r.requestedAt}</div>
+                ${timerText ? `<div class="temp-timer-text">${timerText}</div>` : ""}
+              </div>
+              <span class="temp-status-badge temp-${r.status}">
+                ${{ pending:"ממתין", active:"פעיל", expired:"פג תוקף", rejected:"נדחה" }[r.status]||r.status}
+              </span>
+            </div>
+            ${isPending ? `
+            <div class="temp-actions">
+              <button class="btn-approve" onclick="approveTempAccess(${r.rowIndex},'${r.username}')">
+                ✅ אשר גישה זמנית
+              </button>
+              <button class="btn-reject" onclick="rejectTempAccess(${r.rowIndex},'${r.username}')">
+                ❌
+              </button>
+            </div>` : ""}
+          </div>`;
+      }).join("");
     } catch(e) {
-      showToast(`❌ שגיאה: ${e.message}`);
+      list.innerHTML = `<div class="empty-msg">שגיאה: ${e.message}</div>`;
     }
+  }
+
+  window.approveTempAccess = async function(rowIndex, username) {
+    if (!confirm(`לאשר גישה זמנית ל-${username} למשך 24 שעות?`)) return;
+    try {
+      await api.approveTempAccess(rowIndex);
+      showToast(`✅ גישה זמנית אושרה ל-${username}`);
+      loadTempAccess();
+    } catch(e) { showToast(`❌ ${e.message}`); }
+  };
+
+  window.rejectTempAccess = async function(rowIndex, username) {
+    if (!confirm(`לדחות את בקשת הגישה הזמנית של ${username}?`)) return;
+    try {
+      await api.rejectTempAccess(rowIndex);
+      showToast(`🗑 בקשת ${username} נדחתה`);
+      loadTempAccess();
+    } catch(e) { showToast(`❌ ${e.message}`); }
   };
 
   // ── Users ─────────────────────────────────────────────────
   async function loadUsers() {
+    const list = document.getElementById("user-list");
     try {
-      const data = await api.getUsers();
-      const list = document.getElementById("user-list");
-      if (!data.users.length) {
-        list.innerHTML = '<div class="empty-msg">אין משתמשים</div>';
-        return;
+      const { users=[] } = await api.getUsers();
+      if (!users.length) {
+        list.innerHTML = '<div class="empty-msg">אין משתמשים</div>'; return;
       }
-      list.innerHTML = data.users.map(u => `
-        <div class="user-row">
+      list.innerHTML = users.map(u => `
+        <div class="user-row" onclick="openUserModal(${u.rowIndex},'${u.username}','${u.role}','${u.dept||""}')">
           <div class="user-info">
-            <div class="name">${u.username}</div>
-            <div class="meta">${u.dept || "כל המסגרות"}</div>
+            <div class="uname">${u.username}</div>
+            <div class="umeta">${u.dept || "כל המסגרות"}</div>
           </div>
-          <span class="role-badge role-${u.role}">
-            ${ROLE_LABELS[u.role] || u.role}
-          </span>
+          <div class="user-row-right">
+            <span class="role-badge role-${u.role}">${ROLE_LABELS[u.role]||u.role}</span>
+            <span class="chevron">›</span>
+          </div>
         </div>`).join("");
     } catch(e) {
-      document.getElementById("user-list").textContent = "שגיאה בטעינה";
+      list.innerHTML = `<div class="empty-msg">שגיאה: ${e.message}</div>`;
     }
   }
 
-  window.addUser = async function() {
-    const username = document.getElementById("new-username").value.trim();
-    const password = document.getElementById("new-password").value;
-    const role     = document.getElementById("new-role").value;
-    const dept     = document.getElementById("new-dept").value.trim();
-    const errEl    = document.getElementById("add-error");
-    const okEl     = document.getElementById("add-success");
+  // ── User modal ────────────────────────────────────────────
+  window.openUserModal = async function(rowIndex, username, role, dept) {
+    editingUser = { rowIndex, username };
+    document.getElementById("user-modal-title").textContent = `👤 ${username}`;
+    document.getElementById("edit-role").value    = role;
+    document.getElementById("edit-dept").value    = dept;
+    document.getElementById("edit-message").value = "";
+    document.getElementById("user-modal").classList.add("show");
+
+    // Load history
+    const histEl = document.getElementById("user-history");
+    histEl.innerHTML = '<div class="empty-msg">טוען...</div>';
+    try {
+      const { history=[] } = await api.getUserHistory(username);
+      if (!history.length) {
+        histEl.innerHTML = '<div class="empty-msg">אין היסטוריה</div>'; return;
+      }
+      histEl.innerHTML = history.slice(0,30).map(h => {
+        const isGreen   = h.status.toLowerCase() === "green";
+        const isWarning = h.type === "WARNING";
+        const dotClass  = isWarning ? "warning" : isGreen ? "green" : "red";
+        const label     = isWarning ? "⚠️ אזהרה"
+          : isGreen ? "✅ כניסה" : "🔴 יציאה";
+        const loc = h.location ? ` • ${h.location}` : "";
+        return `
+          <div class="history-item">
+            <div class="history-dot ${dotClass}"></div>
+            <div class="history-body">
+              <div class="hstatus">${label} — ${h.employee}${loc}</div>
+              <div class="hmeta">${h.timestamp}</div>
+            </div>
+          </div>`;
+      }).join("");
+    } catch(e) {
+      histEl.innerHTML = `<div class="empty-msg">שגיאה: ${e.message}</div>`;
+    }
+  };
+
+  window.closeUserModal = function() {
+    document.getElementById("user-modal").classList.remove("show");
+    editingUser = null;
+  };
+
+  window.saveUserEdit = async function() {
+    if (!editingUser) return;
+    const role    = document.getElementById("edit-role").value;
+    const dept    = document.getElementById("edit-dept").value.trim();
+    const message = document.getElementById("edit-message").value.trim();
+    try {
+      await api.editUser(editingUser.rowIndex, role, dept, message);
+      showToast(`✅ ${editingUser.username} עודכן`);
+      closeUserModal();
+      loadUsers();
+    } catch(e) { showToast(`❌ ${e.message}`); }
+  };
+
+  window.deleteUser = async function() {
+    if (!editingUser) return;
+    if (!confirm(`למחוק את המשתמש "${editingUser.username}"?`)) return;
+    if (!confirm(`אישור סופי — פעולה זו אינה הפיכה. למחוק?`)) return;
+    try {
+      await api.deleteUser(editingUser.rowIndex);
+      showToast(`🗑 ${editingUser.username} נמחק`);
+      closeUserModal();
+      loadUsers();
+    } catch(e) { showToast(`❌ ${e.message}`); }
+  };
+
+  // ── Department delete ─────────────────────────────────────
+  window.deleteDepartment = async function() {
+    const dept   = document.getElementById("delete-dept-input").value.trim();
+    const errEl  = document.getElementById("dept-error");
+    const okEl   = document.getElementById("dept-success");
     errEl.style.display = "none";
     okEl.style.display  = "none";
-    if (!username || !password) {
-      errEl.textContent = "נא למלא שם משתמש וסיסמה";
+    if (!dept) {
+      errEl.textContent = "נא להכניס מזהה מסגרת";
       errEl.style.display = "block"; return;
     }
-    if (password.length < 8) {
-      errEl.textContent = "הסיסמה חייבת להכיל לפחות 8 תווים";
-      errEl.style.display = "block"; return;
-    }
+    if (!confirm(`למחוק את מסגרת "${dept}" וכל הנתונים הקשורים אליה?`)) return;
+    if (!confirm(`אישור סופי — כל העובדים והמשתמשים של מסגרת "${dept}" יימחקו לצמיתות. להמשיך?`)) return;
     try {
-      await api.createUser(username, password, role, dept);
-      okEl.textContent = `✅ המשתמש "${username}" נוצר בהצלחה`;
+      const result = await api.deleteDepartment(dept);
+      okEl.textContent = `✅ מסגרת "${dept}" נמחקה — ${result.deletedEmployees} עובדים, ${result.deletedUsers} משתמשים`;
       okEl.style.display = "block";
-      document.getElementById("new-username").value = "";
-      document.getElementById("new-password").value = "";
-      document.getElementById("new-dept").value = "";
+      document.getElementById("delete-dept-input").value = "";
       loadUsers();
     } catch(e) {
-      errEl.textContent = e.message || "שגיאה ביצירת משתמש";
+      errEl.textContent = e.message || "שגיאה במחיקה";
       errEl.style.display = "block";
     }
   };
@@ -305,39 +533,31 @@
     const container = document.getElementById("audit-log");
     container.innerHTML = '<div class="empty-msg">טוען...</div>';
     try {
-      const data = await api.getAuditLog();
-      const logs = data.logs || [];
-
+      const { logs=[] } = await api.getAuditLog();
       if (!logs.length) {
-        container.innerHTML = '<div class="empty-msg">אין פעולות עדיין</div>';
-        return;
+        container.innerHTML = '<div class="empty-msg">אין פעולות עדיין</div>'; return;
       }
-
       container.innerHTML = logs.map(log => {
-        const isGreen  = log.status.toLowerCase() === "green";
-        const icon     = isGreen ? "✅" : "🔴";
-        const iconClass = isGreen ? "green" : "red";
-        const statusLabel = isGreen ? "נוכח" : "לא נוכח";
-        const locationText = log.location ? ` (${log.location})` : "";
-
+        const isWarning = log.type === "WARNING";
+        const isGreen   = log.status.toLowerCase() === "green";
+        const icon      = isWarning ? "⚠️" : isGreen ? "✅" : "🔴";
+        const cls       = isWarning ? "warning" : isGreen ? "green" : "red";
+        const statusLbl = isWarning ? "אזהרה" : isGreen ? "נוכח" : "לא נוכח";
+        const statusCls = isWarning ? "log-status-warning"
+          : isGreen ? "log-status-green" : "log-status-red";
+        const loc = log.location && !isWarning ? ` (${log.location})` : "";
         return `
           <div class="log-entry">
-            <div class="log-icon ${iconClass}">${icon}</div>
+            <div class="log-icon ${cls}">${icon}</div>
             <div class="log-body">
               <div class="log-main">
-                <strong>${log.user}</strong>
-                <span class="arrow">›</span>
-                <span class="emp">${log.employee}</span>
-                —
-                <span class="${isGreen ? "log-status-green" : "log-status-red"}">
-                  ${statusLabel}${locationText}
-                </span>
+                <strong>${log.user}</strong> › <span style="font-weight:600">${log.employee}</span>
+                — <span class="${statusCls}">${statusLbl}${loc}</span>
               </div>
               <div class="log-time">🕐 ${log.timestamp}</div>
             </div>
           </div>`;
       }).join("");
-
     } catch(e) {
       container.innerHTML = `<div class="empty-msg">שגיאה: ${e.message}</div>`;
     }
@@ -347,17 +567,20 @@
     const t = document.createElement("div");
     t.style.cssText = `position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
       background:#1a1a1a;color:white;padding:12px 24px;border-radius:12px;
-      font-size:0.95rem;z-index:100;white-space:nowrap;`;
+      font-size:0.95rem;z-index:300;white-space:nowrap;max-width:90vw;text-align:center;`;
     t.textContent = msg;
     document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2500);
+    setTimeout(() => t.remove(), 2800);
   }
 
+  // ── Init ──────────────────────────────────────────────────
   loadPending();
+  loadTempAccess();
   loadUsers();
   loadAuditLog();
-  setInterval(loadPending, 30000);
-  setInterval(loadAuditLog, 30000);
+  setInterval(loadPending,    30000);
+  setInterval(loadTempAccess, 30000);
+  setInterval(loadAuditLog,   30000);
 </script>
 </body>
 </html>

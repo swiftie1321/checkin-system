@@ -87,6 +87,50 @@ export const api = {
     if (!res.ok) throw new Error(data.error);
     return data;
   },
+
+  async signup(username, password, email, fullName, requestedRole) {
+    const res = await fetch(`${WORKER_URL}/signup`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ username, password, email, fullName, requestedRole }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getPending() {
+    const res = await fetch(`${WORKER_URL}/pending`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async approvePending(rowIndex, approvedRole, dept) {
+    const res = await fetch(`${WORKER_URL}/pending/approve`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex, approvedRole, dept }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async rejectPending(rowIndex) {
+    const res = await fetch(`${WORKER_URL}/pending/reject`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getPendingCount() {
+    const res = await fetch(`${WORKER_URL}/pending/count`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 };
 
 export function requireAuth(minRole = "security") {

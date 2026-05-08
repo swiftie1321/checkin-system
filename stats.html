@@ -10,15 +10,18 @@
   body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
     background:#f0f2f5; min-height:100vh; padding:20px; }
   .topbar { display:flex; justify-content:space-between; align-items:center;
-    max-width:900px; margin:0 auto 24px; }
+    max-width:900px; margin:0 auto 24px; flex-wrap:wrap; gap:8px; }
   .topbar h1 { font-size:1.3rem; font-weight:700; }
-  .topbar-right { display:flex; gap:10px; align-items:center; }
+  .topbar-right { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .link-btn { background:none; border:none; color:#007aff;
     font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
+  .link-btn:hover { background:#f0f0f0; }
   .refresh-btn { background:#007aff; color:white; border:none;
     border-radius:10px; padding:8px 16px; font-size:0.9rem; cursor:pointer; }
+  .refresh-btn:hover { background:#0066dd; }
   .last-update { color:#999; font-size:0.8rem; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
     gap:16px; max-width:900px; margin:0 auto 24px; }
   .stat-card { background:white; border-radius:16px; padding:20px 24px;
     box-shadow:0 2px 12px rgba(0,0,0,0.07); }
@@ -27,24 +30,46 @@
   .stat-green { color:#34c759; }
   .stat-red   { color:#ff3b30; }
   .stat-pct   { color:#007aff; }
-  .charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+  .stat-warn  { color:#ff9500; }
+
+  .charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
     gap:20px; max-width:900px; margin:0 auto 24px; }
   .chart-card { background:white; border-radius:16px; padding:24px;
     box-shadow:0 2px 12px rgba(0,0,0,0.07); }
   .chart-card h3 { font-size:1rem; font-weight:600; color:#333; margin-bottom:20px; }
-  .chart-wrap { position:relative; height:240px; }
-  .dept-table { max-width:900px; margin:0 auto; background:white;
+  .chart-wrap { position:relative; height:220px; }
+
+  .dept-table { max-width:900px; margin:0 auto 24px; background:white;
     border-radius:16px; padding:24px;
     box-shadow:0 2px 12px rgba(0,0,0,0.07); }
   .dept-table h3 { font-size:1rem; font-weight:600; margin-bottom:16px; }
   table { width:100%; border-collapse:collapse; }
   th { text-align:right; padding:10px 12px; color:#888;
-    font-size:0.85rem; border-bottom:2px solid #f0f0f0; }
+    font-size:0.85rem; border-bottom:2px solid #f0f0f0; font-weight:600; }
   td { padding:12px; border-bottom:1px solid #f5f5f5; font-size:0.95rem; }
   tr:last-child td { border-bottom:none; }
-  .pct-bar { height:6px; border-radius:3px; background:#e8f5e9; margin-top:4px; }
+  tr:hover td { background:#fafafa; }
+  .pct-bar  { height:6px; border-radius:3px; background:#e8f5e9; margin-top:4px; }
   .pct-fill { height:100%; border-radius:3px; background:#34c759;
     transition:width 0.6s ease; }
+  .pct-fill.low  { background:#ff9500; }
+  .pct-fill.crit { background:#ff3b30; }
+
+  /* Warning stats card */
+  .warnings-card { max-width:900px; margin:0 auto 24px; background:white;
+    border-radius:16px; padding:24px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+  .warnings-card h3 { font-size:1rem; font-weight:600; margin-bottom:16px;
+    color:#cc6600; }
+  .warning-row { display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:0.9rem; }
+  .warning-row:last-child { border-bottom:none; }
+  .warning-emp { font-weight:600; color:#1a1a1a; }
+  .warning-time { color:#aaa; font-size:0.82rem; }
+  .no-warnings { color:#aaa; text-align:center; padding:16px 0; font-size:0.9rem; }
+
+  .loading { text-align:center; color:#aaa; padding:40px;
+    font-size:0.95rem; }
 </style>
 </head>
 <body>
@@ -59,6 +84,7 @@
   </div>
 </div>
 
+<!-- Summary cards -->
 <div class="grid">
   <div class="stat-card">
     <div class="stat-label">נוכחים ביחידה</div>
@@ -76,8 +102,13 @@
     <div class="stat-label">אחוז נוכחות</div>
     <div class="stat-value stat-pct" id="pct-present">—</div>
   </div>
+  <div class="stat-card" id="warnings-stat-card" style="display:none">
+    <div class="stat-label">אזהרות כניסה כפולה</div>
+    <div class="stat-value stat-warn" id="total-warnings">—</div>
+  </div>
 </div>
 
+<!-- Pie charts -->
 <div class="charts-grid">
   <div class="chart-card">
     <h3>נוכחות כללית</h3>
@@ -89,6 +120,7 @@
   </div>
 </div>
 
+<!-- Department table -->
 <div class="dept-table">
   <h3>נוכחות לפי מסגרת</h3>
   <table>
@@ -104,10 +136,30 @@
   </table>
 </div>
 
+<!-- Recent warnings (admin only) -->
+<div class="warnings-card" id="warnings-card" style="display:none">
+  <h3>⚠️ אזהרות כניסה כפולה אחרונות</h3>
+  <div id="warnings-list"><div class="no-warnings">טוען...</div></div>
+</div>
+
 <script type="module">
   import { api, requireAuth } from "./js/api.js";
   window.api = api;
-  requireAuth("manager");
+
+  // Block managers — stats is for security + admin only
+  const user = requireAuth("security");
+  if (!user) throw new Error("not authed");
+  if (user.role === "manager") {
+    alert("מנהלים אינם מורשים לצפות בסטטיסטיקות");
+    window.location.href = "dashboard.html";
+    throw new Error("forbidden");
+  }
+
+  // Show warnings section for admin only
+  if (user.role === "admin") {
+    document.getElementById("warnings-stat-card").style.display = "block";
+    document.getElementById("warnings-card").style.display = "block";
+  }
 
   const COLORS = [
     "#007aff","#34c759","#ff9500","#ff3b30","#5856d6",
@@ -120,15 +172,16 @@
   window.loadStats = async function() {
     document.getElementById("last-update").textContent = "טוען...";
     try {
-      const data = await api.getStats();
+      const data  = await api.getStats();
       const total = data.totalPresent + data.totalAbsent;
+      const pct   = total ? Math.round(data.totalPresent/total*100) : 0;
 
       document.getElementById("total-present").textContent = data.totalPresent;
       document.getElementById("total-absent").textContent  = data.totalAbsent;
       document.getElementById("total-all").textContent     = total;
-      document.getElementById("pct-present").textContent   =
-        total ? Math.round(data.totalPresent/total*100)+"%" : "0%";
+      document.getElementById("pct-present").textContent   = total ? pct+"%" : "0%";
 
+      // Overall pie
       const overallCtx = document.getElementById("chart-overall").getContext("2d");
       if (chartOverall) chartOverall.destroy();
       chartOverall = new Chart(overallCtx, {
@@ -139,12 +192,14 @@
             backgroundColor:["#34c759","#ff3b30"],
             borderWidth:2, borderColor:"#fff" }]
         },
-        options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%" }
+        options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%",
+          responsive:true, maintainAspectRatio:false }
       });
 
+      // Location pie
       const locLabels = Object.keys(data.locationStats);
       const locValues = Object.values(data.locationStats);
-      const locCtx = document.getElementById("chart-locations").getContext("2d");
+      const locCtx    = document.getElementById("chart-locations").getContext("2d");
       if (chartLocation) chartLocation.destroy();
       if (locLabels.length) {
         chartLocation = new Chart(locCtx, {
@@ -155,32 +210,72 @@
               backgroundColor: COLORS.slice(0,locLabels.length),
               borderWidth:2, borderColor:"#fff" }]
           },
-          options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%" }
+          options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%",
+            responsive:true, maintainAspectRatio:false }
         });
+      } else {
+        locCtx.clearRect(0,0,locCtx.canvas.width,locCtx.canvas.height);
+        locCtx.fillStyle = "#aaa";
+        locCtx.font = "14px sans-serif";
+        locCtx.textAlign = "center";
+        locCtx.fillText("כולם נוכחים 🎉", locCtx.canvas.width/2, locCtx.canvas.height/2);
       }
 
+      // Department table
       const tbody = document.getElementById("dept-tbody");
       tbody.innerHTML = "";
       for (const [dept, s] of Object.entries(data.deptStats)) {
-        const pct = s.total ? Math.round(s.present/s.total*100) : 0;
+        const p   = s.total ? Math.round(s.present/s.total*100) : 0;
+        const cls = p < 50 ? "crit" : p < 75 ? "low" : "";
         tbody.innerHTML += `
           <tr>
             <td><strong>${dept}</strong></td>
             <td style="color:#34c759;font-weight:600">${s.present}</td>
             <td>${s.total}</td>
             <td>
-              <span style="font-weight:600">${pct}%</span>
-              <div class="pct-bar"><div class="pct-fill" style="width:${pct}%"></div></div>
+              <span style="font-weight:600;color:${p<50?"#ff3b30":p<75?"#ff9500":"#1a1a1a"}">${p}%</span>
+              <div class="pct-bar">
+                <div class="pct-fill ${cls}" style="width:${p}%"></div>
+              </div>
             </td>
           </tr>`;
       }
 
       document.getElementById("last-update").textContent =
         "עודכן: " + new Date().toLocaleTimeString("he-IL");
+
+      // Load warnings for admin
+      if (user.role === "admin") loadWarnings();
+
     } catch(e) {
-      document.getElementById("last-update").textContent = "שגיאה בטעינה";
+      document.getElementById("last-update").textContent = "שגיאה בטעינה: " + e.message;
     }
   };
+
+  async function loadWarnings() {
+    const wList = document.getElementById("warnings-list");
+    try {
+      const { logs=[] } = await api.getAuditLog();
+      const warnings = logs.filter(l => l.type === "WARNING");
+      document.getElementById("total-warnings").textContent = warnings.length;
+      if (!warnings.length) {
+        wList.innerHTML = '<div class="no-warnings">אין אזהרות ✅</div>';
+        return;
+      }
+      wList.innerHTML = warnings.map(w => `
+        <div class="warning-row">
+          <div>
+            <span class="warning-emp">⚠️ ${w.employee}</span>
+            <span style="color:#888;font-size:0.85rem;margin-right:8px;">
+              סרקן ע"י ${w.user}
+            </span>
+          </div>
+          <div class="warning-time">${w.timestamp}</div>
+        </div>`).join("");
+    } catch(e) {
+      wList.innerHTML = '<div class="no-warnings">שגיאה בטעינה</div>';
+    }
+  }
 
   loadStats();
   setInterval(loadStats, 30000);

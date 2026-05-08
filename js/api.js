@@ -77,6 +77,16 @@ export const api = {
     if (!res.ok) throw new Error(data.error);
     return data;
   },
+
+  async addEmployee(name, dept, svc) {
+    const res = await fetch(`${WORKER_URL}/addEmployee`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ name, dept, svc }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 };
 
 export function requireAuth(minRole = "security") {

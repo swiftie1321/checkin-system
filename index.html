@@ -22,14 +22,23 @@
     border-radius:12px; font-size:1rem; outline:none;
     transition:border-color 0.2s; margin-bottom:16px; }
   input:focus { border-color:#007aff; }
-  button { width:100%; padding:16px; background:#007aff; color:white;
+  button.btn-login { width:100%; padding:16px; background:#007aff; color:white;
     border:none; border-radius:14px; font-size:1.1rem; font-weight:600;
     cursor:pointer; transition:opacity 0.2s; margin-top:8px; }
-  button:hover { opacity:0.9; }
-  button:disabled { opacity:0.6; cursor:not-allowed; }
+  button.btn-login:hover { opacity:0.9; }
+  button.btn-login:disabled { opacity:0.6; cursor:not-allowed; }
   .error { background:#fff0f0; color:#cc0000; border-radius:10px;
     padding:12px 16px; font-size:0.9rem; margin-top:16px;
     display:none; text-align:center; }
+  .divider { display:flex; align-items:center; gap:12px;
+    margin:20px 0 4px; color:#aaa; font-size:0.85rem; }
+  .divider::before, .divider::after {
+    content:""; flex:1; height:1px; background:#e0e0e0; }
+  .signup-link { display:block; text-align:center; color:#007aff;
+    font-size:0.95rem; text-decoration:none; padding:14px;
+    border:1.5px solid #007aff; border-radius:14px; margin-top:8px;
+    font-weight:600; transition:background 0.2s; }
+  .signup-link:hover { background:#f0f7ff; }
 </style>
 </head>
 <body>
@@ -37,17 +46,23 @@
   <div class="logo">🔐</div>
   <h1>כניסה למערכת</h1>
   <p class="subtitle">מערכת נוכחות ובטיחות</p>
+
   <label>שם משתמש</label>
   <input type="text" id="username" placeholder="הכנס שם משתמש" autocomplete="username">
+
   <label>סיסמה</label>
   <input type="password" id="password" placeholder="הכנס סיסמה" autocomplete="current-password">
-  <button id="btn" onclick="doLogin()">כניסה</button>
+
+  <button class="btn-login" id="btn" onclick="doLogin()">כניסה</button>
   <div class="error" id="error"></div>
+
+  <div class="divider">או</div>
+  <a class="signup-link" href="signup.html">🔏 בקש גישה למערכת</a>
 </div>
+
 <script type="module">
   import { api } from "./js/api.js";
 
-  // Redirect if already logged in
   if (api.token() && api.user()) {
     window.location.href = "dashboard.html";
   }

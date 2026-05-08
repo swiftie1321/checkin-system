@@ -1,4 +1,3 @@
-// ── Replace this with your deployed Worker URL ────────────────
 const WORKER_URL = "https://checkin-api.lihishaul21.workers.dev";
 
 export const api = {

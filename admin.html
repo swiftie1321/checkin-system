@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניהול משתמשים</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    background:#f0f2f5; min-height:100vh; padding:20px; }
+  .topbar { display:flex; justify-content:space-between; align-items:center;
+    max-width:600px; margin:0 auto 24px; }
+  .topbar h1 { font-size:1.3rem; font-weight:700; }
+  .link-btn { background:none; border:none; color:#007aff;
+    font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
+  .card { background:white; border-radius:16px; padding:24px;
+    max-width:600px; margin:0 auto 20px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+  .card h3 { font-size:1rem; font-weight:600; margin-bottom:20px; }
+  label { display:block; font-size:0.85rem; color:#555;
+    font-weight:500; margin-bottom:6px; }
+  input, select { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
+    border-radius:12px; font-size:1rem; outline:none; margin-bottom:14px;
+    background:white; }
+  input:focus, select:focus { border-color:#007aff; }
+  .btn-primary { width:100%; padding:14px; background:#007aff; color:white;
+    border:none; border-radius:12px; font-size:1rem; font-weight:600;
+    cursor:pointer; margin-top:4px; }
+  .user-row { display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; border-bottom:1px solid #f0f0f0; }
+  .user-row:last-child { border-bottom:none; }
+  .user-info .name { font-weight:600; font-size:0.95rem; }
+  .user-info .meta { color:#888; font-size:0.82rem; margin-top:2px; }
+  .role-badge { padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; }
+  .role-admin    { background:#fff3cd; color:#856404; }
+  .role-manager  { background:#cce5ff; color:#004085; }
+  .role-security { background:#d4edda; color:#155724; }
+  .error { background:#fff0f0; color:#cc0000; border-radius:10px;
+    padding:12px; font-size:0.9rem; margin-top:12px; display:none; }
+  .success { background:#f0fff4; color:#006600; border-radius:10px;
+    padding:12px; font-size:0.9rem; margin-top:12px; display:none; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>⚙️ ניהול משתמשים</h1>
+  <div>
+    <button class="link-btn" onclick="window.location.href='dashboard.html'">⬅ חזרה</button>
+    <button class="link-btn" onclick="api.logout()">יציאה</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3>➕ הוספת משתמש חדש</h3>
+  <label>שם משתמש</label>
+  <input type="text" id="new-username" placeholder="שם משתמש">
+  <label>סיסמה</label>
+  <input type="password" id="new-password" placeholder="סיסמה (מינימום 8 תווים)">
+  <label>תפקיד</label>
+  <select id="new-role">
+    <option value="security">אבטחה (Security)</option>
+    <option value="manager">מנהל (Manager)</option>
+    <option value="admin">מנהל מערכת (Admin)</option>
+  </select>
+  <label>מסגרת (למנהלים בלבד)</label>
+  <input type="text" id="new-dept" placeholder="שם המסגרת">
+  <button class="btn-primary" onclick="addUser()">הוסף משתמש</button>
+  <div class="error"   id="add-error"></div>
+  <div class="success" id="add-success"></div>
+</div>
+
+<div class="card">
+  <h3>👥 משתמשים קיימים</h3>
+  <div id="user-list">טוען...</div>
+</div>
+
+<script type="module">
+  import { api, requireAuth } from "./js/api.js";
+  window.api = api;
+  requireAuth("admin");
+
+  async function loadUsers() {
+    try {
+      const data = await api.getUsers();
+      const list = document.getElementById("user-list");
+      if (!data.users.length) { list.textContent = "אין משתמשים"; return; }
+      list.innerHTML = data.users.map(u => `
+        <div class="user-row">
+          <div class="user-info">
+            <div class="name">${u.username}</div>
+            <div class="meta">${u.dept || "כל המסגרות"}</div>
+          </div>
+          <span class="role-badge role-${u.role}">
+            ${{ admin:"מנהל מערכת", manager:"מנהל", security:"אבטחה" }[u.role]}
+          </span>
+        </div>`).join("");
+    } catch(e) {
+      document.getElementById("user-list").textContent = "שגיאה בטעינה";
+    }
+  }
+
+  window.addUser = async function() {
+    const username = document.getElementById("new-username").value.trim();
+    const password = document.getElementById("new-password").value;
+    const role     = document.getElementById("new-role").value;
+    const dept     = document.getElementById("new-dept").value.trim();
+    const errEl    = document.getElementById("add-error");
+    const okEl     = document.getElementById("add-success");
+    errEl.style.display = "none";
+    okEl.style.display  = "none";
+    if (!username || !password) {
+      errEl.textContent = "נא למלא שם משתמש וסיסמה";
+      errEl.style.display = "block"; return;
+    }
+    if (password.length < 8) {
+      errEl.textContent = "הסיסמה חייבת להכיל לפחות 8 תווים";
+      errEl.style.display = "block"; return;
+    }
+    try {
+      await api.createUser(username, password, role, dept);
+      okEl.textContent = `✅ המשתמש "${username}" נוצר בהצלחה`;
+      okEl.style.display = "block";
+      document.getElementById("new-username").value = "";
+      document.getElementById("new-password").value = "";
+      document.getElementById("new-dept").value = "";
+      loadUsers();
+    } catch(e) {
+      errEl.textContent = e.message || "שגיאה ביצירת משתמש";
+      errEl.style.display = "block";
+    }
+  };
+
+  loadUsers();
+</script>
+</body>
+</html>

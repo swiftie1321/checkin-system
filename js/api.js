@@ -1,190 +1,243 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>הוספת משתמש</title>
-<style>
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    background:#f0f2f5; min-height:100vh; display:flex;
-    justify-content:center; align-items:flex-start; padding:20px; }
-  .card { background:white; border-radius:20px; padding:36px 28px;
-    width:100%; max-width:460px; margin-top:20px;
-    box-shadow:0 8px 32px rgba(0,0,0,0.10); }
-  .back-btn { background:none; border:none; color:#007aff;
-    font-size:0.9rem; cursor:pointer; padding:0 0 20px;
-    display:block; }
-  .logo { font-size:2rem; margin-bottom:8px; }
-  h1 { font-size:1.4rem; font-weight:700; color:#1a1a1a; margin-bottom:4px; }
-  .subtitle { color:#888; font-size:0.9rem; margin-bottom:28px; line-height:1.5; }
-  label { display:block; font-size:0.85rem; color:#555;
-    font-weight:500; margin-bottom:6px; }
-  input, select { width:100%; padding:13px 16px; border:1.5px solid #e0e0e0;
-    border-radius:12px; font-size:1rem; outline:none;
-    transition:border-color 0.2s; margin-bottom:14px; background:white; }
-  input:focus, select:focus { border-color:#007aff; }
-  input:disabled, select:disabled { background:#f8f8f8; color:#aaa; }
-  .btn { width:100%; padding:16px; border:none; border-radius:14px;
-    font-size:1.05rem; font-weight:600; cursor:pointer; margin-top:4px; }
-  .btn-submit { background:#007aff; color:white; }
-  .btn-submit:hover { background:#0066dd; }
-  .btn-submit:disabled { background:#b0c8f0; cursor:not-allowed; }
-  .error   { background:#fff0f0; color:#cc0000; border-radius:10px;
-    padding:12px 16px; font-size:0.9rem; margin-top:12px;
-    display:none; text-align:center; }
-  .success-screen { display:none; text-align:center; padding:20px 0; }
-  .success-screen .icon { font-size:3rem; margin-bottom:12px; }
-  .success-screen h2 { font-size:1.3rem; font-weight:700; margin-bottom:8px; }
-  .success-screen p { color:#666; font-size:0.9rem; line-height:1.6;
-    margin-bottom:24px; }
-  .btn-back-home { background:#f0f2f5; color:#333; }
-  .btn-back-home:hover { background:#e4e6e9; }
-  .info-note { background:#e8f4fd; color:#0066cc; border-radius:10px;
-    padding:12px 14px; font-size:0.85rem; margin-bottom:16px;
-    line-height:1.5; border:1px solid #b3d9f7; }
-</style>
-</head>
-<body>
-<div class="card">
-  <button class="back-btn" onclick="window.location.href='dashboard.html'">
-    ⬅ חזרה לדשבורד
-  </button>
+const WORKER_URL = "https://checkin-api.lihishaul21.workers.dev";
 
-  <!-- Form -->
-  <div id="form-section">
-    <div class="logo">➕</div>
-    <h1>הוספת משתמש חדש</h1>
-    <p class="subtitle">הבקשה תישלח למנהל המערכת לאישור</p>
+export const api = {
+  token: () => localStorage.getItem("token"),
+  user:  () => JSON.parse(localStorage.getItem("user") || "null"),
 
-    <div class="info-note" id="dept-note" style="display:none">
-      📌 כמנהל, המשתמש החדש יירשם עם המסגרת שלך אוטומטית
-    </div>
+  headers() {
+    return { "Content-Type":"application/json",
+      Authorization: `Bearer ${this.token()}` };
+  },
 
-    <label>שם מלא</label>
-    <input type="text" id="fullName" placeholder="שם פרטי ומשפחה">
+  async login(username, password) {
+    const res = await fetch(`${WORKER_URL}/login`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(
+      { username:data.username, role:data.role, dept:data.dept }
+    ));
+    // Store pending message for display on next page
+    if (data.pendingMessage) {
+      localStorage.setItem("pendingMessage", data.pendingMessage);
+    }
+    return data;
+  },
 
-    <label>שם משתמש</label>
-    <input type="text" id="username" placeholder="שם משתמש לכניסה" autocomplete="off">
+  logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("pendingMessage");
+    window.location.href = "index.html";
+  },
 
-    <label>סיסמה</label>
-    <input type="password" id="password" placeholder="מינימום 8 תווים">
+  async getEmployee(code) {
+    const res = await fetch(`${WORKER_URL}/employee?code=${code}`,
+      { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-    <label>אימות סיסמה</label>
-    <input type="password" id="password2" placeholder="הכנס סיסמה שוב">
+  async updateStatus(rowIndex, status, location) {
+    const res = await fetch(`${WORKER_URL}/update`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex, status, location }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-    <label>כתובת אימייל</label>
-    <input type="email" id="email" placeholder="your@email.com">
+  async getStats() {
+    const res = await fetch(`${WORKER_URL}/stats`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-    <label>תפקיד מבוקש</label>
-    <select id="requestedRole">
-      <option value="security">אבטחה (Security)</option>
-      <option value="manager">מנהל (Manager)</option>
-      <option value="admin">מנהל מערכת (Admin)</option>
-    </select>
+  async getLocations() {
+    const res = await fetch(`${WORKER_URL}/locations`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-    <label>מסגרת</label>
-    <input type="text" id="dept" placeholder="מספר או שם מסגרת">
+  async getUsers() {
+    const res = await fetch(`${WORKER_URL}/users`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-    <button class="btn btn-submit" id="submit-btn" onclick="doSubmit()">
-      שלח בקשה לאישור
-    </button>
-    <div class="error" id="error"></div>
-  </div>
+  async createUser(username, password, role, dept) {
+    const res = await fetch(`${WORKER_URL}/users`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ username, password, role, dept }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-  <!-- Success -->
-  <div class="success-screen" id="success-screen">
-    <div class="icon">✅</div>
-    <h2>הבקשה נשלחה!</h2>
-    <p>הבקשה התקבלה ומחכה לאישור מנהל המערכת.<br>
-       לאחר האישור המשתמש יוכל להתחבר.</p>
-    <button class="btn btn-submit" onclick="resetForm()" style="margin-bottom:10px">
-      ➕ הוסף משתמש נוסף
-    </button>
-    <button class="btn btn-back-home" onclick="window.location.href='dashboard.html'">
-      ⬅ חזרה לדשבורד
-    </button>
-  </div>
-</div>
+  async editUser(rowIndex, role, dept, message) {
+    const res = await fetch(`${WORKER_URL}/user/edit`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex, role, dept, message }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-<script type="module">
-  import { api, requireAuth } from "./js/api.js";
+  async deleteUser(rowIndex) {
+    const res = await fetch(`${WORKER_URL}/user`, {
+      method:"DELETE", headers: this.headers(),
+      body: JSON.stringify({ rowIndex }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-  const user = requireAuth("manager");
-  if (!user) throw new Error("not authed");
+  async getUserHistory(username) {
+    const res = await fetch(`${WORKER_URL}/user/history?username=${encodeURIComponent(username)}`,
+      { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
 
-  // If manager — lock dept to their own
-  if (user.role === "manager") {
-    const deptInput = document.getElementById("dept");
-    deptInput.value    = user.dept || "";
-    deptInput.disabled = true;
-    document.getElementById("dept-note").style.display = "block";
-    // Managers can't request admin
-    const roleSelect = document.getElementById("requestedRole");
-    const adminOpt = roleSelect.querySelector('option[value="admin"]');
-    if (adminOpt) adminOpt.remove();
+  async addEmployee(name, dept, svc) {
+    const res = await fetch(`${WORKER_URL}/addEmployee`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ name, dept, svc }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async deleteDepartment(dept) {
+    const res = await fetch(`${WORKER_URL}/department`, {
+      method:"DELETE", headers: this.headers(),
+      body: JSON.stringify({ dept }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async signup(username, password, email, fullName, requestedRole, dept) {
+    const res = await fetch(`${WORKER_URL}/signup`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ username, password, email, fullName, requestedRole, dept }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getPending() {
+    const res = await fetch(`${WORKER_URL}/pending`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async approvePending(rowIndex, approvedRole, dept) {
+    const res = await fetch(`${WORKER_URL}/pending/approve`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex, approvedRole, dept }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async rejectPending(rowIndex) {
+    const res = await fetch(`${WORKER_URL}/pending/reject`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getPendingCount() {
+    const res = await fetch(`${WORKER_URL}/pending/count`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getAuditLog() {
+    const res = await fetch(`${WORKER_URL}/auditlog`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getTempAccess() {
+    const res = await fetch(`${WORKER_URL}/tempaccess`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async requestTempAccess(reason) {
+    const res = await fetch(`${WORKER_URL}/tempaccess/request`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ reason }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async approveTempAccess(rowIndex) {
+    const res = await fetch(`${WORKER_URL}/tempaccess/approve`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async rejectTempAccess(rowIndex) {
+    const res = await fetch(`${WORKER_URL}/tempaccess/reject`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getTempAccessMine() {
+    const res = await fetch(`${WORKER_URL}/tempaccess/mine`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+};
+
+export function requireAuth(minRole = "security") {
+  const user = api.user();
+  const roles = { security:1, manager:2, admin:3 };
+  if (!user || !api.token()) {
+    window.location.href = "index.html";
+    return null;
   }
-
-  window.doSubmit = async function() {
-    const fullName      = document.getElementById("fullName").value.trim();
-    const username      = document.getElementById("username").value.trim();
-    const password      = document.getElementById("password").value;
-    const password2     = document.getElementById("password2").value;
-    const email         = document.getElementById("email").value.trim();
-    const requestedRole = document.getElementById("requestedRole").value;
-    const dept          = document.getElementById("dept").value.trim();
-    const btn           = document.getElementById("submit-btn");
-    const errEl         = document.getElementById("error");
-
-    errEl.style.display = "none";
-
-    if (!fullName||!username||!password||!email) {
-      errEl.textContent = "נא למלא את כל השדות";
-      errEl.style.display = "block"; return;
-    }
-    if (password.length < 8) {
-      errEl.textContent = "הסיסמה חייבת להכיל לפחות 8 תווים";
-      errEl.style.display = "block"; return;
-    }
-    if (password !== password2) {
-      errEl.textContent = "הסיסמאות אינן תואמות";
-      errEl.style.display = "block"; return;
-    }
-    if (!email.includes("@")) {
-      errEl.textContent = "כתובת אימייל לא תקינה";
-      errEl.style.display = "block"; return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = "שולח...";
-
-    try {
-      await api.signup(username, password, email, fullName, requestedRole, dept);
-      document.getElementById("form-section").style.display = "none";
-      document.getElementById("success-screen").style.display = "block";
-    } catch(e) {
-      errEl.textContent = e.message || "שגיאה בשליחת הבקשה";
-      errEl.style.display = "block";
-      btn.disabled = false;
-      btn.textContent = "שלח בקשה לאישור";
-    }
-  };
-
-  window.resetForm = function() {
-    document.getElementById("fullName").value   = "";
-    document.getElementById("username").value   = "";
-    document.getElementById("password").value   = "";
-    document.getElementById("password2").value  = "";
-    document.getElementById("email").value      = "";
-    if (user.role !== "manager") {
-      document.getElementById("dept").value = "";
-    }
-    document.getElementById("error").style.display  = "none";
-    document.getElementById("submit-btn").disabled  = false;
-    document.getElementById("submit-btn").textContent = "שלח בקשה לאישור";
-    document.getElementById("form-section").style.display   = "block";
-    document.getElementById("success-screen").style.display = "none";
-  };
-</script>
-</body>
-</html>
+  if ((roles[user.role]||0) < (roles[minRole]||0)) {
+    alert("אין לך הרשאה לצפות בעמוד זה");
+    window.location.href = "index.html";
+    return null;
+  }
+  return user;
+}

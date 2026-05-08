@@ -26,7 +26,7 @@ export const api = {
   logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "/index.html";
+    window.location.href = "index.html";
   },
 
   async getEmployee(code) {
@@ -82,10 +82,13 @@ export const api = {
 export function requireAuth(minRole = "security") {
   const user = api.user();
   const roles = { security:1, manager:2, admin:3 };
-  if (!user || !api.token()) { window.location.href="/index.html"; return null; }
+  if (!user || !api.token()) {
+    window.location.href = "index.html";
+    return null;
+  }
   if ((roles[user.role]||0) < (roles[minRole]||0)) {
     alert("אין לך הרשאה לצפות בעמוד זה");
-    window.location.href="/index.html";
+    window.location.href = "index.html";
     return null;
   }
   return user;

@@ -3,135 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ניהול משתמשים</title>
+<title>בקשת גישה למערכת</title>
 <style>
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    background:#f0f2f5; min-height:100vh; padding:20px; }
-  .topbar { display:flex; justify-content:space-between; align-items:center;
-    max-width:600px; margin:0 auto 24px; }
-  .topbar h1 { font-size:1.3rem; font-weight:700; }
-  .link-btn { background:none; border:none; color:#007aff;
-    font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
-  .card { background:white; border-radius:16px; padding:24px;
-    max-width:600px; margin:0 auto 20px;
-    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
-  .card h3 { font-size:1rem; font-weight:600; margin-bottom:20px; }
+    background:#f0f2f5; min-height:100vh; display:flex;
+    justify-content:center; align-items:center; padding:20px; }
+  .card { background:white; border-radius:20px; padding:40px 32px;
+    width:100%; max-width:440px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.10); }
+  .logo { text-align:center; font-size:2.2rem; margin-bottom:8px; }
+  h1 { text-align:center; font-size:1.4rem; font-weight:700;
+    color:#1a1a1a; margin-bottom:4px; }
+  .subtitle { text-align:center; color:#888; font-size:0.9rem;
+    margin-bottom:28px; }
   label { display:block; font-size:0.85rem; color:#555;
     font-weight:500; margin-bottom:6px; }
-  input, select { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
-    border-radius:12px; font-size:1rem; outline:none; margin-bottom:14px;
-    background:white; }
+  input, select { width:100%; padding:13px 16px; border:1.5px solid #e0e0e0;
+    border-radius:12px; font-size:1rem; outline:none;
+    transition:border-color 0.2s; margin-bottom:14px; background:white; }
   input:focus, select:focus { border-color:#007aff; }
-  .btn-primary { width:100%; padding:14px; background:#007aff; color:white;
-    border:none; border-radius:12px; font-size:1rem; font-weight:600;
-    cursor:pointer; margin-top:4px; }
-  .user-row { display:flex; justify-content:space-between; align-items:center;
-    padding:14px 0; border-bottom:1px solid #f0f0f0; }
-  .user-row:last-child { border-bottom:none; }
-  .user-info .name { font-weight:600; font-size:0.95rem; }
-  .user-info .meta { color:#888; font-size:0.82rem; margin-top:2px; }
-  .role-badge { padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; }
-  .role-admin    { background:#fff3cd; color:#856404; }
-  .role-manager  { background:#cce5ff; color:#004085; }
-  .role-security { background:#d4edda; color:#155724; }
+  .btn { width:100%; padding:16px; border:none; border-radius:14px;
+    font-size:1.05rem; font-weight:600; cursor:pointer;
+    transition:opacity 0.2s; margin-top:4px; }
+  .btn-submit { background:#007aff; color:white; }
+  .btn-submit:hover { opacity:0.9; }
+  .btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
+  .btn-back { background:#f0f2f5; color:#333; margin-top:10px; }
+  .btn-back:hover { background:#e4e6e9; }
   .error { background:#fff0f0; color:#cc0000; border-radius:10px;
-    padding:12px; font-size:0.9rem; margin-top:12px; display:none; }
-  .success { background:#f0fff4; color:#006600; border-radius:10px;
-    padding:12px; font-size:0.9rem; margin-top:12px; display:none; }
+    padding:12px 16px; font-size:0.9rem; margin-top:12px;
+    display:none; text-align:center; }
+  .success-screen { display:none; text-align:center; }
+  .success-screen .icon { font-size:3rem; margin-bottom:12px; }
+  .success-screen h2 { font-size:1.3rem; font-weight:700;
+    color:#1a1a1a; margin-bottom:8px; }
+  .success-screen p { color:#666; font-size:0.95rem;
+    line-height:1.6; margin-bottom:24px; }
+  .divider { text-align:center; color:#aaa; font-size:0.85rem;
+    margin:16px 0; }
+  a.login-link { display:block; text-align:center; color:#007aff;
+    font-size:0.9rem; text-decoration:none; margin-top:16px; }
 </style>
 </head>
 <body>
+<div class="card">
 
-<div class="topbar">
-  <h1>⚙️ ניהול משתמשים</h1>
-  <div>
-    <button class="link-btn" onclick="window.location.href='dashboard.html'">⬅ חזרה</button>
-    <button class="link-btn" onclick="api.logout()">יציאה</button>
+  <!-- Signup form -->
+  <div id="signup-form">
+    <div class="logo">🔏</div>
+    <h1>בקשת גישה למערכת</h1>
+    <p class="subtitle">מלא את הפרטים — מנהל המערכת יאשר את בקשתך</p>
+
+    <label>שם מלא</label>
+    <input type="text" id="fullName" placeholder="שם פרטי ומשפחה">
+
+    <label>שם משתמש</label>
+    <input type="text" id="username" placeholder="שם משתמש לכניסה" autocomplete="username">
+
+    <label>סיסמה</label>
+    <input type="password" id="password" placeholder="מינימום 8 תווים" autocomplete="new-password">
+
+    <label>אימות סיסמה</label>
+    <input type="password" id="password2" placeholder="הכנס סיסמה שוב">
+
+    <label>כתובת אימייל</label>
+    <input type="email" id="email" placeholder="your@email.com">
+
+    <label>תפקיד מבוקש</label>
+    <select id="requestedRole">
+      <option value="security">אבטחה (Security)</option>
+      <option value="manager">מנהל (Manager)</option>
+      <option value="admin">מנהל מערכת (Admin)</option>
+    </select>
+
+    <button class="btn btn-submit" id="submit-btn" onclick="doSignup()">
+      שלח בקשה
+    </button>
+    <div class="error" id="error"></div>
+
+    <div class="divider">או</div>
+    <a class="login-link" href="index.html">כבר יש לי חשבון — כניסה</a>
   </div>
-</div>
 
-<div class="card">
-  <h3>➕ הוספת משתמש חדש</h3>
-  <label>שם משתמש</label>
-  <input type="text" id="new-username" placeholder="שם משתמש">
-  <label>סיסמה</label>
-  <input type="password" id="new-password" placeholder="סיסמה (מינימום 8 תווים)">
-  <label>תפקיד</label>
-  <select id="new-role">
-    <option value="security">אבטחה (Security)</option>
-    <option value="manager">מנהל (Manager)</option>
-    <option value="admin">מנהל מערכת (Admin)</option>
-  </select>
-  <label>מסגרת (למנהלים בלבד)</label>
-  <input type="text" id="new-dept" placeholder="שם המסגרת">
-  <button class="btn-primary" onclick="addUser()">הוסף משתמש</button>
-  <div class="error"   id="add-error"></div>
-  <div class="success" id="add-success"></div>
-</div>
+  <!-- Success screen -->
+  <div class="success-screen" id="success-screen">
+    <div class="icon">✅</div>
+    <h2>הבקשה נשלחה!</h2>
+    <p>בקשתך התקבלה ומחכה לאישור מנהל המערכת.<br>
+       תוכל להתחבר לאחר שהבקשה תאושר.</p>
+    <button class="btn btn-back" onclick="window.location.href='index.html'">
+      חזרה לדף הכניסה
+    </button>
+  </div>
 
-<div class="card">
-  <h3>👥 משתמשים קיימים</h3>
-  <div id="user-list">טוען...</div>
 </div>
 
 <script type="module">
-  import { api, requireAuth } from "./js/api.js";
-  window.api = api;
-  requireAuth("admin");
+  import { api } from "./js/api.js";
 
-  async function loadUsers() {
-    try {
-      const data = await api.getUsers();
-      const list = document.getElementById("user-list");
-      if (!data.users.length) { list.textContent = "אין משתמשים"; return; }
-      list.innerHTML = data.users.map(u => `
-        <div class="user-row">
-          <div class="user-info">
-            <div class="name">${u.username}</div>
-            <div class="meta">${u.dept || "כל המסגרות"}</div>
-          </div>
-          <span class="role-badge role-${u.role}">
-            ${{ admin:"מנהל מערכת", manager:"מנהל", security:"אבטחה" }[u.role]}
-          </span>
-        </div>`).join("");
-    } catch(e) {
-      document.getElementById("user-list").textContent = "שגיאה בטעינה";
-    }
-  }
+  window.doSignup = async function() {
+    const fullName      = document.getElementById("fullName").value.trim();
+    const username      = document.getElementById("username").value.trim();
+    const password      = document.getElementById("password").value;
+    const password2     = document.getElementById("password2").value;
+    const email         = document.getElementById("email").value.trim();
+    const requestedRole = document.getElementById("requestedRole").value;
+    const btn           = document.getElementById("submit-btn");
+    const errEl         = document.getElementById("error");
 
-  window.addUser = async function() {
-    const username = document.getElementById("new-username").value.trim();
-    const password = document.getElementById("new-password").value;
-    const role     = document.getElementById("new-role").value;
-    const dept     = document.getElementById("new-dept").value.trim();
-    const errEl    = document.getElementById("add-error");
-    const okEl     = document.getElementById("add-success");
     errEl.style.display = "none";
-    okEl.style.display  = "none";
-    if (!username || !password) {
-      errEl.textContent = "נא למלא שם משתמש וסיסמה";
+
+    if (!fullName || !username || !password || !email) {
+      errEl.textContent = "נא למלא את כל השדות";
       errEl.style.display = "block"; return;
     }
     if (password.length < 8) {
       errEl.textContent = "הסיסמה חייבת להכיל לפחות 8 תווים";
       errEl.style.display = "block"; return;
     }
+    if (password !== password2) {
+      errEl.textContent = "הסיסמאות אינן תואמות";
+      errEl.style.display = "block"; return;
+    }
+    if (!email.includes("@")) {
+      errEl.textContent = "כתובת אימייל לא תקינה";
+      errEl.style.display = "block"; return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "שולח...";
+
     try {
-      await api.createUser(username, password, role, dept);
-      okEl.textContent = `✅ המשתמש "${username}" נוצר בהצלחה`;
-      okEl.style.display = "block";
-      document.getElementById("new-username").value = "";
-      document.getElementById("new-password").value = "";
-      document.getElementById("new-dept").value = "";
-      loadUsers();
+      await api.signup(username, password, email, fullName, requestedRole);
+      document.getElementById("signup-form").style.display = "none";
+      document.getElementById("success-screen").style.display = "block";
     } catch(e) {
-      errEl.textContent = e.message || "שגיאה ביצירת משתמש";
+      errEl.textContent = e.message || "שגיאה בשליחת הבקשה";
       errEl.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "שלח בקשה";
     }
   };
 
-  loadUsers();
+  document.getElementById("password2").addEventListener("keydown", e => {
+    if (e.key === "Enter") window.doSignup();
+  });
 </script>
 </body>
 </html>

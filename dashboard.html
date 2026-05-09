@@ -10,7 +10,6 @@
   body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
     background:#f0f2f5; min-height:100vh; padding:20px; }
 
-  /* Topbar */
   .topbar { display:flex; justify-content:space-between; align-items:center;
     max-width:480px; margin:0 auto 12px; flex-wrap:wrap; gap:8px; }
   .topbar h2 { font-size:1.1rem; font-weight:600; }
@@ -19,6 +18,13 @@
     font-size:0.85rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
   .link-btn:hover { background:#f0f0f0; }
 
+  /* Admin broadcast banner */
+  .broadcast-banner { max-width:480px; margin:0 auto 12px;
+    background:#fff8e1; border:1px solid #ffe082; border-radius:14px;
+    padding:12px 16px; font-size:0.88rem; color:#7c5c00;
+    display:none; line-height:1.5; }
+  .broadcast-banner.show { display:block; }
+
   /* Temp access banner */
   .temp-banner { max-width:480px; margin:0 auto 12px;
     background:linear-gradient(135deg,#5856d6,#007aff);
@@ -26,9 +32,9 @@
     display:none; align-items:center; justify-content:space-between; gap:8px; }
   .temp-banner.show { display:flex; }
   .temp-banner-text { color:white; font-size:0.85rem; font-weight:600; }
-  .temp-timer { color:rgba(255,255,255,0.9); font-size:0.8rem;
-    background:rgba(255,255,255,0.2); padding:4px 10px;
-    border-radius:20px; white-space:nowrap; }
+  .temp-timer { color:rgba(255,255,255,0.9); font-size:0.85rem; font-weight:700;
+    background:rgba(255,255,255,0.2); padding:4px 12px;
+    border-radius:20px; white-space:nowrap; font-variant-numeric:tabular-nums; }
 
   /* Warning flash */
   @keyframes warningFlash {
@@ -38,7 +44,32 @@
   }
   body.warning-flash { animation: warningFlash 0.8s ease 3; }
 
-  /* Cards */
+  /* Greeting card */
+  .greeting-card { background:white; border-radius:20px; padding:20px 24px;
+    max-width:480px; margin:0 auto 12px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  .greeting-main { font-size:1.2rem; font-weight:700; color:#1a1a1a; }
+  .greeting-sub  { font-size:0.85rem; color:#888; margin-top:4px; }
+
+  /* Last scan card */
+  .last-scan-card { background:white; border-radius:20px; padding:18px 24px;
+    max-width:480px; margin:0 auto 12px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.06); display:none; }
+  .last-scan-card.show { display:block; }
+  .last-scan-label { font-size:0.78rem; font-weight:600; color:#aaa;
+    text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+  .last-scan-row { display:flex; align-items:center; gap:12px; }
+  .last-scan-avatar { width:40px; height:40px; border-radius:50%;
+    background:#e8f0fe; display:flex; align-items:center;
+    justify-content:center; font-size:1.2rem; flex-shrink:0; }
+  .last-scan-name { font-weight:600; font-size:0.95rem; color:#1a1a1a; }
+  .last-scan-meta { font-size:0.8rem; color:#888; margin-top:2px; }
+  .last-scan-badge { padding:3px 10px; border-radius:20px;
+    font-size:0.78rem; font-weight:600; margin-right:auto; }
+  .badge-green { background:#e6ffee; color:#006600; }
+  .badge-red   { background:#ffeeee; color:#990000; }
+
+  /* Scanner card */
   .card { background:white; border-radius:20px; padding:24px;
     max-width:480px; margin:0 auto 16px;
     box-shadow:0 4px 20px rgba(0,0,0,0.08); }
@@ -52,6 +83,22 @@
 
   /* Employee card */
   .emp-card { display:none; }
+
+  /* Deleted user card */
+  .deleted-card { display:none; }
+  .deleted-banner { background:#fff0f0; border:1.5px solid #ffcccc;
+    border-radius:14px; padding:16px; margin-bottom:14px; }
+  .deleted-title { font-size:1rem; font-weight:700; color:#cc0000;
+    margin-bottom:8px; }
+  .deleted-meta { font-size:0.85rem; color:#888; line-height:1.7; }
+  .deleted-meta strong { color:#333; }
+  .deleted-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    margin-top:14px; }
+  .btn-restore { padding:12px; background:#34c759; color:white; border:none;
+    border-radius:12px; font-size:0.9rem; font-weight:600; cursor:pointer; }
+  .btn-warn-del { padding:12px; background:#ff3b30; color:white; border:none;
+    border-radius:12px; font-size:0.9rem; font-weight:600; cursor:pointer; }
+
   .emp-header { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
   .emp-avatar { width:52px; height:52px; border-radius:50%;
     background:#e8f0fe; display:flex; align-items:center;
@@ -63,6 +110,13 @@
     padding:5px 12px; border-radius:20px; font-size:0.88rem; font-weight:600; }
   .status-green { background:#e6ffee; color:#006600; }
   .status-red   { background:#ffeeee; color:#990000; }
+
+  /* Scan message banner */
+  .scan-msg-banner { background:#fffbe6; border:1px solid #ffe58f;
+    border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:0.88rem;
+    color:#7c5c00; display:none; line-height:1.5; }
+  .scan-msg-banner.show { display:block; }
+  .scan-msg-sender { font-size:0.78rem; color:#aaa; margin-top:4px; }
 
   label.loc-label { display:block; font-size:0.85rem; color:#555;
     font-weight:500; margin:14px 0 6px; }
@@ -79,24 +133,27 @@
   .btn-present:disabled,.btn-absent:disabled { opacity:0.5; cursor:not-allowed; }
   .btn-cancel  { width:100%; padding:12px; background:none; border:1.5px solid #ddd;
     border-radius:12px; font-size:0.9rem; color:#555; cursor:pointer; margin-top:8px; }
+  .btn-leave-msg { width:100%; padding:10px; background:none;
+    border:1.5px solid #5856d6; border-radius:12px; font-size:0.88rem;
+    color:#5856d6; cursor:pointer; margin-top:6px; font-weight:600; }
 
-  /* History section */
+  /* History */
   .history-section { margin-top:16px; border-top:1px solid #f0f0f0; padding-top:14px; }
-  .history-title { font-size:0.82rem; font-weight:600; color:#888;
+  .history-title { font-size:0.78rem; font-weight:600; color:#aaa;
     margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; }
   .history-item { display:flex; align-items:center; gap:10px;
-    padding:8px 0; border-bottom:1px solid #f8f8f8; }
+    padding:7px 0; border-bottom:1px solid #f8f8f8; }
   .history-item:last-child { border-bottom:none; }
   .history-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
   .history-dot.green   { background:#34c759; }
   .history-dot.red     { background:#ff3b30; }
   .history-dot.warning { background:#ff9500; }
-  .history-body { flex:1; min-width:0; }
-  .history-status { font-size:0.85rem; font-weight:600; color:#1a1a1a; }
-  .history-meta { font-size:0.78rem; color:#aaa; margin-top:1px; }
+  .history-body { flex:1; }
+  .history-status { font-size:0.84rem; font-weight:600; color:#1a1a1a; }
+  .history-meta   { font-size:0.76rem; color:#aaa; margin-top:1px; }
   .no-history { font-size:0.85rem; color:#bbb; text-align:center; padding:8px 0; }
 
-  /* Warning toast (orange) */
+  /* Toast */
   .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
     color:white; padding:12px 24px; border-radius:12px;
     font-size:0.95rem; opacity:0; transition:opacity 0.3s; pointer-events:none;
@@ -105,27 +162,28 @@
   .toast.normal  { background:#1a1a1a; }
   .toast.warning { background:#ff9500; font-weight:600; }
 
-  /* Modal */
+  /* Modals */
   .modal-overlay { display:none; position:fixed; inset:0;
     background:rgba(0,0,0,0.5); z-index:200;
     justify-content:center; align-items:center; padding:20px; }
   .modal-overlay.show { display:flex; }
   .modal { background:white; border-radius:20px; padding:28px 24px;
     width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-  .modal h3 { font-size:1.1rem; font-weight:700; margin-bottom:20px; color:#1a1a1a; }
+  .modal h3 { font-size:1.1rem; font-weight:700; margin-bottom:12px; color:#1a1a1a; }
+  .modal p  { font-size:0.9rem; color:#666; margin-bottom:16px; line-height:1.5; }
   .modal label { display:block; font-size:0.85rem; color:#555;
     font-weight:500; margin-bottom:6px; }
-  .modal input { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
-    border-radius:12px; font-size:1rem; outline:none; margin-bottom:12px; }
-  .modal input:focus { border-color:#007aff; }
   .modal textarea { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
     border-radius:12px; font-size:1rem; outline:none; margin-bottom:12px;
     resize:vertical; min-height:80px; font-family:inherit; }
   .modal textarea:focus { border-color:#007aff; }
+  .modal select { margin-bottom:12px; }
   .modal-actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:4px; }
   .btn-confirm { padding:14px; background:#007aff; color:white; border:none;
     border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
   .btn-confirm:disabled { opacity:0.5; }
+  .btn-confirm.green { background:#34c759; }
+  .btn-confirm.red   { background:#ff3b30; }
   .btn-dismiss { padding:14px; background:#f0f2f5; color:#333; border:none;
     border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
 
@@ -136,12 +194,19 @@
   .msg-banner.info    { background:#e8f4fd; color:#0066cc; border:1px solid #b3d9f7; }
   .msg-banner.success { background:#e6ffee; color:#006600; border:1px solid #99ddaa; }
   .msg-banner.error   { background:#fff0f0; color:#cc0000; border:1px solid #ffbbbb; }
+
+  /* Restore modal role select */
+  .restore-note { font-size:0.82rem; color:#888; margin-top:-8px;
+    margin-bottom:12px; }
 </style>
 </head>
 <body>
 
 <!-- Pending message banner -->
 <div class="msg-banner" id="msg-banner"></div>
+
+<!-- Admin broadcast banner -->
+<div class="broadcast-banner" id="broadcast-banner"></div>
 
 <div class="topbar">
   <h2 id="greeting">שלום</h2>
@@ -161,7 +226,26 @@
 <!-- Temp access timer banner -->
 <div class="temp-banner" id="temp-banner">
   <div class="temp-banner-text">🔓 גישה זמנית פעילה — כל המסגרות</div>
-  <div class="temp-timer" id="temp-timer">--:--:--</div>
+  <div class="temp-timer" id="temp-timer">00:00:00</div>
+</div>
+
+<!-- Greeting card -->
+<div class="greeting-card">
+  <div class="greeting-main" id="greeting-main">שלום!</div>
+  <div class="greeting-sub"  id="greeting-sub"></div>
+</div>
+
+<!-- Last scan card -->
+<div class="last-scan-card" id="last-scan-card">
+  <div class="last-scan-label">סריקה אחרונה</div>
+  <div class="last-scan-row">
+    <div class="last-scan-avatar">👤</div>
+    <div>
+      <div class="last-scan-name" id="last-scan-name"></div>
+      <div class="last-scan-meta" id="last-scan-meta"></div>
+    </div>
+    <span class="last-scan-badge" id="last-scan-badge"></span>
+  </div>
 </div>
 
 <!-- Scanner card -->
@@ -173,8 +257,35 @@
   </button>
 </div>
 
+<!-- Deleted user card -->
+<div class="card deleted-card" id="deleted-card">
+  <div class="deleted-banner">
+    <div class="deleted-title">⚠️ משתמש מחוק</div>
+    <div class="deleted-meta" id="deleted-info"></div>
+  </div>
+  <div class="deleted-actions" id="deleted-actions-admin" style="display:none">
+    <button class="btn-restore" onclick="openRestoreModal()">🔄 שחזר משתמש</button>
+    <button class="btn-warn-del" onclick="warnDeletedScan()">⚠️ רשום אזהרה</button>
+  </div>
+  <div id="deleted-actions-nonadmin" style="display:none">
+    <button class="btn-warn-del" style="width:100%" onclick="warnDeletedScan()">
+      ⚠️ רשום אזהרה — עובד שאינו פעיל
+    </button>
+  </div>
+  <button class="btn-cancel" style="margin-top:10px" onclick="resetScanner()">
+    ביטול
+  </button>
+</div>
+
 <!-- Employee card -->
 <div class="card emp-card" id="emp-card">
+
+  <!-- Scan message banner -->
+  <div class="scan-msg-banner" id="scan-msg-banner">
+    <div id="scan-msg-text"></div>
+    <div class="scan-msg-sender" id="scan-msg-sender"></div>
+  </div>
+
   <div class="emp-header">
     <div class="emp-avatar">👤</div>
     <div>
@@ -188,21 +299,54 @@
     סטטוס נוכחי: <span class="status-badge" id="status-badge"></span>
   </div>
 
-  <label class="loc-label">📍 מיקום (בעת יציאה)</label>
-  <select id="location-select">
-    <option value="">בחר מיקום...</option>
-  </select>
+  <!-- Location only shown for Red -->
+  <div id="location-section" style="display:none">
+    <label class="loc-label">📍 מיקום יציאה</label>
+    <select id="location-select">
+      <option value="">בחר מיקום...</option>
+    </select>
+  </div>
 
   <div class="action-row">
-    <button class="btn-present" id="btn-present" onclick="updateStatus('Green')">✅ נוכח</button>
-    <button class="btn-absent"  id="btn-absent"  onclick="updateStatus('Red')">🔴 לא נוכח</button>
+    <button class="btn-present" id="btn-present" onclick="handleGreen()">✅ נוכח</button>
+    <button class="btn-absent"  id="btn-absent"  onclick="handleRed()">🔴 לא נוכח</button>
   </div>
-  <button class="btn-cancel" onclick="resetScanner()">ביטול</button>
+  <button class="btn-leave-msg" onclick="openMsgModal()">💬 השאר הודעה לסורק הבא</button>
+  <button class="btn-cancel" onclick="resetScanner()">ביטול — אל תשנה סטטוס</button>
 
   <!-- History -->
   <div class="history-section" id="history-section" style="display:none">
-    <div class="history-title">היסטוריית כניסות/יציאות אחרונות</div>
+    <div class="history-title">היסטוריה אחרונה</div>
     <div id="history-list"></div>
+  </div>
+</div>
+
+<!-- Double-entry confirmation modal -->
+<div class="modal-overlay" id="double-entry-modal">
+  <div class="modal">
+    <h3>⚠️ העובד כבר נוכח</h3>
+    <p id="double-entry-text">העובד מסומן כנוכח — האם הוא יוצא?</p>
+    <div class="modal-actions">
+      <button class="btn-confirm red" onclick="confirmDoubleExit()">כן, יוצא</button>
+      <button class="btn-confirm green" onclick="confirmDoubleStay()">לא, נשאר</button>
+    </div>
+    <button class="btn-dismiss" style="width:100%;margin-top:10px"
+      onclick="cancelDoubleEntry()">ביטול — חזרה לסריקה</button>
+  </div>
+</div>
+
+<!-- Scan message modal -->
+<div class="modal-overlay" id="msg-modal">
+  <div class="modal">
+    <h3>💬 הודעה לסורק הבא</h3>
+    <p>ההודעה תוצג בפעם הבאה שיסרקו את העובד הזה</p>
+    <label>הודעה</label>
+    <textarea id="msg-text" placeholder="כתוב הודעה..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-confirm" id="msg-submit-btn" onclick="submitMsg()">שלח</button>
+      <button class="btn-dismiss" onclick="closeMsgModal()">ביטול</button>
+    </div>
+    <div id="msg-status" style="margin-top:10px;font-size:0.88rem;text-align:center;"></div>
   </div>
 </div>
 
@@ -210,16 +354,36 @@
 <div class="modal-overlay" id="temp-modal">
   <div class="modal">
     <h3>🔓 בקשת גישה זמנית</h3>
-    <p style="color:#666;font-size:0.9rem;margin-bottom:16px;">
-      גישה לכל המסגרות למשך 24 שעות מרגע האישור
-    </p>
+    <p>גישה לכל המסגרות למשך 24 שעות מרגע האישור</p>
     <label>סיבת הבקשה</label>
     <textarea id="temp-reason" placeholder="תאר את הצורך בגישה זמנית..."></textarea>
     <div class="modal-actions">
       <button class="btn-confirm" id="temp-submit-btn" onclick="submitTempRequest()">שלח בקשה</button>
       <button class="btn-dismiss" onclick="closeTempModal()">ביטול</button>
     </div>
-    <div id="temp-modal-status" style="margin-top:12px;font-size:0.9rem;text-align:center;color:#555;"></div>
+    <div id="temp-modal-status" style="margin-top:12px;font-size:0.9rem;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- Restore deleted user modal (admin only) -->
+<div class="modal-overlay" id="restore-modal">
+  <div class="modal">
+    <h3>🔄 שחזור משתמש</h3>
+    <div id="restore-prev-info" class="restore-note"></div>
+    <label>תפקיד לשחזור</label>
+    <select id="restore-role">
+      <option value="security">אבטחה</option>
+      <option value="manager">מנהל</option>
+      <option value="admin">מנהל מערכת</option>
+    </select>
+    <label>מסגרת</label>
+    <input type="text" id="restore-dept" placeholder="מסגרת (אופציונלי)"
+      style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;
+      border-radius:12px;font-size:1rem;outline:none;margin-bottom:12px;">
+    <div class="modal-actions">
+      <button class="btn-confirm" id="restore-btn" onclick="confirmRestore()">שחזר</button>
+      <button class="btn-dismiss" onclick="closeRestoreModal()">ביטול</button>
+    </div>
   </div>
 </div>
 
@@ -232,9 +396,25 @@
   const user = requireAuth("security");
   if (!user) throw new Error("not authed");
 
-  document.getElementById("greeting").textContent = `שלום, ${user.username}`;
+  // ── Greeting ──────────────────────────────────────────────
+  const hour = new Date().getHours();
+  const timeGreet = hour < 12 ? "בוקר טוב" : hour < 17 ? "צהריים טובים" : "ערב טוב";
+  document.getElementById("greeting").textContent = `${timeGreet}, ${user.username}`;
+  document.getElementById("greeting-main").textContent = `${timeGreet}, ${user.username} 👋`;
+  const roleLabel = { admin:"מנהל מערכת", manager:"מנהל", security:"אבטחה" }[user.role] || "";
+  document.getElementById("greeting-sub").textContent =
+    `${roleLabel}${user.dept ? ` • מסגרת ${user.dept}` : ""}`;
 
-  // Show pending message if any
+  // ── Broadcast message ─────────────────────────────────────
+  api.getMessage().then(data => {
+    if (data.message) {
+      const b = document.getElementById("broadcast-banner");
+      b.textContent = "📢 " + data.message;
+      b.classList.add("show");
+    }
+  }).catch(()=>{});
+
+  // ── Pending login message ─────────────────────────────────
   const pendingMsg = localStorage.getItem("pendingMessage");
   if (pendingMsg) {
     const banner = document.getElementById("msg-banner");
@@ -246,7 +426,32 @@
     setTimeout(() => banner.classList.remove("show"), 6000);
   }
 
-  // Role-based UI
+  // ── Last scan (localStorage) ──────────────────────────────
+  function saveLastScan(emp, newStatus) {
+    localStorage.setItem("lastScan", JSON.stringify({
+      name: emp.name, dept: emp.department, service: emp.service,
+      status: newStatus, time: new Date().toLocaleTimeString("he-IL")
+    }));
+    showLastScan();
+  }
+
+  function showLastScan() {
+    const data = localStorage.getItem("lastScan");
+    if (!data) return;
+    const s = JSON.parse(data);
+    const card = document.getElementById("last-scan-card");
+    card.classList.add("show");
+    document.getElementById("last-scan-name").textContent = s.name;
+    document.getElementById("last-scan-meta").textContent =
+      `${s.dept} — ${s.time}`;
+    const badge = document.getElementById("last-scan-badge");
+    const isGreen = s.status === "Green";
+    badge.textContent   = isGreen ? "נוכח" : "לא נוכח";
+    badge.className     = `last-scan-badge ${isGreen?"badge-green":"badge-red"}`;
+  }
+  showLastScan();
+
+  // ── Role-based UI ─────────────────────────────────────────
   if (user.role === "security" || user.role === "admin") {
     document.getElementById("stats-btn").style.display = "block";
   }
@@ -260,8 +465,7 @@
     document.getElementById("temp-req-btn").style.display = "block";
     checkTempAccess();
   }
-
-  // Hide Red button for security
+  // Security: hide Red button
   if (user.role === "security") {
     document.getElementById("btn-absent").style.display = "none";
   }
@@ -302,8 +506,8 @@
         clearInterval(tempTimerInterval);
         banner.classList.remove("show");
         document.getElementById("temp-req-btn").style.display = "block";
-        document.getElementById("temp-req-btn").textContent = "🔓 גישה זמנית";
-        document.getElementById("temp-req-btn").disabled = false;
+        document.getElementById("temp-req-btn").textContent  = "🔓 גישה זמנית";
+        document.getElementById("temp-req-btn").disabled     = false;
         return;
       }
       const h = Math.floor(remaining / 3600000);
@@ -323,39 +527,34 @@
     document.getElementById("temp-modal-status").textContent = "";
     document.getElementById("temp-modal").classList.add("show");
   };
-
   window.closeTempModal = function() {
     document.getElementById("temp-modal").classList.remove("show");
   };
-
   window.submitTempRequest = async function() {
     const reason = document.getElementById("temp-reason").value.trim();
     const btn    = document.getElementById("temp-submit-btn");
     const status = document.getElementById("temp-modal-status");
-    if (!reason) {
-      status.textContent = "נא לציין סיבה";
-      status.style.color = "#ff3b30"; return;
-    }
+    if (!reason) { status.textContent="נא לציין סיבה"; status.style.color="#ff3b30"; return; }
     btn.disabled = true; btn.textContent = "שולח...";
-    status.textContent = ""; 
     try {
       await api.requestTempAccess(reason);
-      status.textContent = "✅ הבקשה נשלחה — ממתינה לאישור מנהל";
+      status.textContent = "✅ הבקשה נשלחה";
       status.style.color = "#34c759";
       document.getElementById("temp-req-btn").textContent = "⏳ ממתין לאישור";
       document.getElementById("temp-req-btn").disabled = true;
       setTimeout(closeTempModal, 2000);
     } catch(e) {
-      status.textContent = e.message || "שגיאה בשליחה";
+      status.textContent = e.message || "שגיאה";
       status.style.color = "#ff3b30";
       btn.disabled = false; btn.textContent = "שלח בקשה";
     }
   };
 
   // ── Scanner ───────────────────────────────────────────────
-  let scanner = null;
+  let scanner        = null;
   let currentEmployee = null;
-  let scanning = false;
+  let scanning       = false;
+  let deletedUser    = null;
 
   window.startScan = async function() {
     if (scanning) return;
@@ -383,9 +582,11 @@
     scanner = null;
 
     currentEmployee = null;
+    deletedUser     = null;
     document.getElementById("btn-present").disabled = false;
-    document.getElementById("btn-absent").disabled = false;
+    document.getElementById("btn-absent").disabled  = false;
     document.getElementById("location-select").value = "";
+    document.getElementById("location-section").style.display = "none";
 
     let code = text;
     try {
@@ -395,6 +596,14 @@
 
     try {
       const emp = await api.getEmployee(code);
+
+      // Deleted user
+      if (emp.deleted) {
+        deletedUser = emp;
+        showDeletedCard(emp);
+        return;
+      }
+
       currentEmployee = emp;
       showEmployeeCard(emp);
     } catch(e) {
@@ -403,10 +612,67 @@
     }
   }
 
-  function showEmployeeCard(emp) {
+  // ── Deleted user card ─────────────────────────────────────
+  function showDeletedCard(emp) {
     document.getElementById("scanner-card").style.display = "none";
-    const card = document.getElementById("emp-card");
-    card.style.display = "block";
+    document.getElementById("deleted-card").style.display = "block";
+    document.getElementById("deleted-info").innerHTML =
+      `<strong>שם משתמש:</strong> ${emp.username}<br>
+       <strong>תפקיד לשעבר:</strong> ${emp.role} • ${emp.dept||"ללא מסגרת"}<br>
+       <strong>נמחק ב:</strong> ${emp.deletedAt}<br>
+       <strong>נמחק ע"י:</strong> ${emp.deletedBy}<br>
+       <strong>סיבה:</strong> ${emp.reason}`;
+
+    if (user.role === "admin") {
+      document.getElementById("deleted-actions-admin").style.display = "grid";
+      document.getElementById("deleted-actions-nonadmin").style.display = "none";
+    } else {
+      document.getElementById("deleted-actions-admin").style.display = "none";
+      document.getElementById("deleted-actions-nonadmin").style.display = "block";
+    }
+  }
+
+  window.warnDeletedScan = async function() {
+    try {
+      await api.warnDeletedScan(deletedUser.code, deletedUser.username);
+      showToast("⚠️ אזהרה נרשמה", "warning");
+      setTimeout(resetScanner, 1500);
+    } catch(e) {
+      showToast(e.message || "שגיאה", "normal");
+    }
+  };
+
+  // ── Restore deleted user ──────────────────────────────────
+  window.openRestoreModal = function() {
+    document.getElementById("restore-prev-info").textContent =
+      `תפקיד קודם: ${deletedUser.role} • מסגרת: ${deletedUser.dept||"ללא"}`;
+    document.getElementById("restore-role").value = deletedUser.role || "security";
+    document.getElementById("restore-dept").value = deletedUser.dept || "";
+    document.getElementById("restore-modal").classList.add("show");
+  };
+  window.closeRestoreModal = function() {
+    document.getElementById("restore-modal").classList.remove("show");
+  };
+  window.confirmRestore = async function() {
+    const role = document.getElementById("restore-role").value;
+    const dept = document.getElementById("restore-dept").value.trim();
+    const btn  = document.getElementById("restore-btn");
+    btn.disabled = true; btn.textContent = "משחזר...";
+    try {
+      await api.restoreUser(deletedUser.rowIndex || 0, role, dept);
+      showToast(`✅ ${deletedUser.username} שוחזר`, "normal");
+      closeRestoreModal();
+      setTimeout(resetScanner, 1500);
+    } catch(e) {
+      showToast(e.message || "שגיאה בשחזור", "normal");
+      btn.disabled = false; btn.textContent = "שחזר";
+    }
+  };
+
+  // ── Employee card ─────────────────────────────────────────
+  function showEmployeeCard(emp) {
+    document.getElementById("scanner-card").style.display  = "none";
+    document.getElementById("emp-card").style.display      = "block";
 
     document.getElementById("emp-name").textContent = emp.name;
     document.getElementById("emp-dept").textContent =
@@ -414,28 +680,33 @@
     document.getElementById("emp-meta").textContent =
       emp.lastUpdated ? `עדכון אחרון: ${emp.lastUpdated}` : "";
 
-    const badge    = document.getElementById("status-badge");
-    const isGreen  = emp.status.toLowerCase() === "green";
+    const badge   = document.getElementById("status-badge");
+    const isGreen = emp.status.toLowerCase() === "green";
     badge.textContent = isGreen ? "נוכח" : "לא נוכח";
     badge.className   = "status-badge " + (isGreen ? "status-green" : "status-red");
 
-    if (emp.location) {
-      document.getElementById("location-select").value = emp.location;
+    // Show scan message if exists
+    const msgBanner = document.getElementById("scan-msg-banner");
+    if (emp.scanMessage) {
+      document.getElementById("scan-msg-text").textContent = "💬 " + emp.scanMessage.message;
+      document.getElementById("scan-msg-sender").textContent =
+        `נשלח ע"י ${emp.scanMessage.sender} • ${emp.scanMessage.timestamp}`;
+      msgBanner.classList.add("show");
+    } else {
+      msgBanner.classList.remove("show");
     }
 
-    // Show history
     showHistory(emp.history || []);
   }
 
   function showHistory(history) {
     const section = document.getElementById("history-section");
     const list    = document.getElementById("history-list");
+    section.style.display = "block";
     if (!history.length) {
-      section.style.display = "block";
       list.innerHTML = '<div class="no-history">אין היסטוריה עדיין</div>';
       return;
     }
-    section.style.display = "block";
     list.innerHTML = history.map(h => {
       const isGreen   = h.status.toLowerCase() === "green";
       const isWarning = h.type === "WARNING";
@@ -453,57 +724,154 @@
     }).join("");
   }
 
-  window.updateStatus = async function(newStatus) {
-    const location = document.getElementById("location-select").value;
-    if (newStatus === "Red" && !location) {
-      showToast("נא לבחור מיקום בעת יציאה", "normal");
-      return;
-    }
-    document.getElementById("btn-present").disabled = true;
-    document.getElementById("btn-absent").disabled = true;
-    try {
-      const result = await api.updateStatus(currentEmployee.rowIndex, newStatus, location);
-
-      // Warning: employee already Green, security scanning entry again
-      if (result.warning) {
-        document.body.classList.add("warning-flash");
-        showToast("⚠️ " + result.message, "warning");
-        setTimeout(() => {
-          document.body.classList.remove("warning-flash");
-          resetScanner();
-        }, 3000);
-        return;
-      }
-
-      showToast(newStatus === "Green" ? "✅ נוכחות עודכנה" : "🔴 יציאה עודכנה", "normal");
-      setTimeout(resetScanner, 1500);
-    } catch(e) {
-      showToast(e.message || "שגיאה בעדכון", "normal");
-      document.getElementById("btn-present").disabled = false;
-      document.getElementById("btn-absent").disabled = false;
+  // ── Status update flow ────────────────────────────────────
+  // Green button clicked
+  window.handleGreen = function() {
+    const isGreen = currentEmployee.status.toLowerCase() === "green";
+    if (isGreen) {
+      // Already green — ask if exiting
+      document.getElementById("double-entry-text").textContent =
+        `${currentEmployee.name} כבר מסומן כנוכח — האם הוא יוצא?`;
+      document.getElementById("double-entry-modal").classList.add("show");
+    } else {
+      // Normal entry
+      updateStatus("Green", null, false);
     }
   };
 
+  // Red button clicked — show location first
+  window.handleRed = function() {
+    const locSection = document.getElementById("location-section");
+    locSection.style.display = "block";
+    document.getElementById("location-select").focus();
+    // Replace action row with confirm exit
+    document.getElementById("btn-absent").textContent = "✔ אשר יציאה";
+    document.getElementById("btn-absent").onclick = confirmRed;
+    document.getElementById("btn-present").style.display = "none";
+  };
+
+  function confirmRed() {
+    const location = document.getElementById("location-select").value;
+    if (!location) {
+      showToast("נא לבחור מיקום", "normal"); return;
+    }
+    updateStatus("Red", location, false);
+  }
+
+  // Double entry: confirmed exit
+  window.confirmDoubleExit = function() {
+    document.getElementById("double-entry-modal").classList.remove("show");
+    // Show location section for exit
+    document.getElementById("location-section").style.display = "block";
+    document.getElementById("btn-absent").textContent = "✔ אשר יציאה";
+    document.getElementById("btn-absent").onclick = confirmRed;
+    document.getElementById("btn-absent").style.display = "block";
+    document.getElementById("btn-present").style.display = "none";
+  };
+
+  // Double entry: confirmed staying
+  window.confirmDoubleStay = function() {
+    document.getElementById("double-entry-modal").classList.remove("show");
+    updateStatus("Green", null, true); // isWarningStay = true
+  };
+
+  // Double entry: cancel
+  window.cancelDoubleEntry = function() {
+    document.getElementById("double-entry-modal").classList.remove("show");
+    resetScanner();
+  };
+
+  async function updateStatus(newStatus, location, isWarningStay) {
+    document.getElementById("btn-present").disabled = true;
+    document.getElementById("btn-absent").disabled  = true;
+    try {
+      const result = await api.updateStatus(
+        currentEmployee.rowIndex, newStatus, location||"", isWarningStay
+      );
+
+      if (result.warning) {
+        document.body.classList.add("warning-flash");
+        showToast("⚠️ " + result.message, "warning");
+        setTimeout(() => document.body.classList.remove("warning-flash"), 2500);
+      } else {
+        showToast(newStatus==="Green" ? "✅ נוכחות עודכנה" : "🔴 יציאה עודכנה", "normal");
+      }
+
+      saveLastScan(currentEmployee, newStatus);
+      setTimeout(resetScanner, result.warning ? 2500 : 1500);
+    } catch(e) {
+      showToast(e.message || "שגיאה בעדכון", "normal");
+      document.getElementById("btn-present").disabled = false;
+      document.getElementById("btn-absent").disabled  = false;
+    }
+  }
+
+  // ── Scan message modal ────────────────────────────────────
+  window.openMsgModal = function() {
+    document.getElementById("msg-text").value = "";
+    document.getElementById("msg-status").textContent = "";
+    document.getElementById("msg-modal").classList.add("show");
+  };
+  window.closeMsgModal = function() {
+    document.getElementById("msg-modal").classList.remove("show");
+  };
+  window.submitMsg = async function() {
+    const msg  = document.getElementById("msg-text").value.trim();
+    const btn  = document.getElementById("msg-submit-btn");
+    const stat = document.getElementById("msg-status");
+    if (!msg) { stat.textContent="נא לכתוב הודעה"; stat.style.color="#ff3b30"; return; }
+    btn.disabled = true; btn.textContent = "שולח...";
+    try {
+      await api.leaveScanMessage(
+        currentEmployee.code,
+        currentEmployee.name,
+        currentEmployee.status,
+        "",
+        msg
+      );
+      stat.textContent = "✅ ההודעה נשמרה";
+      stat.style.color = "#34c759";
+      setTimeout(closeMsgModal, 1500);
+    } catch(e) {
+      stat.textContent = e.message || "שגיאה";
+      stat.style.color = "#ff3b30";
+      btn.disabled = false; btn.textContent = "שלח";
+    }
+  };
+
+  // ── Reset ─────────────────────────────────────────────────
   window.resetScanner = function() {
     currentEmployee = null;
-    scanning = false;
-    document.getElementById("emp-card").style.display = "none";
+    deletedUser     = null;
+    scanning        = false;
+
+    document.getElementById("emp-card").style.display     = "none";
+    document.getElementById("deleted-card").style.display = "none";
     document.getElementById("scanner-card").style.display = "block";
-    document.getElementById("reader").innerHTML = "";
-    document.getElementById("scan-btn").disabled = false;
-    document.getElementById("scan-btn").innerHTML = "📷 התחל סריקה";
-    document.getElementById("location-select").value = "";
-    document.getElementById("btn-present").disabled = false;
-    document.getElementById("btn-absent").disabled = false;
-    document.getElementById("history-section").style.display = "none";
+    document.getElementById("reader").innerHTML            = "";
+    document.getElementById("scan-btn").disabled           = false;
+    document.getElementById("scan-btn").innerHTML          = "📷 התחל סריקה";
+    document.getElementById("location-select").value       = "";
+    document.getElementById("location-section").style.display = "none";
+    document.getElementById("history-section").style.display  = "none";
+    document.getElementById("btn-present").disabled        = false;
+    document.getElementById("btn-absent").disabled         = false;
+    document.getElementById("btn-present").style.display   = "block";
+    document.getElementById("btn-absent").style.display    =
+      user.role === "security" ? "none" : "block";
+    document.getElementById("btn-absent").textContent      = "🔴 לא נוכח";
+    document.getElementById("btn-absent").onclick          = handleRed;
+    document.getElementById("scan-msg-banner").classList.remove("show");
+
     if (scanner) { try { scanner.stop(); } catch {} scanner = null; }
   };
 
   function showToast(msg, type = "normal") {
     const t = document.getElementById("toast");
     t.textContent = msg;
-    t.className = `toast show ${type}`;
-    setTimeout(() => t.classList.remove("show"), type === "warning" ? 3500 : 2500);
+    t.className   = `toast show ${type}`;
+    setTimeout(() => t.classList.remove("show"),
+      type === "warning" ? 3500 : 2500);
   }
 </script>
 </body>

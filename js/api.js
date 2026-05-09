@@ -272,6 +272,16 @@ export const api = {
     if (!res.ok) throw new Error(data.error);
     return data;
   },
+
+  async deactivateTempAccess(rowIndex, username) {
+  const res = await fetch(`${WORKER_URL}/tempaccess/deactivate`, {
+    method:"POST", headers: this.headers(),
+    body: JSON.stringify({ rowIndex, username }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+},
 };
 
 export function requireAuth(minRole = "security") {

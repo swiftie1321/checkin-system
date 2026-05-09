@@ -20,7 +20,6 @@ export const api = {
     localStorage.setItem("user", JSON.stringify(
       { username:data.username, role:data.role, dept:data.dept }
     ));
-    // Store pending message for display on next page
     if (data.pendingMessage) {
       localStorage.setItem("pendingMessage", data.pendingMessage);
     }
@@ -42,10 +41,10 @@ export const api = {
     return data;
   },
 
-  async updateStatus(rowIndex, status, location) {
+  async updateStatus(rowIndex, status, location, isWarningStay = false) {
     const res = await fetch(`${WORKER_URL}/update`, {
       method:"POST", headers: this.headers(),
-      body: JSON.stringify({ rowIndex, status, location }),
+      body: JSON.stringify({ rowIndex, status, location, isWarningStay }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
@@ -93,10 +92,30 @@ export const api = {
     return data;
   },
 
-  async deleteUser(rowIndex) {
+  async deleteUser(rowIndex, reason) {
     const res = await fetch(`${WORKER_URL}/user`, {
       method:"DELETE", headers: this.headers(),
-      body: JSON.stringify({ rowIndex }),
+      body: JSON.stringify({ rowIndex, reason }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async restoreUser(rowIndex, role, dept) {
+    const res = await fetch(`${WORKER_URL}/user/restore`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex, role, dept }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async warnDeletedScan(code, username) {
+    const res = await fetch(`${WORKER_URL}/deleted/warn`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ code, username }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
@@ -104,7 +123,8 @@ export const api = {
   },
 
   async getUserHistory(username) {
-    const res = await fetch(`${WORKER_URL}/user/history?username=${encodeURIComponent(username)}`,
+    const res = await fetch(
+      `${WORKER_URL}/user/history?username=${encodeURIComponent(username)}`,
       { headers: this.headers() });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
@@ -125,6 +145,33 @@ export const api = {
     const res = await fetch(`${WORKER_URL}/department`, {
       method:"DELETE", headers: this.headers(),
       body: JSON.stringify({ dept }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async getMessage() {
+    const res = await fetch(`${WORKER_URL}/message`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async setMessage(message) {
+    const res = await fetch(`${WORKER_URL}/message`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ message }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
+  async leaveScanMessage(code, employeeName, previousStatus, newStatus, message) {
+    const res = await fetch(`${WORKER_URL}/scanmessage`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ code, employeeName, previousStatus, newStatus, message }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);

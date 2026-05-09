@@ -64,7 +64,7 @@
     border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer;
     white-space:nowrap; }
   .btn-approve:hover { background:#28a745; }
-  .btn-reject  { padding:10px 14px; background:#ff3b30; color:white; border:none;
+  .btn-reject { padding:10px 14px; background:#ff3b30; color:white; border:none;
     border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; }
   .btn-reject:hover { background:#dc2626; }
 
@@ -84,6 +84,10 @@
   .temp-expired  { background:#f0f0f0; color:#888; }
   .temp-rejected { background:#fff0f0; color:#cc0000; }
   .temp-actions  { display:flex; gap:8px; margin-top:8px; }
+  .btn-deactivate { padding:10px 16px; background:#ff9500; color:white; border:none;
+    border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer;
+    white-space:nowrap; flex:1; }
+  .btn-deactivate:hover { background:#e08600; }
 
   /* Temp history */
   .temp-history { margin-top:10px; padding-top:10px;
@@ -152,6 +156,7 @@
     width:100%; max-width:460px; box-shadow:0 20px 60px rgba(0,0,0,0.3);
     margin:auto; }
   .modal h3 { font-size:1.1rem; font-weight:700; margin-bottom:20px; color:#1a1a1a; }
+  .modal p  { font-size:0.88rem; color:#888; margin-bottom:14px; line-height:1.5; }
   .modal-actions { display:grid; grid-template-columns:1fr 1fr;
     gap:12px; margin-top:8px; }
   .btn-confirm { padding:14px; background:#007aff; color:white; border:none;
@@ -176,11 +181,16 @@
   .history-body .hstatus { font-weight:600; color:#1a1a1a; }
   .history-body .hmeta   { color:#aaa; font-size:0.78rem; margin-top:1px; }
 
-  /* Delete reason modal */
   .del-reason-input { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
     border-radius:12px; font-size:1rem; outline:none; margin-bottom:14px;
-    font-family:inherit; }
+    font-family:inherit; resize:vertical; }
   .del-reason-input:focus { border-color:#ff3b30; }
+  .del-code-input { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
+    border-radius:12px; font-size:1rem; outline:none; margin-bottom:14px;
+    font-family:inherit; direction:ltr; }
+  .del-code-input:focus { border-color:#007aff; }
+  .optional-note { font-size:0.78rem; color:#aaa; margin-top:-10px;
+    margin-bottom:14px; }
 </style>
 </head>
 <body>
@@ -301,12 +311,16 @@
 <div class="modal-overlay" id="delete-modal">
   <div class="modal">
     <h3>🗑 מחיקת משתמש</h3>
-    <p style="color:#888;font-size:0.88rem;margin-bottom:16px;line-height:1.5">
-      המשתמש יועבר לארכיון המחוקים. ניתן לשחזרו מאוחר יותר דרך סריקת הQR שלו.
-    </p>
+    <p>המשתמש יועבר לארכיון המחוקים. ניתן לשחזרו מאוחר יותר דרך סריקת ה-QR שלו.</p>
     <label>סיבת המחיקה (חובה)</label>
     <textarea class="del-reason-input" id="delete-reason"
       placeholder="לדוגמה: פוטר, עזב את הארגון..."></textarea>
+    <label>קוד QR של העובד (אופציונלי)</label>
+    <input class="del-code-input" type="text" id="delete-emp-code"
+      placeholder="הדבק את קוד ה-QR אם ידוע — לזיהוי בסריקה עתידית">
+    <div class="optional-note">
+      אם לא ידוע, השאר ריק — לא ניתן יהיה לזהות את המשתמש בסריקה
+    </div>
     <div class="modal-actions">
       <button class="btn-confirm" style="background:#ff3b30"
         id="confirm-delete-btn" onclick="confirmDeleteUser()">
@@ -325,7 +339,7 @@
   const ROLE_LABELS = { admin:"מנהל מערכת", manager:"מנהל", security:"אבטחה" };
   let editingUser = null;
 
-  // ── Broadcast message ─────────────────────────────────────
+  // ── Broadcast ─────────────────────────────────────────────
   api.getMessage().then(d => {
     if (d.message) document.getElementById("broadcast-msg").value = d.message;
   }).catch(()=>{});
@@ -335,7 +349,7 @@
     const ok  = document.getElementById("broadcast-ok");
     try {
       await api.setMessage(msg);
-      ok.textContent = msg ? "✅ הודעה נשמרה" : "✅ הודעה נמחקה";
+      ok.textContent   = msg ? "✅ הודעה נשמרה" : "✅ הודעה נמחקה";
       ok.style.display = "block";
       setTimeout(()=>ok.style.display="none", 3000);
     } catch(e) { showToast(`❌ ${e.message}`); }
@@ -439,17 +453,18 @@
         const msLeft    = expires ? Math.max(0, expires-now) : 0;
         const hLeft     = Math.floor(msLeft/3600000);
         const mLeft     = Math.floor((msLeft%3600000)/60000);
+        const sLeft     = Math.floor((msLeft%60000)/1000);
         const timerText = isActive && msLeft>0
-          ? `⏱ נותר: ${hLeft}ש ${mLeft}ד` : "";
+          ? `⏱ נותר: ${String(hLeft).padStart(2,"0")}:${String(mLeft).padStart(2,"0")}:${String(sLeft).padStart(2,"0")}` : "";
 
-        // Previous requests history
         const histHtml = r.history?.length ? `
           <div class="temp-history">
             <div class="temp-history-title">בקשות קודמות</div>
             ${r.history.map(h=>`
               <div class="temp-history-item">
                 <span style="color:#555">${h.requestedAt}</span>
-                <span class="temp-status-badge temp-${h.status}" style="font-size:0.75rem;padding:2px 8px">
+                <span class="temp-status-badge temp-${h.status}"
+                  style="font-size:0.75rem;padding:2px 8px">
                   ${{pending:"ממתין",active:"אושר",expired:"פג",rejected:"נדחה"}[h.status]||h.status}
                   ${h.approvedAt ? ` • ${h.approvedAt}` : ""}
                 </span>
@@ -479,6 +494,13 @@
               <button class="btn-reject"
                 onclick="rejectTempAccess(${r.rowIndex},'${r.username}')">❌</button>
             </div>` : ""}
+            ${isActive ? `
+            <div class="temp-actions">
+              <button class="btn-deactivate"
+                onclick="deactivateTempAccess(${r.rowIndex},'${r.username}')">
+                ⏹ בטל גישה זמנית
+              </button>
+            </div>` : ""}
           </div>`;
       }).join("");
     } catch(e) {
@@ -500,6 +522,15 @@
     try {
       await api.rejectTempAccess(rowIndex);
       showToast(`🗑 בקשת ${username} נדחתה`);
+      loadTempAccess();
+    } catch(e) { showToast(`❌ ${e.message}`); }
+  };
+
+  window.deactivateTempAccess = async function(rowIndex, username) {
+    if (!confirm(`לבטל את הגישה הזמנית של ${username}?`)) return;
+    try {
+      await api.deactivateTempAccess(rowIndex, username);
+      showToast(`⏹ גישה זמנית של ${username} בוטלה`);
       loadTempAccess();
     } catch(e) { showToast(`❌ ${e.message}`); }
   };
@@ -583,25 +614,30 @@
     } catch(e) { showToast(`❌ ${e.message}`); }
   };
 
-  // ── Delete with reason ────────────────────────────────────
+  // ── Delete with reason + empCode ──────────────────────────
   window.openDeleteModal = function() {
-    document.getElementById("delete-reason").value = "";
+    document.getElementById("delete-reason").value   = "";
+    document.getElementById("delete-emp-code").value = "";
+    document.getElementById("confirm-delete-btn").disabled  = false;
+    document.getElementById("confirm-delete-btn").textContent = "מחק";
     document.getElementById("delete-modal").classList.add("show");
   };
+
   window.closeDeleteModal = function() {
     document.getElementById("delete-modal").classList.remove("show");
   };
+
   window.confirmDeleteUser = async function() {
     if (!editingUser) return;
-    const reason = document.getElementById("delete-reason").value.trim();
+    const reason  = document.getElementById("delete-reason").value.trim();
+    const empCode = document.getElementById("delete-emp-code").value.trim();
     if (!reason) {
-      showToast("נא לציין סיבת מחיקה");
-      return;
+      showToast("נא לציין סיבת מחיקה"); return;
     }
     const btn = document.getElementById("confirm-delete-btn");
     btn.disabled = true; btn.textContent = "מוחק...";
     try {
-      await api.deleteUser(editingUser.rowIndex, reason);
+      await api.deleteUser(editingUser.rowIndex, reason, empCode);
       showToast(`🗑 ${editingUser.username} הועבר לארכיון`);
       closeDeleteModal();
       closeUserModal();
@@ -652,8 +688,9 @@
         const icon      = isWarning?"⚠️":isGreen?"✅":"🔴";
         const cls       = isWarning?"warning":isGreen?"green":"red";
         const statusLbl = isWarning?"אזהרה":isGreen?"נוכח":"לא נוכח";
-        const statusCls = isWarning?"log-status-warning":isGreen?"log-status-green":"log-status-red";
-        const loc       = log.location&&!isWarning ? ` (${log.location})` : "";
+        const statusCls = isWarning?"log-status-warning"
+          :isGreen?"log-status-green":"log-status-red";
+        const loc = log.location&&!isWarning ? ` (${log.location})` : "";
         return `
           <div class="log-entry">
             <div class="log-icon ${cls}">${icon}</div>

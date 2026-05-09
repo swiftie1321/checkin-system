@@ -15,7 +15,6 @@
   .link-btn { background:none; border:none; color:#007aff;
     font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
   .link-btn:hover { background:#f0f0f0; }
-  .link-btn.danger { color:#ff3b30; }
 
   .badge { display:inline-flex; align-items:center; justify-content:center;
     background:#ff3b30; color:white; border-radius:20px; font-size:0.75rem;
@@ -41,50 +40,65 @@
   .btn-primary:hover { background:#0066dd; }
   .btn-danger { background:#ff3b30; }
   .btn-danger:hover { background:#cc2200; }
+  .btn-row { display:grid; grid-template-columns:1fr auto; gap:10px;
+    align-items:flex-end; }
 
-  /* Role badges */
   .role-badge { padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; }
   .role-admin    { background:#fff3cd; color:#856404; }
   .role-manager  { background:#cce5ff; color:#004085; }
   .role-security { background:#d4edda; color:#155724; }
 
-  /* Pending rows */
+  /* Pending */
   .pending-row { padding:16px 0; border-bottom:1px solid #f0f0f0; }
   .pending-row:last-child { border-bottom:none; }
-  .pending-info .pname { font-weight:600; font-size:0.95rem; color:#1a1a1a; }
-  .pending-info .pmeta { color:#888; font-size:0.82rem; margin-top:3px; }
+  .pending-info .pname  { font-weight:600; font-size:0.95rem; color:#1a1a1a; }
+  .pending-info .pmeta  { color:#888; font-size:0.82rem; margin-top:3px; }
   .pending-info .pemail { color:#007aff; font-size:0.82rem; margin-top:2px; }
-  .pending-info .ptime { color:#aaa; font-size:0.78rem; margin-top:2px; }
+  .pending-info .ptime  { color:#aaa; font-size:0.78rem; margin-top:2px; }
   .pending-actions { display:grid; grid-template-columns:1fr auto auto;
     gap:8px; align-items:center; margin-top:10px; }
   .pending-role-select { padding:8px 12px; border:1.5px solid #e0e0e0;
     border-radius:10px; font-size:0.9rem; outline:none; background:white;
     margin-bottom:0; width:100%; }
   .btn-approve { padding:10px 16px; background:#34c759; color:white; border:none;
-    border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space:nowrap; }
+    border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer;
+    white-space:nowrap; }
+  .btn-approve:hover { background:#28a745; }
   .btn-reject  { padding:10px 14px; background:#ff3b30; color:white; border:none;
     border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; }
+  .btn-reject:hover { background:#dc2626; }
 
-  /* Temp access rows */
+  /* Temp access */
   .temp-row { padding:14px 0; border-bottom:1px solid #f0f0f0; }
   .temp-row:last-child { border-bottom:none; }
-  .temp-header { display:flex; justify-content:space-between; align-items:flex-start;
-    margin-bottom:8px; }
-  .temp-name { font-weight:600; font-size:0.95rem; }
+  .temp-header { display:flex; justify-content:space-between;
+    align-items:flex-start; margin-bottom:8px; gap:8px; }
+  .temp-name   { font-weight:600; font-size:0.95rem; }
   .temp-reason { color:#666; font-size:0.85rem; margin-top:3px; }
-  .temp-time { color:#aaa; font-size:0.78rem; margin-top:2px; }
-  .temp-status-badge { padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; }
+  .temp-time   { color:#aaa; font-size:0.78rem; margin-top:2px; }
+  .temp-timer-text { font-size:0.82rem; color:#5856d6; font-weight:600; margin-top:4px; }
+  .temp-status-badge { padding:4px 10px; border-radius:20px;
+    font-size:0.8rem; font-weight:600; white-space:nowrap; }
   .temp-pending  { background:#fff3cd; color:#856404; }
   .temp-active   { background:#d4edda; color:#155724; }
   .temp-expired  { background:#f0f0f0; color:#888; }
   .temp-rejected { background:#fff0f0; color:#cc0000; }
   .temp-actions  { display:flex; gap:8px; margin-top:8px; }
-  .temp-timer-text { font-size:0.82rem; color:#5856d6; font-weight:600; margin-top:4px; }
 
-  /* User rows */
+  /* Temp history */
+  .temp-history { margin-top:10px; padding-top:10px;
+    border-top:1px dashed #e0e0e0; }
+  .temp-history-title { font-size:0.78rem; color:#aaa; font-weight:600;
+    margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px; }
+  .temp-history-item { display:flex; justify-content:space-between;
+    align-items:center; padding:5px 0; font-size:0.8rem;
+    border-bottom:1px solid #f8f8f8; }
+  .temp-history-item:last-child { border-bottom:none; }
+
+  /* Users */
   .user-row { display:flex; justify-content:space-between; align-items:center;
-    padding:14px 0; border-bottom:1px solid #f0f0f0; cursor:pointer;
-    transition:background 0.15s; border-radius:8px; padding:12px 8px; }
+    padding:12px 8px; border-bottom:1px solid #f0f0f0; cursor:pointer;
+    border-radius:8px; transition:background 0.15s; }
   .user-row:hover { background:#f8f9fa; }
   .user-row:last-child { border-bottom:none; }
   .user-info .uname { font-weight:600; font-size:0.95rem; }
@@ -120,6 +134,7 @@
   .log-refresh { display:flex; justify-content:flex-end; margin-bottom:10px; }
   .btn-refresh { background:none; border:1.5px solid #e0e0e0; color:#555;
     border-radius:10px; padding:6px 14px; font-size:0.85rem; cursor:pointer; }
+  .btn-refresh:hover { background:#f0f0f0; }
 
   .empty-msg { color:#aaa; text-align:center; padding:20px 0; font-size:0.9rem; }
   .error   { background:#fff0f0; color:#cc0000; border-radius:10px;
@@ -130,13 +145,15 @@
   /* Modal */
   .modal-overlay { display:none; position:fixed; inset:0;
     background:rgba(0,0,0,0.5); z-index:200;
-    justify-content:center; align-items:center; padding:20px; overflow-y:auto; }
+    justify-content:center; align-items:flex-start;
+    padding:20px; overflow-y:auto; }
   .modal-overlay.show { display:flex; }
   .modal { background:white; border-radius:20px; padding:28px 24px;
     width:100%; max-width:460px; box-shadow:0 20px 60px rgba(0,0,0,0.3);
-    max-height:90vh; overflow-y:auto; }
+    margin:auto; }
   .modal h3 { font-size:1.1rem; font-weight:700; margin-bottom:20px; color:#1a1a1a; }
-  .modal-actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+  .modal-actions { display:grid; grid-template-columns:1fr 1fr;
+    gap:12px; margin-top:8px; }
   .btn-confirm { padding:14px; background:#007aff; color:white; border:none;
     border-radius:12px; font-size:1rem; font-weight:600; cursor:pointer; }
   .btn-confirm:disabled { opacity:0.5; }
@@ -146,10 +163,9 @@
     color:#cc0000; border:1.5px solid #ffcccc; border-radius:12px;
     font-size:0.95rem; font-weight:600; cursor:pointer; margin-top:8px; }
 
-  /* History in modal */
-  .history-scroll { max-height:200px; overflow-y:auto; margin-top:12px;
+  .history-scroll { max-height:200px; overflow-y:auto; margin-top:8px;
     scrollbar-width:thin; }
-  .history-item { display:flex; gap:10px; padding:8px 0;
+  .history-item { display:flex; gap:10px; padding:7px 0;
     border-bottom:1px solid #f5f5f5; font-size:0.85rem; }
   .history-item:last-child { border-bottom:none; }
   .history-dot { width:8px; height:8px; border-radius:50%;
@@ -159,6 +175,12 @@
   .history-dot.warning { background:#ff9500; }
   .history-body .hstatus { font-weight:600; color:#1a1a1a; }
   .history-body .hmeta   { color:#aaa; font-size:0.78rem; margin-top:1px; }
+
+  /* Delete reason modal */
+  .del-reason-input { width:100%; padding:12px 14px; border:1.5px solid #e0e0e0;
+    border-radius:12px; font-size:1rem; outline:none; margin-bottom:14px;
+    font-family:inherit; }
+  .del-reason-input:focus { border-color:#ff3b30; }
 </style>
 </head>
 <body>
@@ -169,6 +191,23 @@
     <button class="link-btn" onclick="window.location.href='dashboard.html'">⬅ חזרה</button>
     <button class="link-btn" onclick="api.logout()">יציאה</button>
   </div>
+</div>
+
+<!-- Broadcast message -->
+<div class="card">
+  <h3>📢 הודעת מערכת לכל המשתמשים</h3>
+  <p style="color:#888;font-size:0.88rem;margin-bottom:14px;line-height:1.5">
+    ההודעה תוצג לכל המשתמשים בדשבורד. השאר ריק כדי להסיר.
+  </p>
+  <label>הודעה</label>
+  <textarea id="broadcast-msg" placeholder="כתוב הודעה לכל המשתמשים..."></textarea>
+  <div class="btn-row">
+    <button class="btn-primary" onclick="saveBroadcast()">💾 שמור הודעה</button>
+    <button class="btn-primary btn-danger"
+      style="width:auto;padding:14px 20px;margin-top:4px"
+      onclick="clearBroadcast()">🗑 נקה</button>
+  </div>
+  <div class="success" id="broadcast-ok"></div>
 </div>
 
 <!-- Pending signups -->
@@ -198,16 +237,17 @@
 <!-- Delete department -->
 <div class="card">
   <h3>🗑 מחיקת מסגרת שלמה</h3>
-  <p style="color:#888;font-size:0.88rem;margin-bottom:16px;line-height:1.6;">
-    פעולה זו תמחק את כל העובדים, המשתמשים והבקשות הממתינות של המסגרת לצמיתות.
-    יומן הפעולות ישמר ללא שינוי.
+  <p style="color:#888;font-size:0.88rem;margin-bottom:16px;line-height:1.6">
+    מחיקת מסגרת תסיר את כל העובדים, המשתמשים והבקשות הקשורות.
+    יומן הפעולות ישמר.
   </p>
   <div class="dept-delete-row">
     <div>
-      <label>מספר / שם מסגרת למחיקה</label>
+      <label>מזהה מסגרת למחיקה</label>
       <input type="text" id="delete-dept-input" placeholder="הכנס מזהה מסגרת">
     </div>
-    <button class="btn-primary btn-danger" onclick="deleteDepartment()"
+    <button class="btn-primary btn-danger"
+      onclick="deleteDepartment()"
       style="margin-top:0;width:auto;padding:12px 20px;">מחק</button>
   </div>
   <div class="error"   id="dept-error"></div>
@@ -229,35 +269,50 @@
 <div class="modal-overlay" id="user-modal">
   <div class="modal">
     <h3 id="user-modal-title">👤 פרטי משתמש</h3>
-
     <label>תפקיד</label>
     <select id="edit-role">
       <option value="security">אבטחה</option>
       <option value="manager">מנהל</option>
       <option value="admin">מנהל מערכת</option>
     </select>
-
     <label>מסגרת</label>
-    <input type="text" id="edit-dept" placeholder="מסגרת (ריק = כל המסגרות)">
-
+    <input type="text" id="edit-dept" placeholder="ריק = כל המסגרות">
     <label>הודעה למשתמש (תוצג בפעם הבאה שיתחבר)</label>
     <textarea id="edit-message" placeholder="הודעה אופציונלית..."></textarea>
-
     <div class="modal-actions">
       <button class="btn-confirm" onclick="saveUserEdit()">💾 שמור</button>
       <button class="btn-dismiss" onclick="closeUserModal()">ביטול</button>
     </div>
-
-    <button class="btn-delete-user" onclick="deleteUser()">🗑 מחק משתמש זה</button>
-
-    <!-- History -->
-    <div style="margin-top:20px;">
-      <div style="font-size:0.85rem;font-weight:600;color:#888;margin-bottom:8px;">
+    <button class="btn-delete-user" onclick="openDeleteModal()">
+      🗑 מחק משתמש זה
+    </button>
+    <div style="margin-top:20px">
+      <div style="font-size:0.85rem;font-weight:600;color:#888;margin-bottom:8px">
         היסטוריית פעולות
       </div>
       <div class="history-scroll" id="user-history">
         <div class="empty-msg">טוען...</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete reason modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>🗑 מחיקת משתמש</h3>
+    <p style="color:#888;font-size:0.88rem;margin-bottom:16px;line-height:1.5">
+      המשתמש יועבר לארכיון המחוקים. ניתן לשחזרו מאוחר יותר דרך סריקת הQR שלו.
+    </p>
+    <label>סיבת המחיקה (חובה)</label>
+    <textarea class="del-reason-input" id="delete-reason"
+      placeholder="לדוגמה: פוטר, עזב את הארגון..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-confirm" style="background:#ff3b30"
+        id="confirm-delete-btn" onclick="confirmDeleteUser()">
+        מחק
+      </button>
+      <button class="btn-dismiss" onclick="closeDeleteModal()">ביטול</button>
     </div>
   </div>
 </div>
@@ -270,7 +325,28 @@
   const ROLE_LABELS = { admin:"מנהל מערכת", manager:"מנהל", security:"אבטחה" };
   let editingUser = null;
 
-  // ── Pending signups ───────────────────────────────────────
+  // ── Broadcast message ─────────────────────────────────────
+  api.getMessage().then(d => {
+    if (d.message) document.getElementById("broadcast-msg").value = d.message;
+  }).catch(()=>{});
+
+  window.saveBroadcast = async function() {
+    const msg = document.getElementById("broadcast-msg").value.trim();
+    const ok  = document.getElementById("broadcast-ok");
+    try {
+      await api.setMessage(msg);
+      ok.textContent = msg ? "✅ הודעה נשמרה" : "✅ הודעה נמחקה";
+      ok.style.display = "block";
+      setTimeout(()=>ok.style.display="none", 3000);
+    } catch(e) { showToast(`❌ ${e.message}`); }
+  };
+
+  window.clearBroadcast = async function() {
+    document.getElementById("broadcast-msg").value = "";
+    await window.saveBroadcast();
+  };
+
+  // ── Pending ───────────────────────────────────────────────
   async function loadPending() {
     const list  = document.getElementById("pending-list");
     const badge = document.getElementById("pending-badge");
@@ -280,14 +356,15 @@
         list.innerHTML = '<div class="empty-msg">אין בקשות ממתינות ✅</div>';
         badge.style.display = "none"; return;
       }
-      badge.textContent = pending.length;
+      badge.textContent   = pending.length;
       badge.style.display = "inline-flex";
       list.innerHTML = pending.map(p => `
         <div class="pending-row" id="pending-row-${p.rowIndex}">
           <div class="pending-info">
             <div class="pname">👤 ${p.fullName}</div>
             <div class="pmeta">שם משתמש: <strong>${p.username}</strong>
-              ${p.dept ? ` • מסגרת: <strong>${p.dept}</strong>` : ""}</div>
+              ${p.dept ? ` • מסגרת: <strong>${p.dept}</strong>` : ""}
+            </div>
             <div class="pemail">✉️ ${p.email}</div>
             <div class="pmeta">תפקיד מבוקש:
               <span class="role-badge role-${p.requestedRole}">
@@ -303,7 +380,9 @@
               <option value="admin"    ${p.requestedRole==="admin"   ?"selected":""}>מנהל מערכת</option>
             </select>
             <button class="btn-approve"
-              onclick="approvePending(${p.rowIndex},'${p.username}','${p.dept||""}')">✅ אשר</button>
+              onclick="approvePending(${p.rowIndex},'${p.username}','${p.dept||""}')">
+              ✅ אשר
+            </button>
             <button class="btn-reject"
               onclick="rejectPending(${p.rowIndex},'${p.username}')">❌</button>
           </div>
@@ -316,7 +395,7 @@
   window.approvePending = async function(rowIndex, username, preDept) {
     const approvedRole = document.getElementById(`role-select-${rowIndex}`).value;
     let dept = preDept;
-    if (approvedRole === "manager" && !dept) {
+    if (approvedRole==="manager" && !dept) {
       dept = prompt(`מה המסגרת של ${username}?`) || "";
     }
     try {
@@ -341,28 +420,41 @@
     const badge = document.getElementById("temp-badge");
     try {
       const { requests=[] } = await api.getTempAccess();
-      const pending = requests.filter(r => r.status === "pending");
-      const active  = requests.filter(r => r.status === "active");
+      const pending = requests.filter(r=>r.status==="pending");
+      const active  = requests.filter(r=>r.status==="active");
       const visible = [...pending, ...active];
 
       if (!visible.length) {
         list.innerHTML = '<div class="empty-msg">אין בקשות גישה זמנית ✅</div>';
         badge.style.display = "none"; return;
       }
-
-      badge.textContent = pending.length || null;
+      badge.textContent   = pending.length || null;
       badge.style.display = pending.length ? "inline-flex" : "none";
 
       list.innerHTML = visible.map(r => {
-        const isPending = r.status === "pending";
-        const isActive  = r.status === "active";
+        const isPending = r.status==="pending";
+        const isActive  = r.status==="active";
         const now       = new Date();
         const expires   = r.expiresAt ? new Date(r.expiresAt) : null;
-        const msLeft    = expires ? Math.max(0, expires - now) : 0;
+        const msLeft    = expires ? Math.max(0, expires-now) : 0;
         const hLeft     = Math.floor(msLeft/3600000);
         const mLeft     = Math.floor((msLeft%3600000)/60000);
-        const timerText = isActive && msLeft > 0
+        const timerText = isActive && msLeft>0
           ? `⏱ נותר: ${hLeft}ש ${mLeft}ד` : "";
+
+        // Previous requests history
+        const histHtml = r.history?.length ? `
+          <div class="temp-history">
+            <div class="temp-history-title">בקשות קודמות</div>
+            ${r.history.map(h=>`
+              <div class="temp-history-item">
+                <span style="color:#555">${h.requestedAt}</span>
+                <span class="temp-status-badge temp-${h.status}" style="font-size:0.75rem;padding:2px 8px">
+                  ${{pending:"ממתין",active:"אושר",expired:"פג",rejected:"נדחה"}[h.status]||h.status}
+                  ${h.approvedAt ? ` • ${h.approvedAt}` : ""}
+                </span>
+              </div>`).join("")}
+          </div>` : "";
 
         return `
           <div class="temp-row" id="temp-row-${r.rowIndex}">
@@ -374,17 +466,18 @@
                 ${timerText ? `<div class="temp-timer-text">${timerText}</div>` : ""}
               </div>
               <span class="temp-status-badge temp-${r.status}">
-                ${{ pending:"ממתין", active:"פעיל", expired:"פג תוקף", rejected:"נדחה" }[r.status]||r.status}
+                ${{pending:"ממתין",active:"פעיל",expired:"פג תוקף",rejected:"נדחה"}[r.status]||r.status}
               </span>
             </div>
+            ${histHtml}
             ${isPending ? `
             <div class="temp-actions">
-              <button class="btn-approve" onclick="approveTempAccess(${r.rowIndex},'${r.username}')">
+              <button class="btn-approve"
+                onclick="approveTempAccess(${r.rowIndex},'${r.username}')">
                 ✅ אשר גישה זמנית
               </button>
-              <button class="btn-reject" onclick="rejectTempAccess(${r.rowIndex},'${r.username}')">
-                ❌
-              </button>
+              <button class="btn-reject"
+                onclick="rejectTempAccess(${r.rowIndex},'${r.username}')">❌</button>
             </div>` : ""}
           </div>`;
       }).join("");
@@ -403,7 +496,7 @@
   };
 
   window.rejectTempAccess = async function(rowIndex, username) {
-    if (!confirm(`לדחות את בקשת הגישה הזמנית של ${username}?`)) return;
+    if (!confirm(`לדחות את בקשת ${username}?`)) return;
     try {
       await api.rejectTempAccess(rowIndex);
       showToast(`🗑 בקשת ${username} נדחתה`);
@@ -420,7 +513,8 @@
         list.innerHTML = '<div class="empty-msg">אין משתמשים</div>'; return;
       }
       list.innerHTML = users.map(u => `
-        <div class="user-row" onclick="openUserModal(${u.rowIndex},'${u.username}','${u.role}','${u.dept||""}')">
+        <div class="user-row"
+          onclick="openUserModal(${u.rowIndex},'${u.username}','${u.role}','${u.dept||""}')">
           <div class="user-info">
             <div class="uname">${u.username}</div>
             <div class="umeta">${u.dept || "כל המסגרות"}</div>
@@ -444,7 +538,6 @@
     document.getElementById("edit-message").value = "";
     document.getElementById("user-modal").classList.add("show");
 
-    // Load history
     const histEl = document.getElementById("user-history");
     histEl.innerHTML = '<div class="empty-msg">טוען...</div>';
     try {
@@ -453,12 +546,11 @@
         histEl.innerHTML = '<div class="empty-msg">אין היסטוריה</div>'; return;
       }
       histEl.innerHTML = history.slice(0,30).map(h => {
-        const isGreen   = h.status.toLowerCase() === "green";
-        const isWarning = h.type === "WARNING";
-        const dotClass  = isWarning ? "warning" : isGreen ? "green" : "red";
-        const label     = isWarning ? "⚠️ אזהרה"
-          : isGreen ? "✅ כניסה" : "🔴 יציאה";
-        const loc = h.location ? ` • ${h.location}` : "";
+        const isGreen   = h.status.toLowerCase()==="green";
+        const isWarning = h.type==="WARNING";
+        const dotClass  = isWarning?"warning":isGreen?"green":"red";
+        const label     = isWarning?"⚠️ אזהרה":isGreen?"✅ כניסה":"🔴 יציאה";
+        const loc       = h.location ? ` • ${h.location}` : "";
         return `
           <div class="history-item">
             <div class="history-dot ${dotClass}"></div>
@@ -491,31 +583,48 @@
     } catch(e) { showToast(`❌ ${e.message}`); }
   };
 
-  window.deleteUser = async function() {
+  // ── Delete with reason ────────────────────────────────────
+  window.openDeleteModal = function() {
+    document.getElementById("delete-reason").value = "";
+    document.getElementById("delete-modal").classList.add("show");
+  };
+  window.closeDeleteModal = function() {
+    document.getElementById("delete-modal").classList.remove("show");
+  };
+  window.confirmDeleteUser = async function() {
     if (!editingUser) return;
-    if (!confirm(`למחוק את המשתמש "${editingUser.username}"?`)) return;
-    if (!confirm(`אישור סופי — פעולה זו אינה הפיכה. למחוק?`)) return;
+    const reason = document.getElementById("delete-reason").value.trim();
+    if (!reason) {
+      showToast("נא לציין סיבת מחיקה");
+      return;
+    }
+    const btn = document.getElementById("confirm-delete-btn");
+    btn.disabled = true; btn.textContent = "מוחק...";
     try {
-      await api.deleteUser(editingUser.rowIndex);
-      showToast(`🗑 ${editingUser.username} נמחק`);
+      await api.deleteUser(editingUser.rowIndex, reason);
+      showToast(`🗑 ${editingUser.username} הועבר לארכיון`);
+      closeDeleteModal();
       closeUserModal();
       loadUsers();
-    } catch(e) { showToast(`❌ ${e.message}`); }
+    } catch(e) {
+      showToast(`❌ ${e.message}`);
+      btn.disabled = false; btn.textContent = "מחק";
+    }
   };
 
   // ── Department delete ─────────────────────────────────────
   window.deleteDepartment = async function() {
-    const dept   = document.getElementById("delete-dept-input").value.trim();
-    const errEl  = document.getElementById("dept-error");
-    const okEl   = document.getElementById("dept-success");
+    const dept  = document.getElementById("delete-dept-input").value.trim();
+    const errEl = document.getElementById("dept-error");
+    const okEl  = document.getElementById("dept-success");
     errEl.style.display = "none";
     okEl.style.display  = "none";
     if (!dept) {
       errEl.textContent = "נא להכניס מזהה מסגרת";
       errEl.style.display = "block"; return;
     }
-    if (!confirm(`למחוק את מסגרת "${dept}" וכל הנתונים הקשורים אליה?`)) return;
-    if (!confirm(`אישור סופי — כל העובדים והמשתמשים של מסגרת "${dept}" יימחקו לצמיתות. להמשיך?`)) return;
+    if (!confirm(`למחוק את מסגרת "${dept}" וכל הנתונים הקשורים?`)) return;
+    if (!confirm(`אישור סופי — מחיקה לצמיתות. להמשיך?`)) return;
     try {
       const result = await api.deleteDepartment(dept);
       okEl.textContent = `✅ מסגרת "${dept}" נמחקה — ${result.deletedEmployees} עובדים, ${result.deletedUsers} משתמשים`;
@@ -538,20 +647,20 @@
         container.innerHTML = '<div class="empty-msg">אין פעולות עדיין</div>'; return;
       }
       container.innerHTML = logs.map(log => {
-        const isWarning = log.type === "WARNING";
-        const isGreen   = log.status.toLowerCase() === "green";
-        const icon      = isWarning ? "⚠️" : isGreen ? "✅" : "🔴";
-        const cls       = isWarning ? "warning" : isGreen ? "green" : "red";
-        const statusLbl = isWarning ? "אזהרה" : isGreen ? "נוכח" : "לא נוכח";
-        const statusCls = isWarning ? "log-status-warning"
-          : isGreen ? "log-status-green" : "log-status-red";
-        const loc = log.location && !isWarning ? ` (${log.location})` : "";
+        const isWarning = log.type==="WARNING";
+        const isGreen   = log.status.toLowerCase()==="green";
+        const icon      = isWarning?"⚠️":isGreen?"✅":"🔴";
+        const cls       = isWarning?"warning":isGreen?"green":"red";
+        const statusLbl = isWarning?"אזהרה":isGreen?"נוכח":"לא נוכח";
+        const statusCls = isWarning?"log-status-warning":isGreen?"log-status-green":"log-status-red";
+        const loc       = log.location&&!isWarning ? ` (${log.location})` : "";
         return `
           <div class="log-entry">
             <div class="log-icon ${cls}">${icon}</div>
             <div class="log-body">
               <div class="log-main">
-                <strong>${log.user}</strong> › <span style="font-weight:600">${log.employee}</span>
+                <strong>${log.user}</strong> ›
+                <span style="font-weight:600">${log.employee}</span>
                 — <span class="${statusCls}">${statusLbl}${loc}</span>
               </div>
               <div class="log-time">🕐 ${log.timestamp}</div>
@@ -565,15 +674,15 @@
 
   function showToast(msg) {
     const t = document.createElement("div");
-    t.style.cssText = `position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
-      background:#1a1a1a;color:white;padding:12px 24px;border-radius:12px;
-      font-size:0.95rem;z-index:300;white-space:nowrap;max-width:90vw;text-align:center;`;
+    t.style.cssText = `position:fixed;bottom:30px;left:50%;
+      transform:translateX(-50%);background:#1a1a1a;color:white;
+      padding:12px 24px;border-radius:12px;font-size:0.95rem;
+      z-index:300;white-space:nowrap;max-width:90vw;text-align:center;`;
     t.textContent = msg;
     document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2800);
+    setTimeout(()=>t.remove(), 2800);
   }
 
-  // ── Init ──────────────────────────────────────────────────
   loadPending();
   loadTempAccess();
   loadUsers();

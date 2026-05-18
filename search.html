@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinel — חיפוש</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:       #F4F6FB;
+  --surface:  #FFFFFF;
+  --surface2: #F0F2F8;
+  --border:   #E4E8F0;
+  --text:     #1A1D2E;
+  --text2:    #6B7280;
+  --text3:    #9CA3AF;
+  --accent:   #6366F1;
+  --accent-l: #EEF2FF;
+  --green:    #22C55E;
+  --green-l:  #DCFCE7;
+  --green-t:  #15803D;
+  --red:      #EF4444;
+  --red-l:    #FEE2E2;
+  --red-t:    #B91C1C;
+  --amber:    #F59E0B;
+  --amber-l:  #FEF3C7;
+  --sidebar-w:220px;
+  --radius:   14px;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] {
+  --bg:       #0F1117;
+  --surface:  #1A1D2E;
+  --surface2: #252840;
+  --border:   #2E3250;
+  --text:     #F1F3F9;
+  --text2:    #9CA3AF;
+  --text3:    #6B7280;
+  --accent-l: #1E2050;
+  --green-l:  #052E16;
+  --green-t:  #86EFAC;
+  --red-l:    #2D0A0A;
+  --red-t:    #FCA5A5;
+  --amber-l:  #1C1008;
+  --shadow:   0 1px 3px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;display:flex;
+  transition:background 0.2s,color 0.2s;}
+
+/* ── Sidebar (shared) ── */
+.sidebar{width:var(--sidebar-w);background:var(--surface);
+  border-left:1px solid var(--border);height:100vh;
+  position:fixed;right:0;top:0;display:flex;flex-direction:column;z-index:50;}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);}
+.logo-mark{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.logo-text{font-size:15px;font-weight:700;color:var(--text);}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.nav-section{font-size:10px;color:var(--text3);font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;padding:8px 10px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border-radius:10px;font-size:13px;color:var(--text2);cursor:pointer;
+  transition:all 0.15s;text-decoration:none;border:none;background:none;
+  width:100%;text-align:right;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--accent-l);color:var(--accent);font-weight:600;}
+.nav-item i{font-size:17px;flex-shrink:0;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-l);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:12px;font-weight:600;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:var(--text2);}
+.theme-btn{background:none;border:none;cursor:pointer;color:var(--text2);
+  font-size:17px;padding:4px;border-radius:8px;transition:background 0.15s;}
+.theme-btn:hover{background:var(--surface2);}
+
+/* ── Main ── */
+.main{margin-right:var(--sidebar-w);flex:1;padding:24px 20px;max-width:720px;}
+.page-title{font-size:20px;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+
+/* ── Search bar ── */
+.search-bar{display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:12px 16px;margin-bottom:20px;
+  box-shadow:var(--shadow);}
+.search-bar i{font-size:20px;color:var(--text3);flex-shrink:0;}
+.search-bar input{border:none;background:transparent;font-size:16px;
+  color:var(--text);outline:none;flex:1;}
+.search-bar input::placeholder{color:var(--text3);}
+.search-bar .clear-btn{background:none;border:none;cursor:pointer;
+  color:var(--text3);font-size:16px;padding:2px;display:none;}
+.search-bar .clear-btn.show{display:block;}
+
+/* ── Empty / hint state ── */
+.hint-state{text-align:center;padding:60px 20px;color:var(--text3);}
+.hint-state i{font-size:48px;display:block;margin-bottom:12px;}
+.hint-state p{font-size:14px;line-height:1.6;}
+
+/* ── Results sections ── */
+.section-title{font-size:12px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;}
+
+/* ── Employee result card ── */
+.emp-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;margin-bottom:12px;
+  box-shadow:var(--shadow);}
+.emp-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.emp-avatar{width:48px;height:48px;border-radius:50%;background:var(--accent-l);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;flex-shrink:0;}
+.emp-name{font-size:17px;font-weight:700;color:var(--text);}
+.emp-meta{font-size:13px;color:var(--text2);margin-top:3px;}
+.status-pill{display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;
+  margin-top:4px;}
+.pill-green{background:var(--green-l);color:var(--green-t);}
+.pill-red{background:var(--red-l);color:var(--red-t);}
+.qr-pill{background:var(--surface2);color:var(--text3);
+  padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;
+  display:inline-flex;align-items:center;gap:3px;margin-top:4px;}
+.qr-active{background:var(--green-l);color:var(--green-t);}
+
+/* Mini chart */
+.mini-chart-wrap{height:120px;margin:14px 0 10px;}
+
+/* History list */
+.hist-title{font-size:11px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+.hist-item{display:flex;align-items:center;gap:10px;padding:7px 0;
+  border-bottom:1px solid var(--border);font-size:13px;}
+.hist-item:last-child{border-bottom:none;}
+.h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.h-dot.green{background:var(--green);}
+.h-dot.red{background:var(--red);}
+.h-dot.warning{background:var(--amber);}
+.h-body{flex:1;}
+.h-status{font-weight:600;color:var(--text);}
+.h-meta{font-size:11px;color:var(--text3);margin-top:1px;}
+
+/* ── User result card ── */
+.user-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:8px;
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+.user-avatar-sm{width:38px;height:38px;border-radius:50%;
+  background:var(--accent-l);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;}
+.user-body{flex:1;}
+.user-name{font-size:14px;font-weight:600;color:var(--text);}
+.user-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.role-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.role-admin{background:var(--amber-l);color:#92400E;}
+.role-manager{background:var(--accent-l);color:var(--accent);}
+.role-security{background:var(--green-l);color:var(--green-t);}
+
+.empty-msg{color:var(--text3);text-align:center;padding:20px;font-size:13px;}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-right:0;padding:16px 14px 80px;}
+  .bottom-nav{display:flex !important;}
+}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  z-index:50;padding:6px 0;}
+.bottom-nav-inner{display:flex;justify-content:space-around;}
+.bn-item{display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:6px 12px;font-size:10px;color:var(--text2);
+  cursor:pointer;border:none;background:none;}
+.bn-item.active{color:var(--accent);}
+.bn-item i{font-size:22px;}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🛡</div>
+      <div>
+        <div class="logo-text">Sentinel</div>
+        <div class="logo-sub">מערכת נוכחות</div>
+      </div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">ראשי</div>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-scan"></i>סריקה</a>
+    <a class="nav-item active" href="search.html"><i class="ti ti-search"></i>חיפוש עובד</a>
+    <a class="nav-item" href="dept.html" id="nav-dept" style="display:none">
+      <i class="ti ti-users"></i>אנשי המסגרת
+    </a>
+    <a class="nav-item" href="stats.html" id="nav-stats" style="display:none">
+      <i class="ti ti-chart-bar"></i>סטטיסטיקות
+    </a>
+    <a class="nav-item" href="analytics.html" id="nav-analytics" style="display:none">
+      <i class="ti ti-chart-line"></i>אנליטיקס
+    </a>
+    <div class="nav-section" id="nav-section-admin" style="display:none">ניהול</div>
+    <a class="nav-item" href="admin.html" id="nav-admin" style="display:none">
+      <i class="ti ti-settings"></i>ניהול מערכת
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-avatar" id="sb-avatar">?</div>
+    <div class="user-info">
+      <div class="user-name" id="sb-username"></div>
+      <div class="user-role" id="sb-role"></div>
+    </div>
+    <button class="theme-btn" onclick="handleThemeToggle()">
+      <i class="ti ti-sun" id="theme-icon"></i>
+    </button>
+    <button class="theme-btn" onclick="api.logout()">
+      <i class="ti ti-logout"></i>
+    </button>
+  </div>
+</aside>
+
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bn-item" onclick="location.href='dashboard.html'">
+      <i class="ti ti-scan"></i>סריקה
+    </button>
+    <button class="bn-item active" onclick="location.href='search.html'">
+      <i class="ti ti-search"></i>חיפוש
+    </button>
+    <button class="bn-item" id="bn-dept" style="display:none"
+      onclick="location.href='dept.html'">
+      <i class="ti ti-users"></i>מסגרת
+    </button>
+    <button class="bn-item" id="bn-admin" style="display:none"
+      onclick="location.href='admin.html'">
+      <i class="ti ti-settings"></i>ניהול
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="page-title">
+    <i class="ti ti-search" style="font-size:22px;color:var(--accent)"></i>
+    חיפוש עובד
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <i class="ti ti-search"></i>
+    <input type="text" id="search-input" placeholder="הקלד שם עובד, מסגרת או שירות..."
+      oninput="onSearchInput(this.value)" autocomplete="off">
+    <button class="clear-btn" id="clear-btn" onclick="clearSearch()">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="hint-state">
+      <i class="ti ti-search"></i>
+      <p>הקלד לפחות 2 תווים כדי לחפש<br>עובדים, מסגרות ושירותים</p>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+window.api = api;
+
+// ── Theme ─────────────────────────────────────────────────
+const th = initTheme();
+document.documentElement.setAttribute("data-theme", th);
+updateThemeIcon(th);
+window.handleThemeToggle = function() { updateThemeIcon(toggleTheme()); };
+function updateThemeIcon(t) {
+  const ic=document.getElementById("theme-icon");
+  if(ic) ic.className=t==="dark"?"ti ti-moon":"ti ti-sun";
+}
+
+// ── Auth ──────────────────────────────────────────────────
+const user = requireAuth("security");
+if (!user) throw new Error("not authed");
+document.getElementById("sb-avatar").textContent   = user.username.slice(0,2).toUpperCase();
+document.getElementById("sb-username").textContent = user.username;
+document.getElementById("sb-role").textContent     =
+  {admin:"מנהל מערכת",manager:"מנהל",security:"אבטחה"}[user.role]||user.role;
+
+// Nav visibility
+if (user.role==="manager") {
+  document.getElementById("nav-dept").style.display  = "flex";
+  document.getElementById("bn-dept").style.display   = "flex";
+}
+if (user.role==="security"||user.role==="admin") {
+  document.getElementById("nav-stats").style.display    = "flex";
+  document.getElementById("nav-analytics").style.display= "flex";
+}
+if (user.role==="admin") {
+  document.getElementById("nav-section-admin").style.display = "block";
+  document.getElementById("nav-admin").style.display         = "flex";
+  document.getElementById("bn-admin").style.display          = "flex";
+}
+
+// ── Search ────────────────────────────────────────────────
+let searchTimeout = null;
+let miniCharts    = {};
+
+window.onSearchInput = function(val) {
+  document.getElementById("clear-btn").className =
+    val ? "clear-btn show" : "clear-btn";
+  clearTimeout(searchTimeout);
+  if (val.length < 2) {
+    document.getElementById("results").innerHTML = `
+      <div class="hint-state">
+        <i class="ti ti-search"></i>
+        <p>הקלד לפחות 2 תווים כדי לחפש</p>
+      </div>`;
+    return;
+  }
+  document.getElementById("results").innerHTML = `
+    <div class="hint-state">
+      <i class="ti ti-loader" style="animation:spin 1s linear infinite"></i>
+      <p>מחפש...</p>
+    </div>`;
+  searchTimeout = setTimeout(() => doSearch(val), 350);
+};
+
+window.clearSearch = function() {
+  document.getElementById("search-input").value = "";
+  document.getElementById("clear-btn").className = "clear-btn";
+  document.getElementById("results").innerHTML = `
+    <div class="hint-state">
+      <i class="ti ti-search"></i>
+      <p>הקלד לפחות 2 תווים כדי לחפש</p>
+    </div>`;
+};
+
+async function doSearch(q) {
+  try {
+    const data = await api.search(q);
+    renderResults(data);
+  } catch(e) {
+    document.getElementById("results").innerHTML =
+      `<div class="hint-state"><i class="ti ti-alert-circle"></i><p>${e.message}</p></div>`;
+  }
+}
+
+function renderResults({ employees=[], users=[] }) {
+  const container = document.getElementById("results");
+  if (!employees.length && !users.length) {
+    container.innerHTML = `
+      <div class="hint-state">
+        <i class="ti ti-mood-empty"></i>
+        <p>לא נמצאו תוצאות</p>
+      </div>`; return;
+  }
+
+  let html = "";
+
+  if (employees.length) {
+    html += `<div class="section-title" style="margin-bottom:12px">
+      <i class="ti ti-users" style="vertical-align:-2px"></i>
+      עובדים (${employees.length})
+    </div>`;
+    employees.forEach((emp, idx) => {
+      const ini = emp.name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+      const ok  = emp.status.toLowerCase()==="green";
+      const loc = !ok&&emp.location ? ` · ${emp.location}` : "";
+      const history = emp.history||[];
+      const histHtml = history.length ? history.map(h => {
+        const hok   = h.status.toLowerCase()==="green";
+        const hwarn = h.type==="WARNING";
+        const dot   = hwarn?"warning":hok?"green":"red";
+        const lbl   = hwarn?"⚠️ אזהרה":hok?"✅ כניסה":"🔴 יציאה";
+        const hloc  = h.location ? ` · ${h.location}` : "";
+        return `<div class="hist-item">
+          <div class="h-dot ${dot}"></div>
+          <div class="h-body">
+            <div class="h-status">${lbl}${hloc}</div>
+            <div class="h-meta">${h.timestamp} · ${h.user}</div>
+          </div>
+        </div>`;
+      }).join("") : `<div style="font-size:13px;color:var(--text3);padding:8px 0">אין היסטוריה</div>`;
+
+      html += `
+        <div class="emp-card">
+          <div class="emp-header">
+            <div class="emp-avatar">${ini}</div>
+            <div>
+              <div class="emp-name">${emp.name}</div>
+              <div class="emp-meta">${emp.dept} · ${emp.service}</div>
+              <span class="status-pill ${ok?"pill-green":"pill-red"}">
+                <i class="ti ti-${ok?"circle-check":"circle-x"}" style="font-size:12px"></i>
+                ${ok?"נוכח":"לא נוכח"}${loc}
+              </span>
+              <span class="qr-pill ${emp.hasQr?"qr-active":""}">
+                <i class="ti ti-qrcode" style="font-size:11px"></i>
+                ${emp.hasQr?"QR פעיל":"ללא QR"}
+              </span>
+            </div>
+          </div>
+
+          <!-- Mini presence chart -->
+          <div class="mini-chart-wrap">
+            <canvas id="mini-chart-${idx}"></canvas>
+          </div>
+
+          <!-- History -->
+          <div class="hist-title">היסטוריה אחרונה</div>
+          ${histHtml}
+        </div>`;
+    });
+  }
+
+  if (users.length && user.role==="admin") {
+    html += `<div class="section-title" style="margin:16px 0 10px">
+      <i class="ti ti-user" style="vertical-align:-2px"></i>
+      משתמשים (${users.length})
+    </div>`;
+    users.forEach(u => {
+      html += `
+        <div class="user-card">
+          <div class="user-avatar-sm">${u.username.slice(0,2).toUpperCase()}</div>
+          <div class="user-body">
+            <div class="user-name">${u.username}</div>
+            <div class="user-meta">${u.dept||"כל המסגרות"}</div>
+          </div>
+          <span class="role-pill role-${u.role}">
+            ${{admin:"מנהל מערכת",manager:"מנהל",security:"אבטחה"}[u.role]||u.role}
+          </span>
+        </div>`;
+    });
+  }
+
+  container.innerHTML = html;
+
+  // Render mini charts after DOM update
+  const isDark = ()=>document.documentElement.getAttribute("data-theme")==="dark";
+  const gc     = ()=>isDark()?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)";
+  const tc     = ()=>isDark()?"#6B7280":"#9CA3AF";
+
+  employees.forEach((emp, idx) => {
+    const canvas = document.getElementById(`mini-chart-${idx}`);
+    if (!canvas) return;
+    const history = emp.history||[];
+
+    // Count checkins vs checkouts from history
+    const labels  = history.map((_,i)=>`${i+1}`).reverse();
+    const statuses= [...history].reverse();
+    const greens  = statuses.map(h=>h.status.toLowerCase()==="green"?1:0);
+    const reds    = statuses.map(h=>h.status.toLowerCase()==="red"?1:0);
+
+    if (miniCharts[idx]) miniCharts[idx].destroy();
+    miniCharts[idx] = new Chart(canvas.getContext("2d"), {
+      type:"bar",
+      data:{
+        labels,
+        datasets:[
+          { label:"כניסה", data:greens,
+            backgroundColor:"rgba(34,197,94,0.7)", borderRadius:4 },
+          { label:"יציאה", data:reds,
+            backgroundColor:"rgba(239,68,68,0.7)", borderRadius:4 }
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{
+          legend:{position:"bottom",labels:{color:tc(),font:{size:11},boxWidth:8}},
+          tooltip:{rtl:true}
+        },
+        scales:{
+          x:{grid:{color:gc()},ticks:{color:tc(),font:{size:10}}},
+          y:{grid:{color:gc()},ticks:{color:tc(),font:{size:10},
+            stepSize:1,callback:v=>Number.isInteger(v)?v:""}}
+        }
+      }
+    });
+  });
+}
+
+// Spinner
+const s=document.createElement("style");
+s.textContent="@keyframes spin{to{transform:rotate(360deg)}}";
+document.head.appendChild(s);
+</script>
+</body>
+</html>

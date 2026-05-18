@@ -1,284 +1,524 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>דשבורד נוכחות</title>
+<title>Sentinel — סטטיסטיקות</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    background:#f0f2f5; min-height:100vh; padding:20px; }
-  .topbar { display:flex; justify-content:space-between; align-items:center;
-    max-width:900px; margin:0 auto 24px; flex-wrap:wrap; gap:8px; }
-  .topbar h1 { font-size:1.3rem; font-weight:700; }
-  .topbar-right { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .link-btn { background:none; border:none; color:#007aff;
-    font-size:0.9rem; cursor:pointer; padding:6px 10px; border-radius:8px; }
-  .link-btn:hover { background:#f0f0f0; }
-  .refresh-btn { background:#007aff; color:white; border:none;
-    border-radius:10px; padding:8px 16px; font-size:0.9rem; cursor:pointer; }
-  .refresh-btn:hover { background:#0066dd; }
-  .last-update { color:#999; font-size:0.8rem; }
+:root {
+  --bg:       #F4F6FB;
+  --surface:  #FFFFFF;
+  --surface2: #F0F2F8;
+  --border:   #E4E8F0;
+  --text:     #1A1D2E;
+  --text2:    #6B7280;
+  --text3:    #9CA3AF;
+  --accent:   #6366F1;
+  --accent-l: #EEF2FF;
+  --green:    #22C55E;
+  --green-l:  #DCFCE7;
+  --green-t:  #15803D;
+  --red:      #EF4444;
+  --red-l:    #FEE2E2;
+  --red-t:    #B91C1C;
+  --amber:    #F59E0B;
+  --amber-l:  #FEF3C7;
+  --sidebar-w:220px;
+  --radius:   14px;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] {
+  --bg:       #0F1117;
+  --surface:  #1A1D2E;
+  --surface2: #252840;
+  --border:   #2E3250;
+  --text:     #F1F3F9;
+  --text2:    #9CA3AF;
+  --text3:    #6B7280;
+  --accent-l: #1E2050;
+  --green-l:  #052E16;
+  --green-t:  #86EFAC;
+  --red-l:    #2D0A0A;
+  --red-t:    #FCA5A5;
+  --amber-l:  #1C1008;
+  --shadow:   0 1px 3px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;display:flex;
+  transition:background 0.2s,color 0.2s;}
 
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:16px; max-width:900px; margin:0 auto 24px; }
-  .stat-card { background:white; border-radius:16px; padding:20px 24px;
-    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
-  .stat-label { color:#888; font-size:0.85rem; margin-bottom:6px; }
-  .stat-value { font-size:2.2rem; font-weight:700; }
-  .stat-green { color:#34c759; }
-  .stat-red   { color:#ff3b30; }
-  .stat-pct   { color:#007aff; }
-  .stat-warn  { color:#ff9500; }
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);background:var(--surface);
+  border-left:1px solid var(--border);height:100vh;
+  position:fixed;right:0;top:0;display:flex;flex-direction:column;z-index:50;}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);}
+.logo-mark{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.logo-text{font-size:15px;font-weight:700;color:var(--text);}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.nav-section{font-size:10px;color:var(--text3);font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;padding:8px 10px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border-radius:10px;font-size:13px;color:var(--text2);cursor:pointer;
+  transition:all 0.15s;text-decoration:none;border:none;background:none;
+  width:100%;text-align:right;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--accent-l);color:var(--accent);font-weight:600;}
+.nav-item i{font-size:17px;flex-shrink:0;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-l);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:12px;font-weight:600;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:var(--text2);}
+.theme-btn{background:none;border:none;cursor:pointer;color:var(--text2);
+  font-size:17px;padding:4px;border-radius:8px;transition:background 0.15s;}
+.theme-btn:hover{background:var(--surface2);}
 
-  .charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:20px; max-width:900px; margin:0 auto 24px; }
-  .chart-card { background:white; border-radius:16px; padding:24px;
-    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
-  .chart-card h3 { font-size:1rem; font-weight:600; color:#333; margin-bottom:20px; }
-  .chart-wrap { position:relative; height:220px; }
+/* ── Main ── */
+.main{margin-right:var(--sidebar-w);flex:1;padding:24px 20px;max-width:860px;}
+.page-header{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.page-title{font-size:20px;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:10px;}
+.page-header-right{display:flex;align-items:center;gap:10px;}
+.last-update{font-size:12px;color:var(--text3);}
+.btn-refresh{display:flex;align-items:center;gap:6px;padding:8px 14px;
+  background:var(--accent);color:#fff;border:none;border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
+.btn-refresh:hover{opacity:0.9;}
 
-  .dept-table { max-width:900px; margin:0 auto 24px; background:white;
-    border-radius:16px; padding:24px;
-    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
-  .dept-table h3 { font-size:1rem; font-weight:600; margin-bottom:16px; }
-  table { width:100%; border-collapse:collapse; }
-  th { text-align:right; padding:10px 12px; color:#888;
-    font-size:0.85rem; border-bottom:2px solid #f0f0f0; font-weight:600; }
-  td { padding:12px; border-bottom:1px solid #f5f5f5; font-size:0.95rem; }
-  tr:last-child td { border-bottom:none; }
-  tr:hover td { background:#fafafa; }
-  .pct-bar  { height:6px; border-radius:3px; background:#e8f5e9; margin-top:4px; }
-  .pct-fill { height:100%; border-radius:3px; background:#34c759;
-    transition:width 0.6s ease; }
-  .pct-fill.low  { background:#ff9500; }
-  .pct-fill.crit { background:#ff3b30; }
+/* ── Stat cards ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;margin-bottom:16px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.stat-label{font-size:12px;color:var(--text2);margin-bottom:6px;}
+.stat-value{font-size:28px;font-weight:700;line-height:1;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px;}
+.val-green{color:var(--green);}
+.val-red{color:var(--red);}
+.val-accent{color:var(--accent);}
+.val-amber{color:var(--amber);}
 
-  /* Warning stats card */
-  .warnings-card { max-width:900px; margin:0 auto 24px; background:white;
-    border-radius:16px; padding:24px;
-    box-shadow:0 2px 12px rgba(0,0,0,0.07); }
-  .warnings-card h3 { font-size:1rem; font-weight:600; margin-bottom:16px;
-    color:#cc6600; }
-  .warning-row { display:flex; justify-content:space-between; align-items:center;
-    padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:0.9rem; }
-  .warning-row:last-child { border-bottom:none; }
-  .warning-emp { font-weight:600; color:#1a1a1a; }
-  .warning-time { color:#aaa; font-size:0.82rem; }
-  .no-warnings { color:#aaa; text-align:center; padding:16px 0; font-size:0.9rem; }
+/* ── Cards ── */
+.card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;margin-bottom:16px;
+  box-shadow:var(--shadow);}
+.card-title{font-size:14px;font-weight:600;color:var(--text);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title i{font-size:18px;color:var(--accent);}
 
-  .loading { text-align:center; color:#aaa; padding:40px;
-    font-size:0.95rem; }
+/* ── Charts row ── */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.chart-wrap{position:relative;height:200px;}
+
+/* ── Department table ── */
+.dept-table{width:100%;border-collapse:collapse;}
+.dept-table th{text-align:right;padding:9px 12px;color:var(--text2);
+  font-size:12px;font-weight:600;border-bottom:1px solid var(--border);}
+.dept-table td{padding:11px 12px;border-bottom:1px solid var(--border);
+  font-size:13px;color:var(--text);}
+.dept-table tr:last-child td{border-bottom:none;}
+.dept-table tr:hover td{background:var(--surface2);}
+.pct-bar{height:5px;border-radius:3px;background:var(--surface2);margin-top:4px;}
+.pct-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.pct-good{background:var(--green);}
+.pct-mid{background:var(--amber);}
+.pct-low{background:var(--red);}
+
+/* ── Warning rows ── */
+.warn-row{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.warn-row:last-child{border-bottom:none;}
+.warn-emp{font-weight:600;color:var(--text);}
+.warn-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.warn-time{font-size:11px;color:var(--text3);}
+
+.empty-msg{color:var(--text3);text-align:center;padding:20px 0;font-size:13px;}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-right:0;padding:16px 14px 80px;}
+  .charts-row{grid-template-columns:1fr;}
+  .bottom-nav{display:flex !important;}
+}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  z-index:50;padding:6px 0;}
+.bottom-nav-inner{display:flex;justify-content:space-around;}
+.bn-item{display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:6px 12px;font-size:10px;color:var(--text2);
+  cursor:pointer;border:none;background:none;}
+.bn-item.active{color:var(--accent);}
+.bn-item i{font-size:22px;}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <h1>📊 דשבורד נוכחות</h1>
-  <div class="topbar-right">
-    <span class="last-update" id="last-update"></span>
-    <button class="refresh-btn" onclick="loadStats()">🔄 רענן</button>
-    <button class="link-btn" onclick="window.location.href='dashboard.html'">⬅ חזרה</button>
-    <button class="link-btn" onclick="api.logout()">יציאה</button>
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🛡</div>
+      <div>
+        <div class="logo-text">Sentinel</div>
+        <div class="logo-sub">מערכת נוכחות</div>
+      </div>
+    </div>
   </div>
-</div>
+  <nav class="nav">
+    <div class="nav-section">ראשי</div>
+    <a class="nav-item" href="dashboard.html">
+      <i class="ti ti-scan"></i>סריקה
+    </a>
+    <a class="nav-item" href="search.html">
+      <i class="ti ti-search"></i>חיפוש עובד
+    </a>
+    <a class="nav-item active" href="stats.html">
+      <i class="ti ti-chart-bar"></i>סטטיסטיקות
+    </a>
+    <a class="nav-item" href="analytics.html">
+      <i class="ti ti-chart-line"></i>אנליטיקס
+    </a>
+    <div class="nav-section" id="nav-section-admin" style="display:none">ניהול</div>
+    <a class="nav-item" href="admin.html" id="nav-admin" style="display:none">
+      <i class="ti ti-settings"></i>ניהול מערכת
+    </a>
+    <a class="nav-item" href="add-user.html" id="nav-adduser" style="display:none">
+      <i class="ti ti-user-plus"></i>הוסף משתמש
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-avatar" id="sb-avatar">?</div>
+    <div class="user-info">
+      <div class="user-name" id="sb-username"></div>
+      <div class="user-role" id="sb-role"></div>
+    </div>
+    <button class="theme-btn" onclick="handleThemeToggle()" title="מצב תצוגה">
+      <i class="ti ti-sun" id="theme-icon"></i>
+    </button>
+    <button class="theme-btn" onclick="api.logout()" title="יציאה">
+      <i class="ti ti-logout"></i>
+    </button>
+  </div>
+</aside>
 
-<!-- Summary cards -->
-<div class="grid">
-  <div class="stat-card">
-    <div class="stat-label">נוכחים ביחידה</div>
-    <div class="stat-value stat-green" id="total-present">—</div>
+<!-- ── Bottom nav ── -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bn-item" onclick="location.href='dashboard.html'">
+      <i class="ti ti-scan"></i>סריקה
+    </button>
+    <button class="bn-item" onclick="location.href='search.html'">
+      <i class="ti ti-search"></i>חיפוש
+    </button>
+    <button class="bn-item active" onclick="location.href='stats.html'">
+      <i class="ti ti-chart-bar"></i>סטטיסטיקות
+    </button>
+    <button class="bn-item" id="bn-admin" style="display:none"
+      onclick="location.href='admin.html'">
+      <i class="ti ti-settings"></i>ניהול
+    </button>
   </div>
-  <div class="stat-card">
-    <div class="stat-label">לא נוכחים</div>
-    <div class="stat-value stat-red" id="total-absent">—</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">סה"כ עובדים</div>
-    <div class="stat-value" id="total-all">—</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">אחוז נוכחות</div>
-    <div class="stat-value stat-pct" id="pct-present">—</div>
-  </div>
-  <div class="stat-card" id="warnings-stat-card" style="display:none">
-    <div class="stat-label">אזהרות כניסה כפולה</div>
-    <div class="stat-value stat-warn" id="total-warnings">—</div>
-  </div>
-</div>
+</nav>
 
-<!-- Pie charts -->
-<div class="charts-grid">
-  <div class="chart-card">
-    <h3>נוכחות כללית</h3>
-    <div class="chart-wrap"><canvas id="chart-overall"></canvas></div>
+<!-- ── Main ── -->
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">
+      <i class="ti ti-chart-bar" style="font-size:22px;color:var(--accent)"></i>
+      סטטיסטיקות נוכחות
+    </div>
+    <div class="page-header-right">
+      <span class="last-update" id="last-update"></span>
+      <button class="btn-refresh" onclick="loadStats()">
+        <i class="ti ti-refresh"></i> רענן
+      </button>
+    </div>
   </div>
-  <div class="chart-card">
-    <h3>מיקום הנעדרים</h3>
-    <div class="chart-wrap"><canvas id="chart-locations"></canvas></div>
+
+  <!-- Stat cards -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">נוכחים ביחידה</div>
+      <div class="stat-value val-green" id="total-present">—</div>
+      <div class="stat-sub" id="present-sub"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">לא נוכחים</div>
+      <div class="stat-value val-red" id="total-absent">—</div>
+      <div class="stat-sub" id="absent-sub"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">סה"כ עובדים</div>
+      <div class="stat-value" id="total-all">—</div>
+      <div class="stat-sub">במערכת</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">אחוז נוכחות</div>
+      <div class="stat-value val-accent" id="pct-present">—</div>
+      <div class="stat-sub" id="pct-bar-wrap">
+        <div class="pct-bar" style="margin-top:8px">
+          <div class="pct-fill pct-good" id="pct-bar-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="stat-card" id="warnings-stat-card" style="display:none">
+      <div class="stat-label">אזהרות כפולות</div>
+      <div class="stat-value val-amber" id="total-warnings">—</div>
+      <div class="stat-sub">היום</div>
+    </div>
   </div>
-</div>
 
-<!-- Department table -->
-<div class="dept-table">
-  <h3>נוכחות לפי מסגרת</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>מסגרת</th>
-        <th>נוכחים</th>
-        <th>סה"כ</th>
-        <th>אחוז</th>
-      </tr>
-    </thead>
-    <tbody id="dept-tbody"></tbody>
-  </table>
-</div>
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">
+        <i class="ti ti-chart-donut"></i>נוכחות כללית
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart-overall"></canvas>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">
+        <i class="ti ti-map-pin"></i>מיקום הנעדרים
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart-locations"></canvas>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:16px"></div>
 
-<!-- Recent warnings (admin only) -->
-<div class="warnings-card" id="warnings-card" style="display:none">
-  <h3>⚠️ אזהרות כניסה כפולה אחרונות</h3>
-  <div id="warnings-list"><div class="no-warnings">טוען...</div></div>
-</div>
+  <!-- Department table -->
+  <div class="card">
+    <div class="card-title">
+      <i class="ti ti-building"></i>נוכחות לפי מסגרת
+    </div>
+    <table class="dept-table">
+      <thead>
+        <tr>
+          <th>מסגרת</th>
+          <th>נוכחים</th>
+          <th>סה"כ</th>
+          <th style="min-width:100px">אחוז</th>
+        </tr>
+      </thead>
+      <tbody id="dept-tbody">
+        <tr><td colspan="4" class="empty-msg">טוען...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Warnings (admin only) -->
+  <div class="card" id="warnings-card" style="display:none">
+    <div class="card-title" style="color:var(--amber)">
+      <i class="ti ti-alert-triangle" style="color:var(--amber)"></i>
+      אזהרות כניסה כפולה אחרונות
+    </div>
+    <div id="warnings-list">
+      <div class="empty-msg">טוען...</div>
+    </div>
+  </div>
+</main>
 
 <script type="module">
-  import { api, requireAuth } from "./js/api.js";
-  window.api = api;
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+window.api = api;
 
-  // Block managers — stats is for security + admin only
-  const user = requireAuth("security");
-  if (!user) throw new Error("not authed");
-  if (user.role === "manager") {
-    alert("מנהלים אינם מורשים לצפות בסטטיסטיקות");
-    window.location.href = "dashboard.html";
-    throw new Error("forbidden");
-  }
+// ── Theme ─────────────────────────────────────────────────
+const th = initTheme();
+document.documentElement.setAttribute("data-theme", th);
+updateThemeIcon(th);
+window.handleThemeToggle = function() { updateThemeIcon(toggleTheme()); };
+function updateThemeIcon(t) {
+  const ic = document.getElementById("theme-icon");
+  if (ic) ic.className = t==="dark" ? "ti ti-moon" : "ti ti-sun";
+}
 
-  // Show warnings section for admin only
-  if (user.role === "admin") {
-    document.getElementById("warnings-stat-card").style.display = "block";
-    document.getElementById("warnings-card").style.display = "block";
-  }
+// ── Auth ──────────────────────────────────────────────────
+const user = requireAuth("security");
+if (!user) throw new Error("not authed");
+if (user.role==="manager") {
+  alert("מנהלים אינם מורשים לצפות בסטטיסטיקות");
+  window.location.href="dashboard.html";
+  throw new Error("forbidden");
+}
 
-  const COLORS = [
-    "#007aff","#34c759","#ff9500","#ff3b30","#5856d6",
-    "#ff2d55","#00c7be","#30b0c7","#32ade6","#64d2ff",
-  ];
+// ── Sidebar ───────────────────────────────────────────────
+document.getElementById("sb-avatar").textContent   = user.username.slice(0,2).toUpperCase();
+document.getElementById("sb-username").textContent = user.username;
+document.getElementById("sb-role").textContent     =
+  {admin:"מנהל מערכת",manager:"מנהל",security:"אבטחה"}[user.role]||user.role;
 
-  let chartOverall  = null;
-  let chartLocation = null;
+if (user.role==="admin") {
+  document.getElementById("nav-section-admin").style.display = "block";
+  document.getElementById("nav-admin").style.display         = "flex";
+  document.getElementById("nav-adduser").style.display       = "flex";
+  document.getElementById("bn-admin").style.display          = "flex";
+  document.getElementById("warnings-stat-card").style.display= "block";
+  document.getElementById("warnings-card").style.display     = "block";
+}
 
-  window.loadStats = async function() {
-    document.getElementById("last-update").textContent = "טוען...";
-    try {
-      const data  = await api.getStats();
-      const total = data.totalPresent + data.totalAbsent;
-      const pct   = total ? Math.round(data.totalPresent/total*100) : 0;
+// ── Chart instances ───────────────────────────────────────
+let chartOverall = null, chartLocation = null;
 
-      document.getElementById("total-present").textContent = data.totalPresent;
-      document.getElementById("total-absent").textContent  = data.totalAbsent;
-      document.getElementById("total-all").textContent     = total;
-      document.getElementById("pct-present").textContent   = total ? pct+"%" : "0%";
+const isDark = () => document.documentElement.getAttribute("data-theme")==="dark";
+const gridColor  = () => isDark() ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+const tickColor  = () => isDark() ? "#6B7280" : "#9CA3AF";
 
-      // Overall pie
-      const overallCtx = document.getElementById("chart-overall").getContext("2d");
-      if (chartOverall) chartOverall.destroy();
-      chartOverall = new Chart(overallCtx, {
+const PALETTE = [
+  "#6366F1","#22C55E","#F59E0B","#EF4444","#14B8A6",
+  "#8B5CF6","#F97316","#06B6D4","#EC4899","#84CC16"
+];
+
+// ── Load stats ────────────────────────────────────────────
+window.loadStats = async function() {
+  document.getElementById("last-update").textContent = "טוען...";
+  try {
+    const data  = await api.getStats();
+    const total = data.totalPresent + data.totalAbsent;
+    const pct   = total ? Math.round(data.totalPresent/total*100) : 0;
+
+    document.getElementById("total-present").textContent = data.totalPresent;
+    document.getElementById("total-absent").textContent  = data.totalAbsent;
+    document.getElementById("total-all").textContent     = total;
+    document.getElementById("pct-present").textContent   = total ? pct+"%" : "0%";
+    document.getElementById("present-sub").textContent   = `מתוך ${total}`;
+    document.getElementById("absent-sub").textContent    =
+      total ? `${100-pct}% מהכוח` : "";
+
+    // Presence % bar
+    const fill = document.getElementById("pct-bar-fill");
+    fill.style.width = pct+"%";
+    fill.className = `pct-fill ${pct>=75?"pct-good":pct>=50?"pct-mid":"pct-low"}`;
+
+    // ── Overall doughnut ──
+    const overallCtx = document.getElementById("chart-overall").getContext("2d");
+    if (chartOverall) chartOverall.destroy();
+    chartOverall = new Chart(overallCtx, {
+      type:"doughnut",
+      data:{
+        labels:["נוכחים","לא נוכחים"],
+        datasets:[{
+          data:[data.totalPresent, data.totalAbsent],
+          backgroundColor:["#22C55E","#EF4444"],
+          borderWidth:3,
+          borderColor: isDark() ? "#1A1D2E" : "#FFFFFF"
+        }]
+      },
+      options:{
+        plugins:{legend:{position:"bottom",labels:{color:tickColor(),font:{size:12}}}},
+        cutout:"68%",responsive:true,maintainAspectRatio:false
+      }
+    });
+
+    // ── Locations doughnut ──
+    const locLabels = Object.keys(data.locationStats);
+    const locValues = Object.values(data.locationStats);
+    const locCtx    = document.getElementById("chart-locations").getContext("2d");
+    if (chartLocation) chartLocation.destroy();
+    if (locLabels.length) {
+      chartLocation = new Chart(locCtx, {
         type:"doughnut",
         data:{
-          labels:["נוכחים","לא נוכחים"],
-          datasets:[{ data:[data.totalPresent, data.totalAbsent],
-            backgroundColor:["#34c759","#ff3b30"],
-            borderWidth:2, borderColor:"#fff" }]
+          labels:locLabels,
+          datasets:[{
+            data:locValues,
+            backgroundColor:PALETTE.slice(0,locLabels.length),
+            borderWidth:3,
+            borderColor: isDark() ? "#1A1D2E" : "#FFFFFF"
+          }]
         },
-        options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%",
-          responsive:true, maintainAspectRatio:false }
+        options:{
+          plugins:{legend:{position:"bottom",labels:{color:tickColor(),font:{size:12}}}},
+          cutout:"68%",responsive:true,maintainAspectRatio:false
+        }
       });
+    } else {
+      locCtx.clearRect(0,0,locCtx.canvas.width,locCtx.canvas.height);
+      locCtx.fillStyle = tickColor();
+      locCtx.font      = "14px sans-serif";
+      locCtx.textAlign = "center";
+      locCtx.fillText("כולם נוכחים 🎉",locCtx.canvas.width/2,locCtx.canvas.height/2);
+    }
 
-      // Location pie
-      const locLabels = Object.keys(data.locationStats);
-      const locValues = Object.values(data.locationStats);
-      const locCtx    = document.getElementById("chart-locations").getContext("2d");
-      if (chartLocation) chartLocation.destroy();
-      if (locLabels.length) {
-        chartLocation = new Chart(locCtx, {
-          type:"doughnut",
-          data:{
-            labels: locLabels,
-            datasets:[{ data:locValues,
-              backgroundColor: COLORS.slice(0,locLabels.length),
-              borderWidth:2, borderColor:"#fff" }]
-          },
-          options:{ plugins:{ legend:{ position:"bottom" } }, cutout:"65%",
-            responsive:true, maintainAspectRatio:false }
-        });
-      } else {
-        locCtx.clearRect(0,0,locCtx.canvas.width,locCtx.canvas.height);
-        locCtx.fillStyle = "#aaa";
-        locCtx.font = "14px sans-serif";
-        locCtx.textAlign = "center";
-        locCtx.fillText("כולם נוכחים 🎉", locCtx.canvas.width/2, locCtx.canvas.height/2);
-      }
-
-      // Department table
-      const tbody = document.getElementById("dept-tbody");
-      tbody.innerHTML = "";
-      for (const [dept, s] of Object.entries(data.deptStats)) {
+    // ── Department table ──
+    const tbody = document.getElementById("dept-tbody");
+    const depts = Object.entries(data.deptStats);
+    if (!depts.length) {
+      tbody.innerHTML='<tr><td colspan="4" class="empty-msg">אין נתונים</td></tr>';
+    } else {
+      // Sort by presence % descending
+      depts.sort((a,b) => {
+        const pa = a[1].total ? a[1].present/a[1].total : 0;
+        const pb = b[1].total ? b[1].present/b[1].total : 0;
+        return pb - pa;
+      });
+      tbody.innerHTML = depts.map(([dept,s]) => {
         const p   = s.total ? Math.round(s.present/s.total*100) : 0;
-        const cls = p < 50 ? "crit" : p < 75 ? "low" : "";
-        tbody.innerHTML += `
+        const cls = p<50?"pct-low":p<75?"pct-mid":"pct-good";
+        const col = p<50?"var(--red)":p<75?"var(--amber)":"var(--green)";
+        return `
           <tr>
             <td><strong>${dept}</strong></td>
-            <td style="color:#34c759;font-weight:600">${s.present}</td>
-            <td>${s.total}</td>
+            <td style="color:var(--green-t);font-weight:600">${s.present}</td>
+            <td style="color:var(--text2)">${s.total}</td>
             <td>
-              <span style="font-weight:600;color:${p<50?"#ff3b30":p<75?"#ff9500":"#1a1a1a"}">${p}%</span>
+              <span style="font-weight:700;color:${col}">${p}%</span>
               <div class="pct-bar">
-                <div class="pct-fill ${cls}" style="width:${p}%"></div>
+                <div class="${cls} pct-fill" style="width:${p}%"></div>
               </div>
             </td>
           </tr>`;
-      }
-
-      document.getElementById("last-update").textContent =
-        "עודכן: " + new Date().toLocaleTimeString("he-IL");
-
-      // Load warnings for admin
-      if (user.role === "admin") loadWarnings();
-
-    } catch(e) {
-      document.getElementById("last-update").textContent = "שגיאה בטעינה: " + e.message;
+      }).join("");
     }
-  };
 
-  async function loadWarnings() {
-    const wList = document.getElementById("warnings-list");
-    try {
-      const { logs=[] } = await api.getAuditLog();
-      const warnings = logs.filter(l => l.type === "WARNING");
-      document.getElementById("total-warnings").textContent = warnings.length;
-      if (!warnings.length) {
-        wList.innerHTML = '<div class="no-warnings">אין אזהרות ✅</div>';
-        return;
-      }
-      wList.innerHTML = warnings.map(w => `
-        <div class="warning-row">
-          <div>
-            <span class="warning-emp">⚠️ ${w.employee}</span>
-            <span style="color:#888;font-size:0.85rem;margin-right:8px;">
-              סרקן ע"י ${w.user}
-            </span>
-          </div>
-          <div class="warning-time">${w.timestamp}</div>
-        </div>`).join("");
-    } catch(e) {
-      wList.innerHTML = '<div class="no-warnings">שגיאה בטעינה</div>';
-    }
+    document.getElementById("last-update").textContent =
+      "עודכן: "+new Date().toLocaleTimeString("he-IL");
+
+    if (user.role==="admin") loadWarnings();
+
+  } catch(e) {
+    document.getElementById("last-update").textContent = "שגיאה: "+e.message;
   }
+};
 
-  loadStats();
-  setInterval(loadStats, 30000);
+async function loadWarnings() {
+  const wList = document.getElementById("warnings-list");
+  try {
+    const { logs=[] } = await api.getAuditLog();
+    const warnings = logs.filter(l=>l.type==="WARNING");
+    document.getElementById("total-warnings").textContent = warnings.length;
+    if (!warnings.length) {
+      wList.innerHTML='<div class="empty-msg">אין אזהרות ✅</div>'; return;
+    }
+    wList.innerHTML = warnings.map(w=>`
+      <div class="warn-row">
+        <div>
+          <div class="warn-emp">⚠️ ${w.employee}</div>
+          <div class="warn-meta">סרקן ע"י ${w.user}</div>
+        </div>
+        <div class="warn-time">${w.timestamp}</div>
+      </div>`).join("");
+  } catch {
+    wList.innerHTML='<div class="empty-msg">שגיאה בטעינה</div>';
+  }
+}
+
+loadStats();
+setInterval(loadStats, 30000);
 </script>
 </body>
 </html>

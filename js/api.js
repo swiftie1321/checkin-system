@@ -17,27 +17,7 @@ export const api = {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-
-    // 2FA required — return needsTotp signal to caller
-    if (data.needsTotp) return data;
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(
-      { username:data.username, role:data.role, dept:data.dept }
-    ));
-    if (data.pendingMessage) {
-      localStorage.setItem("pendingMessage", data.pendingMessage);
-    }
-    return data;
-  },
-
-  async loginTotp(preToken, totpCode) {
-    const res = await fetch(`${WORKER_URL}/login/totp`, {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ preToken, totpCode }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    // Store token immediately — no 2FA step
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(
       { username:data.username, role:data.role, dept:data.dept }
@@ -53,40 +33,13 @@ export const api = {
     localStorage.removeItem("user");
     localStorage.removeItem("pendingMessage");
     localStorage.removeItem("theme");
+    localStorage.removeItem("lastScan");
     window.location.href = "index.html";
-  },
-
-  // ── 2FA setup ────────────────────────────────────────────
-  async getTotpSetup() {
-    const res = await fetch(`${WORKER_URL}/totp/setup`, { headers: this.headers() });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    return data; // { secret, otpUrl }
-  },
-
-  async enableTotp(secret, totpCode) {
-    const res = await fetch(`${WORKER_URL}/totp/enable`, {
-      method:"POST", headers: this.headers(),
-      body: JSON.stringify({ secret, totpCode }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    return data;
-  },
-
-  async resetTotp(username) {
-    const res = await fetch(`${WORKER_URL}/totp/reset`, {
-      method:"DELETE", headers: this.headers(),
-      body: JSON.stringify({ username }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    return data;
   },
 
   // ── Employee ─────────────────────────────────────────────
   async getEmployee(code) {
-    const res = await fetch(`${WORKER_URL}/employee?code=${code}`,
+    const res = await fetch(`${WORKER_URL}/employee?code=${encodeURIComponent(code)}`,
       { headers: this.headers() });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
@@ -103,6 +56,17 @@ export const api = {
     return data;
   },
 
+  // Remote status change — no QR scan needed
+  async updateStatusRemote(rowIndex, status, location) {
+    const res = await fetch(`${WORKER_URL}/status/update`, {
+      method:"POST", headers: this.headers(),
+      body: JSON.stringify({ rowIndex, status, location: location||"" }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+  },
+
   async leaveScanMessage(code, employeeName, previousStatus, newStatus, message) {
     const res = await fetch(`${WORKER_URL}/scanmessage`, {
       method:"POST", headers: this.headers(),
@@ -113,7 +77,7 @@ export const api = {
     return data;
   },
 
-  // ── Department employee management (manager) ─────────────
+  // ── Department employee management ───────────────────────
   async getDeptEmployees() {
     const res = await fetch(`${WORKER_URL}/dept/employees`, { headers: this.headers() });
     const data = await res.json();
@@ -121,10 +85,11 @@ export const api = {
     return data;
   },
 
-  async addDeptEmployee(name, service) {
+  // All roles can add employees — dept handled server-side per role
+  async addDeptEmployee(name, service, dept) {
     const res = await fetch(`${WORKER_URL}/dept/employee`, {
       method:"POST", headers: this.headers(),
-      body: JSON.stringify({ name, service }),
+      body: JSON.stringify({ name, service, dept: dept||"" }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
@@ -151,18 +116,29 @@ export const api = {
     return data;
   },
 
-  // ── Analytics ────────────────────────────────────────────
-  async getAnalytics(from, to) {
+  // ── Departments list (for dropdowns) ─────────────────────
+  async getDepartments() {
+    const res = await fetch(`${WORKER_URL}/departments`, { headers: this.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data; // { departments: string[] }
+  },
+
+  // ── Analytics — with name + dept filters ─────────────────
+  async getAnalytics(from, to, name, dept) {
     const params = new URLSearchParams();
     if (from) params.set("from", from);
-    if (to)   params.set("to", to);
+    if (to)   params.set("to",   to);
+    if (name) params.set("name", name);
+    if (dept) params.set("dept", dept);
+    const qs = params.toString();
     const res = await fetch(
-      `${WORKER_URL}/analytics${params.toString() ? "?" + params : ""}`,
+      `${WORKER_URL}/analytics${qs ? "?" + qs : ""}`,
       { headers: this.headers() }
     );
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    return data;
+    return data; // { minutely, absentByDept, allDepts }
   },
 
   // ── Search ───────────────────────────────────────────────
@@ -173,7 +149,7 @@ export const api = {
     );
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    return data;
+    return data; // { employees: [...dailyMap, history], users: [] }
   },
 
   // ── Stats & Locations ────────────────────────────────────

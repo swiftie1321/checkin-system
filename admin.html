@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sentinel — ניהול מערכת</title>
+<title>CheckIn — ניהול מערכת</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 :root {
@@ -49,7 +49,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);color:var(--text);min-height:100vh;display:flex;
   transition:background 0.2s,color 0.2s;}
 
-/* ── Sidebar ── */
 .sidebar{width:var(--sidebar-w);background:var(--surface);
   border-left:1px solid var(--border);height:100vh;
   position:fixed;right:0;top:0;display:flex;flex-direction:column;z-index:50;}
@@ -85,12 +84,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:17px;padding:4px;border-radius:8px;transition:background 0.15s;}
 .theme-btn:hover{background:var(--surface2);}
 
-/* ── Main ── */
 .main{margin-right:var(--sidebar-w);flex:1;padding:24px 20px;max-width:720px;}
 .page-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:20px;
   display:flex;align-items:center;gap:10px;}
 
-/* ── Cards ── */
 .card{background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius);padding:20px;margin-bottom:16px;
   box-shadow:var(--shadow);}
@@ -98,7 +95,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 .card-title i{font-size:18px;color:var(--accent);}
 
-/* ── Form elements ── */
 label{display:block;font-size:13px;color:var(--text2);
   font-weight:500;margin-bottom:6px;}
 input,select,textarea{width:100%;padding:10px 14px;
@@ -115,7 +111,6 @@ textarea{resize:vertical;min-height:70px;}
 .btn-primary:hover{opacity:0.9;}
 .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
 .btn-danger{background:var(--red);}
-.btn-success{background:var(--green);}
 .btn-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;}
 .btn-sm{padding:8px 14px;font-size:13px;font-weight:600;border:none;
   border-radius:8px;cursor:pointer;transition:opacity 0.2s;white-space:nowrap;}
@@ -125,7 +120,6 @@ textarea{resize:vertical;min-height:70px;}
 .btn-sm.amber{background:var(--amber);color:#fff;}
 .btn-sm.outline{background:none;border:1px solid var(--border);color:var(--text2);}
 
-/* ── Badges ── */
 .badge{display:inline-flex;align-items:center;justify-content:center;
   background:var(--red);color:#fff;border-radius:20px;font-size:10px;
   font-weight:700;min-width:18px;height:18px;padding:0 5px;margin-right:2px;}
@@ -133,18 +127,14 @@ textarea{resize:vertical;min-height:70px;}
 .role-admin{background:var(--amber-l);color:#92400E;}
 .role-manager{background:var(--accent-l);color:var(--accent);}
 .role-security{background:var(--green-l);color:var(--green-t);}
-.totp-pill{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;}
-.totp-on{background:var(--green-l);color:var(--green-t);}
-.totp-off{background:var(--surface2);color:var(--text3);}
 .status-pill{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
 .pill-pending{background:var(--amber-l);color:#92400E;}
 .pill-active{background:var(--green-l);color:var(--green-t);}
 .pill-expired{background:var(--surface2);color:var(--text3);}
 .pill-rejected{background:var(--red-l);color:var(--red-t);}
 
-/* ── List rows ── */
 .list-row{display:flex;align-items:center;gap:12px;padding:11px 0;
-  border-bottom:1px solid var(--border);transition:background 0.1s;}
+  border-bottom:1px solid var(--border);}
 .list-row:last-child{border-bottom:none;}
 .list-row-clickable{cursor:pointer;border-radius:8px;padding:11px 8px;margin:0 -8px;}
 .list-row-clickable:hover{background:var(--surface2);}
@@ -156,24 +146,19 @@ textarea{resize:vertical;min-height:70px;}
 .row-meta{font-size:12px;color:var(--text2);margin-top:2px;}
 .row-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 
-/* ── Pending actions ── */
 .pending-actions{display:grid;grid-template-columns:1fr auto auto;
   gap:8px;align-items:center;margin-top:10px;}
 .pending-role-select{padding:8px 12px;border:1px solid var(--border);
   border-radius:8px;font-size:13px;outline:none;background:var(--surface);
   color:var(--text);margin-bottom:0;width:100%;}
 
-/* ── Temp history ── */
-.temp-history{margin-top:10px;padding-top:10px;
-  border-top:1px dashed var(--border);}
+.temp-history{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);}
 .temp-history-title{font-size:11px;color:var(--text3);font-weight:600;
   margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
 .temp-history-item{display:flex;justify-content:space-between;
-  align-items:center;padding:5px 0;font-size:12px;
-  border-bottom:1px solid var(--border);}
+  align-items:center;padding:5px 0;font-size:12px;border-bottom:1px solid var(--border);}
 .temp-history-item:last-child{border-bottom:none;}
 
-/* ── Audit log ── */
 .log-scroll{max-height:360px;overflow-y:auto;
   scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
 .log-entry{display:flex;gap:12px;padding:10px 0;
@@ -183,6 +168,7 @@ textarea{resize:vertical;min-height:70px;}
 .log-dot.green{background:var(--green);}
 .log-dot.red{background:var(--red);}
 .log-dot.warning{background:var(--amber);}
+.log-dot.remote{background:var(--accent);}
 .log-body{flex:1;min-width:0;}
 .log-main{font-size:13px;color:var(--text);line-height:1.5;}
 .log-main .actor{color:var(--accent);font-weight:600;}
@@ -190,16 +176,15 @@ textarea{resize:vertical;min-height:70px;}
 .log-status-green{color:var(--green-t);font-weight:600;}
 .log-status-red{color:var(--red-t);font-weight:600;}
 .log-status-warning{color:#92400E;font-weight:600;}
+.log-status-remote{color:var(--accent);font-weight:600;}
 .log-time{font-size:11px;color:var(--text3);margin-top:2px;}
 
-/* ── Feedback ── */
 .feedback{border-radius:10px;padding:10px 14px;font-size:13px;
   margin-top:10px;display:none;}
 .feedback.ok{background:var(--green-l);color:var(--green-t);}
 .feedback.err{background:var(--red-l);color:var(--red-t);}
 .empty-msg{color:var(--text3);text-align:center;padding:20px 0;font-size:13px;}
 
-/* ── Modal ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
   z-index:300;justify-content:center;align-items:flex-start;
   padding:20px;overflow-y:auto;}
@@ -214,18 +199,12 @@ textarea{resize:vertical;min-height:70px;}
   border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
 .btn-confirm:disabled{opacity:0.5;}
 .btn-confirm.red{background:var(--red);}
-.btn-confirm.green{background:var(--green);}
 .btn-dismiss{padding:12px;background:var(--surface2);color:var(--text2);
   border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
 .btn-delete-user{width:100%;padding:11px;background:var(--red-l);
   color:var(--red-t);border:1px solid var(--red);border-radius:10px;
   font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;
   display:flex;align-items:center;justify-content:center;gap:6px;}
-.btn-reset-totp{width:100%;padding:11px;background:var(--amber-l);
-  color:#92400E;border:1px solid var(--amber);border-radius:10px;
-  font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;
-  display:flex;align-items:center;justify-content:center;gap:6px;}
-
 .hist-scroll{max-height:200px;overflow-y:auto;margin-top:8px;}
 .hist-item{display:flex;gap:10px;padding:7px 0;
   border-bottom:1px solid var(--border);font-size:13px;}
@@ -234,12 +213,11 @@ textarea{resize:vertical;min-height:70px;}
 .hdot.green{background:var(--green);}
 .hdot.red{background:var(--red);}
 .hdot.warning{background:var(--amber);}
+.hdot.remote{background:var(--accent);}
 .hstatus{font-weight:600;color:var(--text);}
 .hmeta{color:var(--text3);font-size:11px;margin-top:1px;}
-
 .optional-note{font-size:12px;color:var(--text3);margin-top:-8px;margin-bottom:12px;}
 
-/* ── Toast ── */
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
   color:#fff;padding:11px 22px;border-radius:12px;font-size:14px;
   opacity:0;transition:opacity 0.3s;pointer-events:none;
@@ -248,7 +226,6 @@ textarea{resize:vertical;min-height:70px;}
 .toast.ok{background:#1A1D2E;}
 .toast.err{background:var(--red);}
 
-/* ── Mobile ── */
 @media(max-width:768px){
   .sidebar{display:none;}
   .main{margin-right:0;padding:16px 14px 80px;}
@@ -267,13 +244,12 @@ textarea{resize:vertical;min-height:70px;}
 </head>
 <body>
 
-<!-- ── Sidebar ── -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
-      <div class="logo-icon">🛡</div>
+      <div class="logo-icon">✅</div>
       <div>
-        <div class="logo-text">Sentinel</div>
+        <div class="logo-text">CheckIn</div>
         <div class="logo-sub">מערכת נוכחות</div>
       </div>
     </div>
@@ -281,7 +257,7 @@ textarea{resize:vertical;min-height:70px;}
   <nav class="nav">
     <div class="nav-section">ראשי</div>
     <a class="nav-item" href="dashboard.html">
-      <i class="ti ti-scan"></i>סריקה
+      <i class="ti ti-layout-dashboard"></i>דשבורד
     </a>
     <a class="nav-item" href="search.html">
       <i class="ti ti-search"></i>חיפוש עובד
@@ -303,20 +279,19 @@ textarea{resize:vertical;min-height:70px;}
       <div class="user-name" id="sb-username">Admin</div>
       <div class="user-role">מנהל מערכת</div>
     </div>
-    <button class="theme-btn" onclick="handleThemeToggle()" title="מצב תצוגה">
+    <button class="theme-btn" onclick="handleThemeToggle()">
       <i class="ti ti-sun" id="theme-icon"></i>
     </button>
-    <button class="theme-btn" onclick="api.logout()" title="יציאה">
+    <button class="theme-btn" onclick="api.logout()">
       <i class="ti ti-logout"></i>
     </button>
   </div>
 </aside>
 
-<!-- ── Bottom nav ── -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bn-item" onclick="location.href='dashboard.html'">
-      <i class="ti ti-scan"></i>סריקה
+      <i class="ti ti-layout-dashboard"></i>דשבורד
     </button>
     <button class="bn-item" onclick="location.href='search.html'">
       <i class="ti ti-search"></i>חיפוש
@@ -327,14 +302,12 @@ textarea{resize:vertical;min-height:70px;}
   </div>
 </nav>
 
-<!-- ── Main ── -->
 <main class="main">
   <div class="page-title">
     <i class="ti ti-settings" style="font-size:22px;color:var(--accent)"></i>
     ניהול מערכת
   </div>
 
-  <!-- Broadcast -->
   <div class="card">
     <div class="card-title">
       <i class="ti ti-speakerphone"></i>הודעת שידור לכל המשתמשים
@@ -356,7 +329,6 @@ textarea{resize:vertical;min-height:70px;}
     <div class="feedback ok" id="broadcast-ok"></div>
   </div>
 
-  <!-- Pending signups -->
   <div class="card">
     <div class="card-title">
       <i class="ti ti-bell"></i>
@@ -366,7 +338,6 @@ textarea{resize:vertical;min-height:70px;}
     <div id="pending-list"><div class="empty-msg">טוען...</div></div>
   </div>
 
-  <!-- Temp access -->
   <div class="card">
     <div class="card-title">
       <i class="ti ti-lock-open"></i>
@@ -376,7 +347,6 @@ textarea{resize:vertical;min-height:70px;}
     <div id="temp-list"><div class="empty-msg">טוען...</div></div>
   </div>
 
-  <!-- Users -->
   <div class="card">
     <div class="card-title">
       <i class="ti ti-users"></i>משתמשים קיימים
@@ -384,7 +354,6 @@ textarea{resize:vertical;min-height:70px;}
     <div id="user-list"><div class="empty-msg">טוען...</div></div>
   </div>
 
-  <!-- Delete department -->
   <div class="card">
     <div class="card-title">
       <i class="ti ti-trash" style="color:var(--red)"></i>מחיקת מסגרת שלמה
@@ -407,7 +376,6 @@ textarea{resize:vertical;min-height:70px;}
     <div class="feedback ok"  id="dept-success"></div>
   </div>
 
-  <!-- Audit log -->
   <div class="card">
     <div class="card-title" style="justify-content:space-between">
       <span style="display:flex;align-items:center;gap:8px">
@@ -423,11 +391,10 @@ textarea{resize:vertical;min-height:70px;}
   </div>
 </main>
 
-<!-- ── User modal ── -->
+<!-- User modal -->
 <div class="modal-overlay" id="user-modal">
   <div class="modal">
     <h3 id="user-modal-title">פרטי משתמש</h3>
-    <div id="user-totp-status" style="margin-bottom:14px"></div>
     <label>תפקיד</label>
     <select id="edit-role">
       <option value="security">אבטחה</option>
@@ -444,10 +411,6 @@ textarea{resize:vertical;min-height:70px;}
       </button>
       <button class="btn-dismiss" onclick="closeUserModal()">ביטול</button>
     </div>
-    <button class="btn-reset-totp" id="reset-totp-btn" onclick="resetTotp()"
-      style="display:none">
-      <i class="ti ti-shield-off"></i> אפס 2FA
-    </button>
     <button class="btn-delete-user" onclick="openDeleteModal()">
       <i class="ti ti-trash"></i> מחק משתמש זה
     </button>
@@ -462,7 +425,7 @@ textarea{resize:vertical;min-height:70px;}
   </div>
 </div>
 
-<!-- ── Delete reason modal ── -->
+<!-- Delete modal -->
 <div class="modal-overlay" id="delete-modal">
   <div class="modal">
     <h3><i class="ti ti-trash" style="vertical-align:-2px;color:var(--red)"></i> מחיקת משתמש</h3>
@@ -470,13 +433,10 @@ textarea{resize:vertical;min-height:70px;}
     <label>סיבת המחיקה (חובה)</label>
     <textarea id="delete-reason" placeholder="פוטר, עזב..."></textarea>
     <label>קוד QR של העובד (אופציונלי)</label>
-    <input type="text" id="delete-emp-code" placeholder="קוד QR לזיהוי עתידי"
-      style="direction:ltr">
+    <input type="text" id="delete-emp-code" placeholder="קוד QR לזיהוי עתידי" style="direction:ltr">
     <div class="optional-note">אם לא ידוע, השאר ריק</div>
     <div class="modal-actions">
-      <button class="btn-confirm red" id="confirm-delete-btn" onclick="confirmDeleteUser()">
-        מחק
-      </button>
+      <button class="btn-confirm red" id="confirm-delete-btn" onclick="confirmDeleteUser()">מחק</button>
       <button class="btn-dismiss" onclick="closeDeleteModal()">ביטול</button>
     </div>
   </div>
@@ -485,10 +445,9 @@ textarea{resize:vertical;min-height:70px;}
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js?v=3";
 window.api = api;
 
-// ── Theme ─────────────────────────────────────────────────
 const t0 = initTheme();
 document.documentElement.setAttribute("data-theme", t0);
 updateThemeIcon(t0);
@@ -498,11 +457,9 @@ function updateThemeIcon(th) {
   if (ic) ic.className = th==="dark" ? "ti ti-moon" : "ti ti-sun";
 }
 
-// ── Auth ──────────────────────────────────────────────────
 const user = requireAuth("admin");
 if (!user) throw new Error("not authed");
-const ini = user.username.slice(0,2).toUpperCase();
-document.getElementById("sb-avatar").textContent   = ini;
+document.getElementById("sb-avatar").textContent   = user.username.slice(0,2).toUpperCase();
 document.getElementById("sb-username").textContent = user.username;
 
 const ROLE_LABELS = { admin:"מנהל מערכת", manager:"מנהל", security:"אבטחה" };
@@ -528,30 +485,27 @@ window.clearBroadcast = async function() {
   await saveBroadcast();
 };
 
-// ── Pending signups ───────────────────────────────────────
+// ── Pending ───────────────────────────────────────────────
 async function loadPending() {
   const list  = document.getElementById("pending-list");
   const badge = document.getElementById("pending-badge");
   try {
     const { pending=[] } = await api.getPending();
     if (!pending.length) {
-      list.innerHTML = '<div class="empty-msg">אין בקשות ממתינות ✅</div>';
-      badge.style.display = "none"; return;
+      list.innerHTML='<div class="empty-msg">אין בקשות ממתינות ✅</div>';
+      badge.style.display="none"; return;
     }
-    badge.textContent = pending.length;
-    badge.style.display = "inline-flex";
-    list.innerHTML = pending.map(p => `
-      <div class="list-row" id="pending-row-${p.rowIndex}" style="flex-direction:column;align-items:stretch">
+    badge.textContent=pending.length; badge.style.display="inline-flex";
+    list.innerHTML=pending.map(p=>`
+      <div class="list-row" style="flex-direction:column;align-items:stretch">
         <div style="display:flex;align-items:center;gap:12px">
           <div class="row-avatar">${p.fullName?.[0]||"?"}</div>
           <div class="row-body">
             <div class="row-name">${p.fullName}</div>
-            <div class="row-meta">
-              @${p.username}
-              ${p.dept?` · מסגרת ${p.dept}`:""}
-              · <span class="role-pill role-${p.requestedRole}">${ROLE_LABELS[p.requestedRole]||p.requestedRole}</span>
+            <div class="row-meta">@${p.username}${p.dept?` · ${p.dept}`:""} ·
+              <span class="role-pill role-${p.requestedRole}">${ROLE_LABELS[p.requestedRole]||p.requestedRole}</span>
             </div>
-            <div class="row-meta" style="margin-top:2px">${p.email} · ${p.timestamp}</div>
+            <div class="row-meta">${p.email} · ${p.timestamp}</div>
           </div>
         </div>
         <div class="pending-actions" style="margin-top:10px">
@@ -570,67 +524,54 @@ async function loadPending() {
           </button>
         </div>
       </div>`).join("");
-  } catch(e) {
-    list.innerHTML = `<div class="empty-msg">שגיאה: ${e.message}</div>`;
-  }
+  } catch(e) { list.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`; }
 }
 
 window.approvePending = async function(rowIndex, username, preDept) {
-  const role = document.getElementById(`role-select-${rowIndex}`).value;
-  let dept = preDept;
-  if (role==="manager" && !dept) dept = prompt(`מה המסגרת של ${username}?`)||"";
-  try {
-    await api.approvePending(rowIndex, role, dept);
-    showToast(`✅ ${username} אושר`);
-    loadPending(); loadUsers();
-  } catch(e) { showToast("❌ "+e.message,"err"); }
+  const role=document.getElementById(`role-select-${rowIndex}`).value;
+  let dept=preDept;
+  if (role==="manager"&&!dept) dept=prompt(`מה המסגרת של ${username}?`)||"";
+  try { await api.approvePending(rowIndex,role,dept); showToast(`✅ ${username} אושר`); loadPending(); loadUsers(); }
+  catch(e) { showToast("❌ "+e.message,"err"); }
 };
 window.rejectPending = async function(rowIndex, username) {
-  if (!confirm(`לדחות את הבקשה של ${username}?`)) return;
-  try {
-    await api.rejectPending(rowIndex);
-    showToast(`🗑 ${username} נדחה`);
-    loadPending();
-  } catch(e) { showToast("❌ "+e.message,"err"); }
+  if (!confirm(`לדחות את ${username}?`)) return;
+  try { await api.rejectPending(rowIndex); showToast(`🗑 ${username} נדחה`); loadPending(); }
+  catch(e) { showToast("❌ "+e.message,"err"); }
 };
 
 // ── Temp access ───────────────────────────────────────────
 async function loadTempAccess() {
-  const list  = document.getElementById("temp-list");
-  const badge = document.getElementById("temp-badge");
+  const list=document.getElementById("temp-list");
+  const badge=document.getElementById("temp-badge");
   try {
-    const { requests=[] } = await api.getTempAccess();
-    const pending = requests.filter(r=>r.status==="pending");
-    const active  = requests.filter(r=>r.status==="active");
-    const visible = [...pending,...active];
-    if (!visible.length) {
-      list.innerHTML = '<div class="empty-msg">אין בקשות גישה זמנית ✅</div>';
-      badge.style.display = "none"; return;
+    const {requests=[]}=await api.getTempAccess();
+    const pending=requests.filter(r=>r.status==="pending");
+    const active =requests.filter(r=>r.status==="active");
+    const visible=[...pending,...active];
+    if (!visible.length){
+      list.innerHTML='<div class="empty-msg">אין בקשות גישה זמנית ✅</div>';
+      badge.style.display="none"; return;
     }
-    badge.textContent   = pending.length||null;
-    badge.style.display = pending.length?"inline-flex":"none";
-
-    list.innerHTML = visible.map(r => {
-      const isPending = r.status==="pending";
-      const isActive  = r.status==="active";
-      const expires   = r.expiresAt ? new Date(r.expiresAt) : null;
-      const msLeft    = expires ? Math.max(0,expires-new Date()) : 0;
+    badge.textContent=pending.length||null;
+    badge.style.display=pending.length?"inline-flex":"none";
+    list.innerHTML=visible.map(r=>{
+      const isPending=r.status==="pending",isActive=r.status==="active";
+      const expires=r.expiresAt?new Date(r.expiresAt):null;
+      const msLeft=expires?Math.max(0,expires-new Date()):0;
       const hL=Math.floor(msLeft/3600000),mL=Math.floor((msLeft%3600000)/60000),sL=Math.floor((msLeft%60000)/1000);
-      const timerText = isActive&&msLeft>0
-        ? `⏱ נותר: ${String(hL).padStart(2,"0")}:${String(mL).padStart(2,"0")}:${String(sL).padStart(2,"0")}` : "";
-
-      const histHtml = r.history?.length ? `
+      const timer=isActive&&msLeft>0?`⏱ נותר: ${String(hL).padStart(2,"0")}:${String(mL).padStart(2,"0")}:${String(sL).padStart(2,"0")}`:"";
+      const histHtml=r.history?.length?`
         <div class="temp-history">
           <div class="temp-history-title">בקשות קודמות</div>
           ${r.history.map(h=>`
             <div class="temp-history-item">
-              <span style="color:var(--text2);font-size:12px">${h.requestedAt}</span>
+              <span style="color:var(--text2)">${h.requestedAt}</span>
               <span class="status-pill pill-${h.status}" style="font-size:11px">
                 ${{pending:"ממתין",active:"אושר",expired:"פג",rejected:"נדחה"}[h.status]||h.status}
               </span>
             </div>`).join("")}
-        </div>` : "";
-
+        </div>`:"";
       return `
         <div class="list-row" style="flex-direction:column;align-items:stretch">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
@@ -638,7 +579,7 @@ async function loadTempAccess() {
               <div class="row-name">${r.username}</div>
               <div class="row-meta">סיבה: ${r.reason}</div>
               <div class="row-meta">נשלח: ${r.requestedAt}</div>
-              ${timerText?`<div style="font-size:12px;color:var(--accent);font-weight:600;margin-top:3px">${timerText}</div>`:""}
+              ${timer?`<div style="font-size:12px;color:var(--accent);font-weight:600;margin-top:3px">${timer}</div>`:""}
             </div>
             <span class="status-pill pill-${r.status}">
               ${{pending:"ממתין",active:"פעיל",expired:"פג",rejected:"נדחה"}[r.status]||r.status}
@@ -665,242 +606,174 @@ async function loadTempAccess() {
           </div>`:""}
         </div>`;
     }).join("");
-  } catch(e) {
-    list.innerHTML = `<div class="empty-msg">שגיאה: ${e.message}</div>`;
-  }
+  } catch(e) { list.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`; }
 }
 
-window.approveTempAccess = async function(rowIndex, username) {
-  if (!confirm(`לאשר גישה זמנית ל-${username} למשך 24 שעות?`)) return;
-  try {
-    await api.approveTempAccess(rowIndex);
-    showToast(`✅ גישה אושרה ל-${username}`);
-    loadTempAccess();
-  } catch(e) { showToast("❌ "+e.message,"err"); }
+window.approveTempAccess = async function(rowIndex,username) {
+  if (!confirm(`לאשר גישה ל-${username} 24 שעות?`)) return;
+  try { await api.approveTempAccess(rowIndex); showToast(`✅ גישה אושרה`); loadTempAccess(); }
+  catch(e) { showToast("❌ "+e.message,"err"); }
 };
-window.rejectTempAccess = async function(rowIndex, username) {
-  if (!confirm(`לדחות את בקשת ${username}?`)) return;
-  try {
-    await api.rejectTempAccess(rowIndex);
-    showToast(`🗑 בקשת ${username} נדחתה`);
-    loadTempAccess();
-  } catch(e) { showToast("❌ "+e.message,"err"); }
+window.rejectTempAccess = async function(rowIndex,username) {
+  if (!confirm(`לדחות את ${username}?`)) return;
+  try { await api.rejectTempAccess(rowIndex); showToast(`🗑 נדחה`); loadTempAccess(); }
+  catch(e) { showToast("❌ "+e.message,"err"); }
 };
-window.deactivateTempAccess = async function(rowIndex, username) {
-  if (!confirm(`לבטל את הגישה הזמנית של ${username}?`)) return;
-  try {
-    await api.deactivateTempAccess(rowIndex, username);
-    showToast(`⏹ גישה של ${username} בוטלה`);
-    loadTempAccess();
-  } catch(e) { showToast("❌ "+e.message,"err"); }
+window.deactivateTempAccess = async function(rowIndex,username) {
+  if (!confirm(`לבטל גישה של ${username}?`)) return;
+  try { await api.deactivateTempAccess(rowIndex,username); showToast("⏹ בוטל"); loadTempAccess(); }
+  catch(e) { showToast("❌ "+e.message,"err"); }
 };
 
 // ── Users ─────────────────────────────────────────────────
 async function loadUsers() {
-  const list = document.getElementById("user-list");
+  const list=document.getElementById("user-list");
   try {
-    const { users=[] } = await api.getUsers();
-    if (!users.length) {
-      list.innerHTML='<div class="empty-msg">אין משתמשים</div>'; return;
-    }
-    list.innerHTML = users.map(u => `
+    const {users=[]}=await api.getUsers();
+    if (!users.length){list.innerHTML='<div class="empty-msg">אין משתמשים</div>';return;}
+    list.innerHTML=users.map(u=>`
       <div class="list-row list-row-clickable"
-        onclick="openUserModal(${u.rowIndex},'${u.username}','${u.role}','${u.dept||""}',${!!u.hasTwoFA})">
+        onclick="openUserModal(${u.rowIndex},'${u.username}','${u.role}','${u.dept||""}')">
         <div class="row-avatar">${u.username.slice(0,2).toUpperCase()}</div>
         <div class="row-body">
           <div class="row-name">${u.username}</div>
           <div class="row-meta">${u.dept||"כל המסגרות"}</div>
         </div>
         <div class="row-right">
-          <span class="totp-pill ${u.hasTwoFA?"totp-on":"totp-off"}">
-            ${u.hasTwoFA?"🔐 2FA":"2FA כבוי"}
-          </span>
           <span class="role-pill role-${u.role}">${ROLE_LABELS[u.role]||u.role}</span>
           <i class="ti ti-chevron-left" style="color:var(--text3)"></i>
         </div>
       </div>`).join("");
-  } catch(e) {
-    list.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`;
-  }
+  } catch(e) { list.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`; }
 }
 
 // ── User modal ────────────────────────────────────────────
-window.openUserModal = async function(rowIndex, username, role, dept, hasTwoFA) {
-  editingUser = { rowIndex, username };
-  document.getElementById("user-modal-title").textContent = `👤 ${username}`;
-  document.getElementById("edit-role").value    = role;
-  document.getElementById("edit-dept").value    = dept;
-  document.getElementById("edit-message").value = "";
-
-  // 2FA status + reset button
-  const totpEl  = document.getElementById("user-totp-status");
-  const resetBtn= document.getElementById("reset-totp-btn");
-  if (hasTwoFA) {
-    totpEl.innerHTML = `<span class="totp-pill totp-on">🔐 2FA פעיל</span>`;
-    resetBtn.style.display = "flex";
-    resetBtn.dataset.username = username;
-  } else {
-    totpEl.innerHTML = `<span class="totp-pill totp-off">2FA לא מוגדר</span>`;
-    resetBtn.style.display = "none";
-  }
-
+window.openUserModal = async function(rowIndex,username,role,dept) {
+  editingUser={rowIndex,username};
+  document.getElementById("user-modal-title").textContent=`👤 ${username}`;
+  document.getElementById("edit-role").value   =role;
+  document.getElementById("edit-dept").value   =dept;
+  document.getElementById("edit-message").value="";
   document.getElementById("user-modal").classList.add("show");
-
-  const histEl = document.getElementById("user-history");
-  histEl.innerHTML = '<div class="empty-msg">טוען...</div>';
+  const histEl=document.getElementById("user-history");
+  histEl.innerHTML='<div class="empty-msg">טוען...</div>';
   try {
-    const { history=[] } = await api.getUserHistory(username);
-    if (!history.length) {
-      histEl.innerHTML='<div class="empty-msg">אין היסטוריה</div>'; return;
-    }
-    histEl.innerHTML = history.slice(0,30).map(h => {
-      const ok   = h.status.toLowerCase()==="green";
-      const warn = h.type==="WARNING";
-      const dot  = warn?"warning":ok?"green":"red";
-      const lbl  = warn?"⚠️ אזהרה":ok?"✅ כניסה":"🔴 יציאה";
-      const loc  = h.location?` · ${h.location}`:"";
-      return `
-        <div class="hist-item">
-          <div class="hdot ${dot}"></div>
-          <div>
-            <div class="hstatus">${lbl} — ${h.employee}${loc}</div>
-            <div class="hmeta">${h.timestamp}</div>
-          </div>
-        </div>`;
+    const {history=[]}=await api.getUserHistory(username);
+    if (!history.length){histEl.innerHTML='<div class="empty-msg">אין היסטוריה</div>';return;}
+    histEl.innerHTML=history.slice(0,30).map(h=>{
+      const ok=h.status.toLowerCase()==="green";
+      const warn=h.type==="WARNING";
+      const remote=h.type==="REMOTE_UPDATE";
+      const dot=warn?"warning":remote?"remote":ok?"green":"red";
+      const lbl=warn?"⚠️ אזהרה":remote?"🖥️ שינוי מרחוק":ok?"✅ כניסה":"🔴 יציאה";
+      const loc=h.location?` · ${h.location}`:"";
+      return `<div class="hist-item">
+        <div class="hdot ${dot}"></div>
+        <div>
+          <div class="hstatus">${lbl} — ${h.employee}${loc}</div>
+          <div class="hmeta">${h.timestamp}</div>
+        </div>
+      </div>`;
     }).join("");
-  } catch(e) {
-    histEl.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`;
-  }
+  } catch(e){histEl.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`;}
 };
-window.closeUserModal = function() {
+window.closeUserModal=function(){
   document.getElementById("user-modal").classList.remove("show");
-  editingUser = null;
+  editingUser=null;
 };
-window.saveUserEdit = async function() {
+window.saveUserEdit=async function(){
   if (!editingUser) return;
-  const role    = document.getElementById("edit-role").value;
-  const dept    = document.getElementById("edit-dept").value.trim();
-  const message = document.getElementById("edit-message").value.trim();
+  const role   =document.getElementById("edit-role").value;
+  const dept   =document.getElementById("edit-dept").value.trim();
+  const message=document.getElementById("edit-message").value.trim();
   try {
-    await api.editUser(editingUser.rowIndex, role, dept, message);
+    await api.editUser(editingUser.rowIndex,role,dept,message);
     showToast(`✅ ${editingUser.username} עודכן`);
     closeUserModal(); loadUsers();
-  } catch(e) { showToast("❌ "+e.message,"err"); }
-};
-
-// ── 2FA reset ─────────────────────────────────────────────
-window.resetTotp = async function() {
-  const username = document.getElementById("reset-totp-btn").dataset.username;
-  if (!confirm(`לאפס את ה-2FA של ${username}? הם יצטרכו להגדיר מחדש.`)) return;
-  try {
-    await api.resetTotp(username);
-    showToast(`✅ 2FA של ${username} אופס`);
-    document.getElementById("user-totp-status").innerHTML =
-      `<span class="totp-pill totp-off">2FA לא מוגדר</span>`;
-    document.getElementById("reset-totp-btn").style.display = "none";
-    loadUsers();
-  } catch(e) { showToast("❌ "+e.message,"err"); }
+  } catch(e){showToast("❌ "+e.message,"err");}
 };
 
 // ── Delete user ───────────────────────────────────────────
-window.openDeleteModal = function() {
-  document.getElementById("delete-reason").value   = "";
-  document.getElementById("delete-emp-code").value = "";
-  const btn = document.getElementById("confirm-delete-btn");
-  btn.disabled=false; btn.textContent="מחק";
+window.openDeleteModal=function(){
+  document.getElementById("delete-reason").value="";
+  document.getElementById("delete-emp-code").value="";
+  const btn=document.getElementById("confirm-delete-btn");
+  btn.disabled=false;btn.textContent="מחק";
   document.getElementById("delete-modal").classList.add("show");
 };
-window.closeDeleteModal = function() {
+window.closeDeleteModal=function(){
   document.getElementById("delete-modal").classList.remove("show");
 };
-window.confirmDeleteUser = async function() {
+window.confirmDeleteUser=async function(){
   if (!editingUser) return;
-  const reason  = document.getElementById("delete-reason").value.trim();
-  const empCode = document.getElementById("delete-emp-code").value.trim();
-  if (!reason) { showToast("נא לציין סיבת מחיקה","err"); return; }
-  const btn = document.getElementById("confirm-delete-btn");
-  btn.disabled=true; btn.textContent="מוחק...";
+  const reason =document.getElementById("delete-reason").value.trim();
+  const empCode=document.getElementById("delete-emp-code").value.trim();
+  if (!reason){showToast("נא לציין סיבת מחיקה","err");return;}
+  const btn=document.getElementById("confirm-delete-btn");
+  btn.disabled=true;btn.textContent="מוחק...";
   try {
-    await api.deleteUser(editingUser.rowIndex, reason, empCode);
+    await api.deleteUser(editingUser.rowIndex,reason,empCode);
     showToast(`🗑 ${editingUser.username} הועבר לארכיון`);
-    closeDeleteModal(); closeUserModal(); loadUsers();
-  } catch(e) {
-    showToast("❌ "+e.message,"err");
-    btn.disabled=false; btn.textContent="מחק";
-  }
+    closeDeleteModal();closeUserModal();loadUsers();
+  } catch(e){showToast("❌ "+e.message,"err");btn.disabled=false;btn.textContent="מחק";}
 };
 
 // ── Department delete ─────────────────────────────────────
-window.deleteDepartment = async function() {
-  const dept   = document.getElementById("delete-dept-input").value.trim();
-  const errEl  = document.getElementById("dept-error");
-  const okEl   = document.getElementById("dept-success");
-  errEl.style.display="none"; okEl.style.display="none";
-  if (!dept) {
-    errEl.textContent="נא להכניס מזהה מסגרת";
-    errEl.style.display="block"; return;
-  }
-  if (!confirm(`למחוק את מסגרת "${dept}" וכל הנתונים?`)) return;
-  if (!confirm(`אישור סופי — מחיקה לצמיתות?`)) return;
+window.deleteDepartment=async function(){
+  const dept=document.getElementById("delete-dept-input").value.trim();
+  const errEl=document.getElementById("dept-error");
+  const okEl =document.getElementById("dept-success");
+  errEl.style.display="none";okEl.style.display="none";
+  if (!dept){errEl.textContent="נא להכניס מזהה מסגרת";errEl.style.display="block";return;}
+  if (!confirm(`למחוק את "${dept}"?`)) return;
+  if (!confirm("אישור סופי?")) return;
   try {
-    const res = await api.deleteDepartment(dept);
-    okEl.textContent=`✅ מסגרת "${dept}" נמחקה — ${res.deletedEmployees} עובדים, ${res.deletedUsers} משתמשים`;
+    const res=await api.deleteDepartment(dept);
+    okEl.textContent=`✅ "${dept}" נמחקה — ${res.deletedEmployees} עובדים, ${res.deletedUsers} משתמשים`;
     okEl.style.display="block";
     document.getElementById("delete-dept-input").value="";
     loadUsers();
-  } catch(e) {
-    errEl.textContent=e.message||"שגיאה"; errEl.style.display="block";
-  }
+  } catch(e){errEl.textContent=e.message||"שגיאה";errEl.style.display="block";}
 };
 
-// ── Audit log ─────────────────────────────────────────────
-window.loadAuditLog = async function() {
-  const container = document.getElementById("audit-log");
+// ── Audit log — shows REMOTE_UPDATE entries ───────────────
+window.loadAuditLog=async function(){
+  const container=document.getElementById("audit-log");
   container.innerHTML='<div class="empty-msg">טוען...</div>';
   try {
-    const { logs=[] } = await api.getAuditLog();
-    if (!logs.length) {
-      container.innerHTML='<div class="empty-msg">אין פעולות עדיין</div>'; return;
-    }
-    container.innerHTML = logs.map(log => {
-      const warn   = log.type==="WARNING";
-      const ok     = log.status.toLowerCase()==="green";
-      const dot    = warn?"warning":ok?"green":"red";
-      const lbl    = warn?"אזהרה":ok?"נוכח":"לא נוכח";
-      const cls    = warn?"log-status-warning":ok?"log-status-green":"log-status-red";
-      const loc    = log.location&&!warn?` (${log.location})`:"";
-      return `
-        <div class="log-entry">
-          <div class="log-dot ${dot}"></div>
-          <div class="log-body">
-            <div class="log-main">
-              <span class="actor">${log.user}</span> ›
-              <span class="emp">${log.employee}</span>
-              — <span class="${cls}">${lbl}${loc}</span>
-            </div>
-            <div class="log-time">${log.timestamp}</div>
+    const {logs=[]}=await api.getAuditLog();
+    if (!logs.length){container.innerHTML='<div class="empty-msg">אין פעולות עדיין</div>';return;}
+    container.innerHTML=logs.map(log=>{
+      const warn  =log.type==="WARNING";
+      const remote=log.type==="REMOTE_UPDATE";
+      const ok    =log.status.toLowerCase()==="green";
+      const dot   =warn?"warning":remote?"remote":ok?"green":"red";
+      const lbl   =warn?"אזהרה":remote?"שינוי מרחוק":ok?"נוכח":"לא נוכח";
+      const cls   =warn?"log-status-warning":remote?"log-status-remote":ok?"log-status-green":"log-status-red";
+      const loc   =log.location&&!warn?` (${log.location})`:"";
+      return `<div class="log-entry">
+        <div class="log-dot ${dot}"></div>
+        <div class="log-body">
+          <div class="log-main">
+            <span class="actor">${log.user}</span> ›
+            <span class="emp">${log.employee}</span>
+            — <span class="${cls}">${lbl}${loc}</span>
           </div>
-        </div>`;
+          <div class="log-time">${log.timestamp}</div>
+        </div>
+      </div>`;
     }).join("");
-  } catch(e) {
-    container.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`;
-  }
+  } catch(e){container.innerHTML=`<div class="empty-msg">שגיאה: ${e.message}</div>`;}
 };
 
-// ── Toast ─────────────────────────────────────────────────
-function showToast(msg, type="ok") {
-  const t = document.getElementById("toast");
-  t.textContent=msg; t.className=`toast show ${type}`;
-  setTimeout(()=>t.classList.remove("show"), 2800);
+function showToast(msg,type="ok"){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.className=`toast show ${type}`;
+  setTimeout(()=>t.classList.remove("show"),2800);
 }
 
-loadPending();
-loadTempAccess();
-loadUsers();
-loadAuditLog();
-setInterval(loadPending,    30000);
-setInterval(loadTempAccess, 30000);
-setInterval(loadAuditLog,   30000);
+loadPending();loadTempAccess();loadUsers();loadAuditLog();
+setInterval(loadPending,30000);setInterval(loadTempAccess,30000);setInterval(loadAuditLog,30000);
 </script>
 </body>
 </html>

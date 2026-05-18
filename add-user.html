@@ -1,190 +1,453 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>הוספת משתמש</title>
+<title>Sentinel — הוספת משתמש</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-  * { box-sizing:border-box; margin:0; padding:0; }
-  body { font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    background:#f0f2f5; min-height:100vh; display:flex;
-    justify-content:center; align-items:flex-start; padding:20px; }
-  .card { background:white; border-radius:20px; padding:36px 28px;
-    width:100%; max-width:460px; margin-top:20px;
-    box-shadow:0 8px 32px rgba(0,0,0,0.10); }
-  .back-btn { background:none; border:none; color:#007aff;
-    font-size:0.9rem; cursor:pointer; padding:0 0 20px;
-    display:block; }
-  .logo { font-size:2rem; margin-bottom:8px; }
-  h1 { font-size:1.4rem; font-weight:700; color:#1a1a1a; margin-bottom:4px; }
-  .subtitle { color:#888; font-size:0.9rem; margin-bottom:28px; line-height:1.5; }
-  label { display:block; font-size:0.85rem; color:#555;
-    font-weight:500; margin-bottom:6px; }
-  input, select { width:100%; padding:13px 16px; border:1.5px solid #e0e0e0;
-    border-radius:12px; font-size:1rem; outline:none;
-    transition:border-color 0.2s; margin-bottom:14px; background:white; }
-  input:focus, select:focus { border-color:#007aff; }
-  input:disabled, select:disabled { background:#f8f8f8; color:#aaa; }
-  .btn { width:100%; padding:16px; border:none; border-radius:14px;
-    font-size:1.05rem; font-weight:600; cursor:pointer; margin-top:4px; }
-  .btn-submit { background:#007aff; color:white; }
-  .btn-submit:hover { background:#0066dd; }
-  .btn-submit:disabled { background:#b0c8f0; cursor:not-allowed; }
-  .error   { background:#fff0f0; color:#cc0000; border-radius:10px;
-    padding:12px 16px; font-size:0.9rem; margin-top:12px;
-    display:none; text-align:center; }
-  .success-screen { display:none; text-align:center; padding:20px 0; }
-  .success-screen .icon { font-size:3rem; margin-bottom:12px; }
-  .success-screen h2 { font-size:1.3rem; font-weight:700; margin-bottom:8px; }
-  .success-screen p { color:#666; font-size:0.9rem; line-height:1.6;
-    margin-bottom:24px; }
-  .btn-back-home { background:#f0f2f5; color:#333; }
-  .btn-back-home:hover { background:#e4e6e9; }
-  .info-note { background:#e8f4fd; color:#0066cc; border-radius:10px;
-    padding:12px 14px; font-size:0.85rem; margin-bottom:16px;
-    line-height:1.5; border:1px solid #b3d9f7; }
+:root {
+  --bg:       #F4F6FB;
+  --surface:  #FFFFFF;
+  --surface2: #F0F2F8;
+  --border:   #E4E8F0;
+  --text:     #1A1D2E;
+  --text2:    #6B7280;
+  --text3:    #9CA3AF;
+  --accent:   #6366F1;
+  --accent-l: #EEF2FF;
+  --green:    #22C55E;
+  --green-l:  #DCFCE7;
+  --green-t:  #15803D;
+  --red:      #EF4444;
+  --red-l:    #FEE2E2;
+  --red-t:    #B91C1C;
+  --amber-l:  #FEF3C7;
+  --sidebar-w:220px;
+  --radius:   14px;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] {
+  --bg:       #0F1117;
+  --surface:  #1A1D2E;
+  --surface2: #252840;
+  --border:   #2E3250;
+  --text:     #F1F3F9;
+  --text2:    #9CA3AF;
+  --text3:    #6B7280;
+  --accent-l: #1E2050;
+  --green-l:  #052E16;
+  --green-t:  #86EFAC;
+  --red-l:    #2D0A0A;
+  --red-t:    #FCA5A5;
+  --amber-l:  #1C1008;
+  --shadow:   0 1px 3px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;display:flex;
+  transition:background 0.2s,color 0.2s;}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);background:var(--surface);
+  border-left:1px solid var(--border);height:100vh;
+  position:fixed;right:0;top:0;display:flex;flex-direction:column;z-index:50;}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);}
+.logo-mark{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.logo-text{font-size:15px;font-weight:700;color:var(--text);}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.nav-section{font-size:10px;color:var(--text3);font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;padding:8px 10px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border-radius:10px;font-size:13px;color:var(--text2);cursor:pointer;
+  transition:all 0.15s;text-decoration:none;border:none;background:none;
+  width:100%;text-align:right;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--accent-l);color:var(--accent);font-weight:600;}
+.nav-item i{font-size:17px;flex-shrink:0;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-l);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:12px;font-weight:600;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:var(--text2);}
+.theme-btn{background:none;border:none;cursor:pointer;color:var(--text2);
+  font-size:17px;padding:4px;border-radius:8px;transition:background 0.15s;}
+.theme-btn:hover{background:var(--surface2);}
+
+/* ── Main ── */
+.main{margin-right:var(--sidebar-w);flex:1;padding:40px 24px;
+  display:flex;justify-content:center;align-items:flex-start;}
+
+/* ── Form card ── */
+.form-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:32px 28px;width:100%;max-width:480px;
+  box-shadow:var(--shadow);}
+
+.form-header{margin-bottom:24px;}
+.form-icon{width:48px;height:48px;background:var(--accent-l);
+  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;}
+.form-icon i{font-size:24px;color:var(--accent);}
+.form-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.form-sub{font-size:13px;color:var(--text2);line-height:1.5;}
+
+.info-note{background:var(--accent-l);border:1px solid var(--accent);
+  border-radius:10px;padding:11px 14px;font-size:13px;color:var(--accent);
+  margin-bottom:16px;display:none;line-height:1.5;}
+
+.field{margin-bottom:14px;}
+label{display:block;font-size:13px;color:var(--text2);
+  font-weight:500;margin-bottom:6px;}
+input,select{width:100%;padding:10px 14px;border:1px solid var(--border);
+  border-radius:10px;font-size:14px;outline:none;
+  background:var(--surface);color:var(--text);
+  transition:border 0.15s;font-family:inherit;}
+input:focus,select:focus{border-color:var(--accent);}
+input:disabled,select:disabled{background:var(--surface2);color:var(--text3);
+  cursor:not-allowed;}
+
+/* Two column row */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+
+/* Password strength */
+.pw-strength{margin-top:5px;height:3px;border-radius:2px;
+  background:var(--surface2);overflow:hidden;}
+.pw-fill{height:100%;border-radius:2px;transition:width 0.3s,background 0.3s;}
+
+.btn-submit{width:100%;padding:13px;background:var(--accent);color:#fff;
+  border:none;border-radius:12px;font-size:15px;font-weight:600;
+  cursor:pointer;transition:opacity 0.2s;display:flex;
+  align-items:center;justify-content:center;gap:8px;margin-top:4px;}
+.btn-submit:hover{opacity:0.9;}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed;}
+
+.error-box{background:var(--red-l);color:var(--red-t);border-radius:10px;
+  padding:11px 14px;font-size:13px;margin-top:12px;display:none;
+  line-height:1.5;}
+
+/* ── Success screen ── */
+.success-screen{display:none;text-align:center;padding:12px 0;}
+.success-icon{width:64px;height:64px;background:var(--green-l);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;font-size:28px;}
+.success-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.success-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px;}
+.btn-secondary{width:100%;padding:12px;background:var(--surface2);
+  color:var(--text2);border:none;border-radius:12px;font-size:14px;
+  font-weight:600;cursor:pointer;margin-top:10px;transition:background 0.15s;}
+.btn-secondary:hover{background:var(--border);}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-right:0;padding:20px 14px 80px;}
+  .field-row{grid-template-columns:1fr;}
+  .bottom-nav{display:flex !important;}
+}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  z-index:50;padding:6px 0;}
+.bottom-nav-inner{display:flex;justify-content:space-around;}
+.bn-item{display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:6px 12px;font-size:10px;color:var(--text2);
+  cursor:pointer;border:none;background:none;}
+.bn-item.active{color:var(--accent);}
+.bn-item i{font-size:22px;}
 </style>
 </head>
 <body>
-<div class="card">
-  <button class="back-btn" onclick="window.location.href='dashboard.html'">
-    ⬅ חזרה לדשבורד
-  </button>
 
-  <!-- Form -->
-  <div id="form-section">
-    <div class="logo">➕</div>
-    <h1>הוספת משתמש חדש</h1>
-    <p class="subtitle">הבקשה תישלח למנהל המערכת לאישור</p>
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🛡</div>
+      <div>
+        <div class="logo-text">Sentinel</div>
+        <div class="logo-sub">מערכת נוכחות</div>
+      </div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">ראשי</div>
+    <a class="nav-item" href="dashboard.html">
+      <i class="ti ti-scan"></i>סריקה
+    </a>
+    <a class="nav-item" href="search.html">
+      <i class="ti ti-search"></i>חיפוש עובד
+    </a>
+    <a class="nav-item" href="dept.html" id="nav-dept" style="display:none">
+      <i class="ti ti-users"></i>אנשי המסגרת
+    </a>
+    <a class="nav-item" href="analytics.html" id="nav-analytics" style="display:none">
+      <i class="ti ti-chart-bar"></i>אנליטיקס
+    </a>
+    <div class="nav-section" id="nav-section-admin" style="display:none">ניהול</div>
+    <a class="nav-item" href="admin.html" id="nav-admin" style="display:none">
+      <i class="ti ti-settings"></i>ניהול מערכת
+    </a>
+    <a class="nav-item active" href="add-user.html">
+      <i class="ti ti-user-plus"></i>הוסף משתמש
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-avatar" id="sb-avatar">?</div>
+    <div class="user-info">
+      <div class="user-name" id="sb-username"></div>
+      <div class="user-role" id="sb-role"></div>
+    </div>
+    <button class="theme-btn" onclick="handleThemeToggle()" title="מצב תצוגה">
+      <i class="ti ti-sun" id="theme-icon"></i>
+    </button>
+    <button class="theme-btn" onclick="api.logout()" title="יציאה">
+      <i class="ti ti-logout"></i>
+    </button>
+  </div>
+</aside>
 
-    <div class="info-note" id="dept-note" style="display:none">
-      📌 כמנהל, המשתמש החדש יירשם עם המסגרת שלך אוטומטית
+<!-- ── Bottom nav ── -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bn-item" onclick="location.href='dashboard.html'">
+      <i class="ti ti-scan"></i>סריקה
+    </button>
+    <button class="bn-item" onclick="location.href='search.html'">
+      <i class="ti ti-search"></i>חיפוש
+    </button>
+    <button class="bn-item active" onclick="location.href='add-user.html'">
+      <i class="ti ti-user-plus"></i>משתמש
+    </button>
+    <button class="bn-item" id="bn-admin" style="display:none"
+      onclick="location.href='admin.html'">
+      <i class="ti ti-settings"></i>ניהול
+    </button>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main class="main">
+  <div class="form-card">
+
+    <!-- Form section -->
+    <div id="form-section">
+      <div class="form-header">
+        <div class="form-icon">
+          <i class="ti ti-user-plus"></i>
+        </div>
+        <div class="form-title">הוספת משתמש חדש</div>
+        <div class="form-sub">הבקשה תישלח למנהל המערכת לאישור</div>
+      </div>
+
+      <div class="info-note" id="dept-note">
+        <i class="ti ti-info-circle" style="vertical-align:-2px"></i>
+        כמנהל, המשתמש החדש יירשם עם המסגרת שלך אוטומטית
+      </div>
+
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0">
+          <label>שם פרטי</label>
+          <input type="text" id="firstName" placeholder="שם פרטי">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>שם משפחה</label>
+          <input type="text" id="lastName" placeholder="שם משפחה">
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label>שם משתמש</label>
+        <input type="text" id="username" placeholder="username" autocomplete="off"
+          style="direction:ltr">
+      </div>
+
+      <div class="field">
+        <label>סיסמה</label>
+        <input type="password" id="password" placeholder="מינימום 8 תווים"
+          oninput="checkPwStrength(this.value)">
+        <div class="pw-strength">
+          <div class="pw-fill" id="pw-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>אימות סיסמה</label>
+        <input type="password" id="password2" placeholder="הכנס סיסמה שוב">
+      </div>
+
+      <div class="field">
+        <label>כתובת אימייל</label>
+        <input type="email" id="email" placeholder="your@email.com" style="direction:ltr">
+      </div>
+
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0">
+          <label>תפקיד מבוקש</label>
+          <select id="requestedRole">
+            <option value="security">אבטחה</option>
+            <option value="manager">מנהל</option>
+            <option value="admin">מנהל מערכת</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>מסגרת</label>
+          <input type="text" id="dept" placeholder="שם / מספר מסגרת">
+        </div>
+      </div>
+
+      <button class="btn-submit" id="submit-btn" onclick="doSubmit()"
+        style="margin-top:20px">
+        <i class="ti ti-send"></i> שלח בקשה לאישור
+      </button>
+      <div class="error-box" id="error"></div>
     </div>
 
-    <label>שם מלא</label>
-    <input type="text" id="fullName" placeholder="שם פרטי ומשפחה">
+    <!-- Success screen -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">הבקשה נשלחה!</div>
+      <div class="success-sub">
+        הבקשה התקבלה ומחכה לאישור מנהל המערכת.<br>
+        לאחר האישור המשתמש יוכל להתחבר.
+      </div>
+      <button class="btn-submit" onclick="resetForm()">
+        <i class="ti ti-user-plus"></i> הוסף משתמש נוסף
+      </button>
+      <button class="btn-secondary" onclick="location.href='dashboard.html'">
+        <i class="ti ti-arrow-right" style="vertical-align:-2px"></i> חזרה לדשבורד
+      </button>
+    </div>
 
-    <label>שם משתמש</label>
-    <input type="text" id="username" placeholder="שם משתמש לכניסה" autocomplete="off">
-
-    <label>סיסמה</label>
-    <input type="password" id="password" placeholder="מינימום 8 תווים">
-
-    <label>אימות סיסמה</label>
-    <input type="password" id="password2" placeholder="הכנס סיסמה שוב">
-
-    <label>כתובת אימייל</label>
-    <input type="email" id="email" placeholder="your@email.com">
-
-    <label>תפקיד מבוקש</label>
-    <select id="requestedRole">
-      <option value="security">אבטחה (Security)</option>
-      <option value="manager">מנהל (Manager)</option>
-      <option value="admin">מנהל מערכת (Admin)</option>
-    </select>
-
-    <label>מסגרת</label>
-    <input type="text" id="dept" placeholder="מספר או שם מסגרת">
-
-    <button class="btn btn-submit" id="submit-btn" onclick="doSubmit()">
-      שלח בקשה לאישור
-    </button>
-    <div class="error" id="error"></div>
   </div>
-
-  <!-- Success -->
-  <div class="success-screen" id="success-screen">
-    <div class="icon">✅</div>
-    <h2>הבקשה נשלחה!</h2>
-    <p>הבקשה התקבלה ומחכה לאישור מנהל המערכת.<br>
-       לאחר האישור המשתמש יוכל להתחבר.</p>
-    <button class="btn btn-submit" onclick="resetForm()" style="margin-bottom:10px">
-      ➕ הוסף משתמש נוסף
-    </button>
-    <button class="btn btn-back-home" onclick="window.location.href='dashboard.html'">
-      ⬅ חזרה לדשבורד
-    </button>
-  </div>
-</div>
+</main>
 
 <script type="module">
-  import { api, requireAuth } from "./js/api.js";
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+window.api = api;
 
-  const user = requireAuth("manager");
-  if (!user) throw new Error("not authed");
+// ── Theme ─────────────────────────────────────────────────
+const th = initTheme();
+document.documentElement.setAttribute("data-theme", th);
+updateThemeIcon(th);
+window.handleThemeToggle = function() { updateThemeIcon(toggleTheme()); };
+function updateThemeIcon(t) {
+  const ic = document.getElementById("theme-icon");
+  if (ic) ic.className = t==="dark" ? "ti ti-moon" : "ti ti-sun";
+}
 
-  // If manager — lock dept to their own
-  if (user.role === "manager") {
-    const deptInput = document.getElementById("dept");
-    deptInput.value    = user.dept || "";
-    deptInput.disabled = true;
-    document.getElementById("dept-note").style.display = "block";
-    // Managers can't request admin
-    const roleSelect = document.getElementById("requestedRole");
-    const adminOpt = roleSelect.querySelector('option[value="admin"]');
-    if (adminOpt) adminOpt.remove();
+// ── Auth ──────────────────────────────────────────────────
+const user = requireAuth("manager");
+if (!user) throw new Error("not authed");
+
+document.getElementById("sb-avatar").textContent   = user.username.slice(0,2).toUpperCase();
+document.getElementById("sb-username").textContent = user.username;
+document.getElementById("sb-role").textContent     =
+  {admin:"מנהל מערכת",manager:"מנהל",security:"אבטחה"}[user.role]||user.role;
+
+// Role-based nav
+if (user.role==="manager") {
+  document.getElementById("nav-dept").style.display = "flex";
+}
+if (user.role==="admin") {
+  document.getElementById("nav-section-admin").style.display = "block";
+  document.getElementById("nav-admin").style.display         = "flex";
+  document.getElementById("nav-analytics").style.display     = "flex";
+  document.getElementById("bn-admin").style.display          = "flex";
+}
+
+// Manager: lock dept, hide admin option
+if (user.role==="manager") {
+  const deptInput = document.getElementById("dept");
+  deptInput.value    = user.dept||"";
+  deptInput.disabled = true;
+  document.getElementById("dept-note").style.display = "block";
+  const adminOpt = document.getElementById("requestedRole")
+    .querySelector('option[value="admin"]');
+  if (adminOpt) adminOpt.remove();
+}
+
+// ── Password strength ─────────────────────────────────────
+window.checkPwStrength = function(pw) {
+  const fill = document.getElementById("pw-fill");
+  let score = 0;
+  if (pw.length >= 8)  score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const pct   = Math.min(100, score * 20);
+  const color = pct <= 20 ? "var(--red)" : pct <= 60 ? "var(--amber)" : "var(--green)";
+  fill.style.width      = pct+"%";
+  fill.style.background = color;
+};
+
+// ── Submit ────────────────────────────────────────────────
+window.doSubmit = async function() {
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName  = document.getElementById("lastName").value.trim();
+  const fullName  = `${firstName} ${lastName}`.trim();
+  const username  = document.getElementById("username").value.trim();
+  const password  = document.getElementById("password").value;
+  const password2 = document.getElementById("password2").value;
+  const email     = document.getElementById("email").value.trim();
+  const role      = document.getElementById("requestedRole").value;
+  const dept      = document.getElementById("dept").value.trim();
+  const btn       = document.getElementById("submit-btn");
+  const errEl     = document.getElementById("error");
+  errEl.style.display = "none";
+
+  if (!firstName||!lastName||!username||!password||!email) {
+    errEl.textContent="נא למלא את כל השדות"; errEl.style.display="block"; return;
+  }
+  if (password.length < 8) {
+    errEl.textContent="הסיסמה חייבת להכיל לפחות 8 תווים"; errEl.style.display="block"; return;
+  }
+  if (password !== password2) {
+    errEl.textContent="הסיסמאות אינן תואמות"; errEl.style.display="block"; return;
+  }
+  if (!email.includes("@")) {
+    errEl.textContent="כתובת אימייל לא תקינה"; errEl.style.display="block"; return;
   }
 
-  window.doSubmit = async function() {
-    const fullName      = document.getElementById("fullName").value.trim();
-    const username      = document.getElementById("username").value.trim();
-    const password      = document.getElementById("password").value;
-    const password2     = document.getElementById("password2").value;
-    const email         = document.getElementById("email").value.trim();
-    const requestedRole = document.getElementById("requestedRole").value;
-    const dept          = document.getElementById("dept").value.trim();
-    const btn           = document.getElementById("submit-btn");
-    const errEl         = document.getElementById("error");
+  btn.disabled=true;
+  btn.innerHTML='<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> שולח...';
 
-    errEl.style.display = "none";
+  try {
+    await api.signup(username, password, email, fullName, role, dept);
+    document.getElementById("form-section").style.display   = "none";
+    document.getElementById("success-screen").style.display = "block";
+  } catch(e) {
+    errEl.textContent = e.message||"שגיאה בשליחת הבקשה";
+    errEl.style.display = "block";
+    btn.disabled=false;
+    btn.innerHTML='<i class="ti ti-send"></i> שלח בקשה לאישור';
+  }
+};
 
-    if (!fullName||!username||!password||!email) {
-      errEl.textContent = "נא למלא את כל השדות";
-      errEl.style.display = "block"; return;
-    }
-    if (password.length < 8) {
-      errEl.textContent = "הסיסמה חייבת להכיל לפחות 8 תווים";
-      errEl.style.display = "block"; return;
-    }
-    if (password !== password2) {
-      errEl.textContent = "הסיסמאות אינן תואמות";
-      errEl.style.display = "block"; return;
-    }
-    if (!email.includes("@")) {
-      errEl.textContent = "כתובת אימייל לא תקינה";
-      errEl.style.display = "block"; return;
-    }
+window.resetForm = function() {
+  ["firstName","lastName","username","password","password2","email"].forEach(id => {
+    document.getElementById(id).value="";
+  });
+  if (user.role!=="manager") document.getElementById("dept").value="";
+  document.getElementById("pw-fill").style.width="0%";
+  document.getElementById("error").style.display="none";
+  const btn = document.getElementById("submit-btn");
+  btn.disabled=false;
+  btn.innerHTML='<i class="ti ti-send"></i> שלח בקשה לאישור';
+  document.getElementById("form-section").style.display   ="block";
+  document.getElementById("success-screen").style.display ="none";
+};
 
-    btn.disabled = true;
-    btn.textContent = "שולח...";
-
-    try {
-      await api.signup(username, password, email, fullName, requestedRole, dept);
-      document.getElementById("form-section").style.display = "none";
-      document.getElementById("success-screen").style.display = "block";
-    } catch(e) {
-      errEl.textContent = e.message || "שגיאה בשליחת הבקשה";
-      errEl.style.display = "block";
-      btn.disabled = false;
-      btn.textContent = "שלח בקשה לאישור";
-    }
-  };
-
-  window.resetForm = function() {
-    document.getElementById("fullName").value   = "";
-    document.getElementById("username").value   = "";
-    document.getElementById("password").value   = "";
-    document.getElementById("password2").value  = "";
-    document.getElementById("email").value      = "";
-    if (user.role !== "manager") {
-      document.getElementById("dept").value = "";
-    }
-    document.getElementById("error").style.display  = "none";
-    document.getElementById("submit-btn").disabled  = false;
-    document.getElementById("submit-btn").textContent = "שלח בקשה לאישור";
-    document.getElementById("form-section").style.display   = "block";
-    document.getElementById("success-screen").style.display = "none";
-  };
+// Spinner keyframe
+const s = document.createElement("style");
+s.textContent="@keyframes spin{to{transform:rotate(360deg)}}";
+document.head.appendChild(s);
 </script>
 </body>
 </html>

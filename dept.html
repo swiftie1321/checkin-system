@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sentinel — אנשי המסגרת</title>
+<title>CheckIn — אנשי המסגרת</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 :root {
@@ -49,7 +49,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);color:var(--text);min-height:100vh;display:flex;
   transition:background 0.2s,color 0.2s;}
 
-/* ── Sidebar ── */
 .sidebar{width:var(--sidebar-w);background:var(--surface);
   border-left:1px solid var(--border);height:100vh;
   position:fixed;right:0;top:0;display:flex;flex-direction:column;z-index:50;}
@@ -82,7 +81,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:17px;padding:4px;border-radius:8px;transition:background 0.15s;}
 .theme-btn:hover{background:var(--surface2);}
 
-/* ── Main ── */
 .main{margin-right:var(--sidebar-w);flex:1;padding:24px 20px;max-width:760px;}
 .page-header{display:flex;justify-content:space-between;align-items:center;
   margin-bottom:20px;flex-wrap:wrap;gap:10px;}
@@ -91,7 +89,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .dept-tag{background:var(--accent-l);color:var(--accent);
   padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;}
 
-/* ── Stat row ── */
 .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
   gap:10px;margin-bottom:16px;}
 .stat-card{background:var(--surface);border:1px solid var(--border);
@@ -102,7 +99,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .val-red{color:var(--red);}
 .val-accent{color:var(--accent);}
 
-/* ── Search + add bar ── */
 .toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
 .search-wrap{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;
   background:var(--surface);border:1px solid var(--border);
@@ -116,7 +112,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   transition:opacity 0.2s;}
 .btn-add:hover{opacity:0.9;}
 
-/* ── Employee table ── */
 .card{background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
 .emp-table{width:100%;border-collapse:collapse;}
@@ -155,10 +150,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .btn-icon:hover{background:var(--surface2);color:var(--text);}
 .btn-icon.danger:hover{background:var(--red-l);color:var(--red-t);border-color:var(--red);}
 .btn-icon.warn:hover{background:var(--amber-l);color:#92400E;border-color:var(--amber);}
+.btn-icon.remote:hover{background:var(--accent-l);color:var(--accent);border-color:var(--accent);}
 
 .empty-msg{text-align:center;padding:32px;color:var(--text3);font-size:13px;}
 
-/* ── Toast ── */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
   color:#fff;padding:11px 22px;border-radius:12px;font-size:14px;
   opacity:0;transition:opacity 0.3s;pointer-events:none;
@@ -167,7 +162,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .toast.ok{background:#1A1D2E;}
 .toast.err{background:var(--red);}
 
-/* ── Modals ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
   z-index:300;justify-content:center;align-items:center;padding:20px;}
 .modal-overlay.show{display:flex;}
@@ -178,21 +172,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .modal p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
 .modal label{display:block;font-size:13px;color:var(--text2);
   font-weight:500;margin-bottom:6px;}
-.modal input{width:100%;padding:10px 14px;border:1px solid var(--border);
+.modal input,.modal select{width:100%;padding:10px 14px;border:1px solid var(--border);
   border-radius:10px;font-size:14px;outline:none;
-  background:var(--surface);color:var(--text);margin-bottom:12px;}
-.modal input:focus{border-color:var(--accent);}
+  background:var(--surface);color:var(--text);margin-bottom:12px;font-family:inherit;}
+.modal input:focus,.modal select:focus{border-color:var(--accent);}
+.modal textarea{width:100%;padding:10px 14px;border:1px solid var(--border);
+  border-radius:10px;font-size:14px;outline:none;resize:vertical;
+  min-height:80px;background:var(--surface);color:var(--text);
+  margin-bottom:12px;font-family:inherit;}
+.modal textarea:focus{border-color:var(--accent);}
 .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .btn-confirm{padding:12px;background:var(--accent);color:#fff;border:none;
-  border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
-  transition:opacity 0.2s;}
+  border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
 .btn-confirm:disabled{opacity:0.5;}
 .btn-confirm.red{background:var(--red);}
+.btn-confirm.green{background:var(--green);}
+.btn-confirm.amber{background:var(--amber);}
 .btn-dismiss{padding:12px;background:var(--surface2);color:var(--text2);
   border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
-.danger-zone{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
 
-/* ── Mobile ── */
 @media(max-width:768px){
   .sidebar{display:none;}
   .main{margin-right:0;padding:16px 14px 80px;}
@@ -216,16 +214,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
-      <div class="logo-icon">🛡</div>
+      <div class="logo-icon">✅</div>
       <div>
-        <div class="logo-text">Sentinel</div>
+        <div class="logo-text">CheckIn</div>
         <div class="logo-sub">מערכת נוכחות</div>
       </div>
     </div>
   </div>
   <nav class="nav">
     <div class="nav-section">ראשי</div>
-    <a class="nav-item" href="dashboard.html"><i class="ti ti-scan"></i>סריקה</a>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-layout-dashboard"></i>דשבורד</a>
     <a class="nav-item" href="search.html"><i class="ti ti-search"></i>חיפוש עובד</a>
     <a class="nav-item active" href="dept.html"><i class="ti ti-users"></i>אנשי המסגרת</a>
     <div class="nav-section">גישה</div>
@@ -253,7 +251,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bn-item" onclick="location.href='dashboard.html'">
-      <i class="ti ti-scan"></i>סריקה
+      <i class="ti ti-layout-dashboard"></i>דשבורד
     </button>
     <button class="bn-item" onclick="location.href='search.html'">
       <i class="ti ti-search"></i>חיפוש
@@ -279,7 +277,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     </button>
   </div>
 
-  <!-- Stat cards -->
   <div class="stat-row">
     <div class="stat-card">
       <div class="stat-label">נוכחים</div>
@@ -299,19 +296,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-wrap">
       <i class="ti ti-search"></i>
       <input type="text" id="search-input" placeholder="חיפוש לפי שם..."
         oninput="filterTable()">
     </div>
-    <button class="btn-add" onclick="loadEmployees()" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border)">
+    <button class="btn-add" onclick="loadEmployees()"
+      style="background:var(--surface2);color:var(--text2);border:1px solid var(--border)">
       <i class="ti ti-refresh"></i>
     </button>
   </div>
 
-  <!-- Table -->
   <div class="card">
     <table class="emp-table">
       <thead>
@@ -335,7 +331,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <div class="modal-overlay" id="add-modal">
   <div class="modal">
     <h3><i class="ti ti-user-plus" style="vertical-align:-2px;color:var(--accent)"></i> הוספת עובד</h3>
-    <p>העובד יתווסף למסגרת שלך. QR יופק על ידי מנהל המערכת.</p>
+    <p>העובד יתווסף למסגרת. QR יופק על ידי מנהל המערכת.</p>
     <label>שם מלא</label>
     <input type="text" id="add-name" placeholder="שם העובד">
     <label>שירות / יחידה</label>
@@ -358,8 +354,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       QR הקוד יתנקה — העובד יסומן כלא נוכח. ניתן להפעיל מחדש דרך יצירת QR חדש.
     </p>
     <div class="modal-actions" style="margin-top:14px">
-      <button class="btn-confirm" style="background:var(--amber)" id="deactivate-btn"
-        onclick="confirmDeactivate()">
+      <button class="btn-confirm amber" id="deactivate-btn" onclick="confirmDeactivate()">
         השבת
       </button>
       <button class="btn-dismiss" onclick="closeModal('deactivate-modal')">ביטול</button>
@@ -372,8 +367,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   <div class="modal">
     <h3><i class="ti ti-trash" style="vertical-align:-2px;color:var(--red)"></i> מחיקת עובד</h3>
     <p id="delete-text"></p>
-    <p style="font-size:12px;color:var(--red-t);background:var(--red-l);
-      padding:10px;border-radius:8px;">
+    <p style="font-size:12px;color:var(--red-t);background:var(--red-l);padding:10px;border-radius:8px">
       פעולה זו בלתי הפיכה — העובד יוסר לצמיתות מהמערכת.
     </p>
     <div class="modal-actions" style="margin-top:14px">
@@ -385,17 +379,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   </div>
 </div>
 
+<!-- Remote status modal -->
+<div class="modal-overlay" id="remote-modal">
+  <div class="modal">
+    <h3>🖥️ שינוי סטטוס מרחוק</h3>
+    <p id="remote-modal-text"></p>
+    <div id="remote-loc-section" style="display:none;margin-bottom:12px">
+      <label>מיקום יציאה</label>
+      <select id="remote-location-select">
+        <option value="">בחר מיקום...</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirm green" id="remote-btn-green"
+        onclick="confirmRemote('Green')">
+        <i class="ti ti-check" style="vertical-align:-2px"></i> נוכח
+      </button>
+      <button class="btn-confirm red" id="remote-btn-red"
+        onclick="showRemoteLoc()">
+        <i class="ti ti-x" style="vertical-align:-2px"></i> לא נוכח
+      </button>
+    </div>
+    <button class="btn-dismiss" style="width:100%;margin-top:10px"
+      onclick="closeModal('remote-modal')">ביטול</button>
+    <div id="remote-status"
+      style="margin-top:10px;font-size:13px;text-align:center"></div>
+  </div>
+</div>
+
 <!-- Temp access modal -->
 <div class="modal-overlay" id="temp-modal">
   <div class="modal">
     <h3>🔓 בקשת גישה זמנית</h3>
     <p>גישה לכל המסגרות למשך 24 שעות מרגע האישור</p>
     <label>סיבת הבקשה</label>
-    <textarea id="temp-reason" placeholder="תאר את הצורך..."
-      style="width:100%;padding:10px 14px;border:1px solid var(--border);
-      border-radius:10px;font-size:14px;outline:none;resize:vertical;
-      min-height:80px;background:var(--surface);color:var(--text);
-      margin-bottom:12px;font-family:inherit"></textarea>
+    <textarea id="temp-reason" placeholder="תאר את הצורך..."></textarea>
     <div class="modal-actions">
       <button class="btn-confirm" id="temp-btn" onclick="submitTempRequest()">שלח בקשה</button>
       <button class="btn-dismiss" onclick="closeModal('temp-modal')">ביטול</button>
@@ -407,7 +425,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js?v=3";
 window.api = api;
 
 // ── Theme ─────────────────────────────────────────────────
@@ -432,6 +450,16 @@ document.getElementById("nav-temp-btn").style.display = "flex";
 let allEmployees = [];
 let pendingRow   = null;
 let pendingName  = "";
+let remoteEmployee = { rowIndex:null, name:"", status:"" };
+
+// ── Load locations into remote modal ─────────────────────
+api.getLocations().then(data => {
+  const sel = document.getElementById("remote-location-select");
+  data.locations.forEach(loc => {
+    const opt = document.createElement("option");
+    opt.value=loc; opt.textContent=loc; sel.appendChild(opt);
+  });
+}).catch(()=>{});
 
 // ── Load employees ────────────────────────────────────────
 async function loadEmployees() {
@@ -467,6 +495,7 @@ function renderTable(emps) {
     const ini = emp.name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
     const ok  = emp.status.toLowerCase()==="green";
     const loc = emp.location ? ` · ${emp.location}` : "";
+    const safeName = emp.name.replace(/'/g,"\\'").replace(/"/g,"&quot;");
     return `
       <tr>
         <td>
@@ -486,7 +515,7 @@ function renderTable(emps) {
         </td>
         <td>
           <span class="qr-pill ${emp.hasQr?"qr-active":"qr-none"}">
-            <i class="ti ti-${emp.hasQr?"qrcode":"qrcode"}" style="font-size:11px"></i>
+            <i class="ti ti-qrcode" style="font-size:11px"></i>
             ${emp.hasQr?"פעיל":"ללא QR"}
           </span>
         </td>
@@ -494,12 +523,16 @@ function renderTable(emps) {
         <td class="scanner-meta">${emp.lastUpdated||"—"}</td>
         <td>
           <div class="action-btns">
+            <button class="btn-icon remote" title="שינוי סטטוס מרחוק"
+              onclick="openRemoteModal(${emp.rowIndex},'${safeName}','${emp.status}')">
+              <i class="ti ti-refresh-alert"></i>
+            </button>
             <button class="btn-icon warn" title="השבת QR"
-              onclick="openDeactivate(${emp.rowIndex},'${emp.name.replace(/'/g,"\\'")}')">
+              onclick="openDeactivate(${emp.rowIndex},'${safeName}')">
               <i class="ti ti-shield-off"></i>
             </button>
             <button class="btn-icon danger" title="מחק עובד"
-              onclick="openDelete(${emp.rowIndex},'${emp.name.replace(/'/g,"\\'")}')">
+              onclick="openDelete(${emp.rowIndex},'${safeName}')">
               <i class="ti ti-trash"></i>
             </button>
           </div>
@@ -519,10 +552,11 @@ window.filterTable = function() {
 
 // ── Add employee ──────────────────────────────────────────
 window.openAddModal = function() {
-  document.getElementById("add-name").value = "";
+  document.getElementById("add-name").value    = "";
   document.getElementById("add-service").value = "";
   const btn = document.getElementById("add-btn");
-  btn.disabled=false; btn.innerHTML='<i class="ti ti-check" style="vertical-align:-2px"></i> הוסף';
+  btn.disabled=false;
+  btn.innerHTML='<i class="ti ti-check" style="vertical-align:-2px"></i> הוסף';
   document.getElementById("add-modal").classList.add("show");
   setTimeout(()=>document.getElementById("add-name").focus(),100);
 };
@@ -533,7 +567,8 @@ window.confirmAdd = async function() {
   if (!name||!service) { showToast("נא למלא שם ושירות","err"); return; }
   btn.disabled=true; btn.innerHTML='שולח...';
   try {
-    await api.addDeptEmployee(name, service);
+    // Pass dept for non-manager roles; managers get dept from server
+    await api.addDeptEmployee(name, service, user.dept||"");
     showToast(`✅ ${name} נוסף למסגרת`);
     closeModal("add-modal");
     loadEmployees();
@@ -590,10 +625,57 @@ window.confirmDelete = async function() {
   }
 };
 
+// ── Remote status change ──────────────────────────────────
+window.openRemoteModal = function(rowIndex, name, status) {
+  remoteEmployee = { rowIndex, name, status };
+  const ok = status.toLowerCase()==="green";
+  document.getElementById("remote-modal-text").textContent =
+    `${name} — סטטוס נוכחי: ${ok?"✅ נוכח":"🔴 לא נוכח"}`;
+  document.getElementById("remote-loc-section").style.display = "none";
+  document.getElementById("remote-location-select").value    = "";
+  document.getElementById("remote-status").textContent       = "";
+  const btnG = document.getElementById("remote-btn-green");
+  const btnR = document.getElementById("remote-btn-red");
+  btnG.disabled=false; btnR.disabled=false;
+  btnR.innerHTML='<i class="ti ti-x" style="vertical-align:-2px"></i> לא נוכח';
+  btnR.onclick = showRemoteLoc;
+  document.getElementById("remote-modal").classList.add("show");
+};
+
+window.showRemoteLoc = function() {
+  document.getElementById("remote-loc-section").style.display = "block";
+  const btnR = document.getElementById("remote-btn-red");
+  btnR.innerHTML='<i class="ti ti-check" style="vertical-align:-2px"></i> אשר יציאה';
+  btnR.onclick = () => confirmRemote("Red");
+};
+
+window.confirmRemote = async function(status) {
+  const loc   = document.getElementById("remote-location-select").value;
+  const stat  = document.getElementById("remote-status");
+  if (status==="Red"&&!loc) {
+    stat.textContent="נא לבחור מיקום";
+    stat.style.color="var(--red)"; return;
+  }
+  const btnG=document.getElementById("remote-btn-green");
+  const btnR=document.getElementById("remote-btn-red");
+  btnG.disabled=true; btnR.disabled=true;
+  stat.textContent=""; 
+  try {
+    await api.updateStatusRemote(remoteEmployee.rowIndex, status, loc||"");
+    showToast(`✅ ${remoteEmployee.name} — ${status==="Green"?"נוכח":"לא נוכח"}`);
+    closeModal("remote-modal");
+    loadEmployees();
+  } catch(e) {
+    stat.textContent=e.message||"שגיאה";
+    stat.style.color="var(--red)";
+    btnG.disabled=false; btnR.disabled=false;
+  }
+};
+
 // ── Temp access ───────────────────────────────────────────
 window.openTempModal = function() {
-  document.getElementById("temp-reason").value="";
-  document.getElementById("temp-status").textContent="";
+  document.getElementById("temp-reason").value    = "";
+  document.getElementById("temp-status").textContent = "";
   const btn=document.getElementById("temp-btn");
   btn.disabled=false; btn.textContent="שלח בקשה";
   document.getElementById("temp-modal").classList.add("show");
@@ -606,12 +688,12 @@ window.submitTempRequest = async function() {
   btn.disabled=true; btn.textContent="שולח...";
   try {
     await api.requestTempAccess(reason);
-    stat.textContent="✅ הבקשה נשלחה";stat.style.color="var(--green)";
+    stat.textContent="✅ הבקשה נשלחה"; stat.style.color="var(--green)";
     document.getElementById("nav-temp-label").textContent="⏳ ממתין לאישור";
     document.getElementById("nav-temp-btn").disabled=true;
     setTimeout(()=>closeModal("temp-modal"),2000);
   } catch(e) {
-    stat.textContent=e.message||"שגיאה";stat.style.color="var(--red)";
+    stat.textContent=e.message||"שגיאה"; stat.style.color="var(--red)";
     btn.disabled=false; btn.textContent="שלח בקשה";
   }
 };

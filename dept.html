@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentinel — אנשי המסגרת</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --bg:       #F4F6FB;
+  --surface:  #FFFFFF;
+  --surface2: #F0F2F8;
+  --border:   #E4E8F0;
+  --text:     #1A1D2E;
+  --text2:    #6B7280;
+  --text3:    #9CA3AF;
+  --accent:   #6366F1;
+  --accent-l: #EEF2FF;
+  --green:    #22C55E;
+  --green-l:  #DCFCE7;
+  --green-t:  #15803D;
+  --red:      #EF4444;
+  --red-l:    #FEE2E2;
+  --red-t:    #B91C1C;
+  --amber:    #F59E0B;
+  --amber-l:  #FEF3C7;
+  --sidebar-w:220px;
+  --radius:   14px;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] {
+  --bg:       #0F1117;
+  --surface:  #1A1D2E;
+  --surface2: #252840;
+  --border:   #2E3250;
+  --text:     #F1F3F9;
+  --text2:    #9CA3AF;
+  --text3:    #6B7280;
+  --accent-l: #1E2050;
+  --green-l:  #052E16;
+  --green-t:  #86EFAC;
+  --red-l:    #2D0A0A;
+  --red-t:    #FCA5A5;
+  --amber-l:  #1C1008;
+  --shadow:   0 1px 3px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;display:flex;
+  transition:background 0.2s,color 0.2s;}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);background:var(--surface);
+  border-left:1px solid var(--border);height:100vh;
+  position:fixed;right:0;top:0;display:flex;flex-direction:column;z-index:50;}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border);}
+.logo-mark{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.logo-text{font-size:15px;font-weight:700;color:var(--text);}
+.logo-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.nav-section{font-size:10px;color:var(--text3);font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;padding:8px 10px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border-radius:10px;font-size:13px;color:var(--text2);cursor:pointer;
+  transition:all 0.15s;text-decoration:none;border:none;background:none;
+  width:100%;text-align:right;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--accent-l);color:var(--accent);font-weight:600;}
+.nav-item i{font-size:17px;flex-shrink:0;}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-l);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:12px;font-weight:600;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:var(--text2);}
+.theme-btn{background:none;border:none;cursor:pointer;color:var(--text2);
+  font-size:17px;padding:4px;border-radius:8px;transition:background 0.15s;}
+.theme-btn:hover{background:var(--surface2);}
+
+/* ── Main ── */
+.main{margin-right:var(--sidebar-w);flex:1;padding:24px 20px;max-width:760px;}
+.page-header{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.page-title{font-size:20px;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:10px;}
+.dept-tag{background:var(--accent-l);color:var(--accent);
+  padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;}
+
+/* ── Stat row ── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
+.stat-label{font-size:12px;color:var(--text2);margin-bottom:4px;}
+.stat-val{font-size:24px;font-weight:700;}
+.val-green{color:var(--green);}
+.val-red{color:var(--red);}
+.val-accent{color:var(--accent);}
+
+/* ── Search + add bar ── */
+.toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.search-wrap{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:9px 12px;}
+.search-wrap i{font-size:16px;color:var(--text3);flex-shrink:0;}
+.search-wrap input{border:none;background:transparent;font-size:14px;
+  color:var(--text);outline:none;width:100%;}
+.btn-add{display:flex;align-items:center;gap:6px;padding:9px 16px;
+  background:var(--accent);color:#fff;border:none;border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:opacity 0.2s;}
+.btn-add:hover{opacity:0.9;}
+
+/* ── Employee table ── */
+.card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.emp-table{width:100%;border-collapse:collapse;}
+.emp-table th{text-align:right;padding:11px 14px;font-size:12px;
+  font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);
+  background:var(--surface2);}
+.emp-table td{padding:12px 14px;border-bottom:1px solid var(--border);
+  font-size:13px;color:var(--text);}
+.emp-table tr:last-child td{border-bottom:none;}
+.emp-table tr:hover td{background:var(--surface2);}
+
+.emp-name-cell{display:flex;align-items:center;gap:10px;}
+.emp-avatar{width:32px;height:32px;border-radius:50%;
+  background:var(--accent-l);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;}
+.emp-name{font-weight:600;color:var(--text);}
+.emp-service{font-size:11px;color:var(--text2);margin-top:1px;}
+
+.status-pill{display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.pill-green{background:var(--green-l);color:var(--green-t);}
+.pill-red{background:var(--red-l);color:var(--red-t);}
+
+.qr-pill{display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.qr-active{background:var(--green-l);color:var(--green-t);}
+.qr-none{background:var(--surface2);color:var(--text3);}
+
+.scanner-meta{font-size:12px;color:var(--text2);}
+
+.action-btns{display:flex;gap:6px;}
+.btn-icon{background:none;border:1px solid var(--border);
+  border-radius:8px;padding:6px 8px;cursor:pointer;color:var(--text2);
+  font-size:14px;transition:all 0.15s;display:flex;align-items:center;}
+.btn-icon:hover{background:var(--surface2);color:var(--text);}
+.btn-icon.danger:hover{background:var(--red-l);color:var(--red-t);border-color:var(--red);}
+.btn-icon.warn:hover{background:var(--amber-l);color:#92400E;border-color:var(--amber);}
+
+.empty-msg{text-align:center;padding:32px;color:var(--text3);font-size:13px;}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  color:#fff;padding:11px 22px;border-radius:12px;font-size:14px;
+  opacity:0;transition:opacity 0.3s;pointer-events:none;
+  white-space:nowrap;z-index:999;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;}
+.toast.ok{background:#1A1D2E;}
+.toast.err{background:var(--red);}
+
+/* ── Modals ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:300;justify-content:center;align-items:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:20px;padding:24px;
+  width:100%;max-width:400px;border:1px solid var(--border);
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.modal p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
+.modal label{display:block;font-size:13px;color:var(--text2);
+  font-weight:500;margin-bottom:6px;}
+.modal input{width:100%;padding:10px 14px;border:1px solid var(--border);
+  border-radius:10px;font-size:14px;outline:none;
+  background:var(--surface);color:var(--text);margin-bottom:12px;}
+.modal input:focus{border-color:var(--accent);}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-confirm{padding:12px;background:var(--accent);color:#fff;border:none;
+  border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+  transition:opacity 0.2s;}
+.btn-confirm:disabled{opacity:0.5;}
+.btn-confirm.red{background:var(--red);}
+.btn-dismiss{padding:12px;background:var(--surface2);color:var(--text2);
+  border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
+.danger-zone{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-right:0;padding:16px 14px 80px;}
+  .emp-table th:nth-child(4),.emp-table td:nth-child(4),
+  .emp-table th:nth-child(5),.emp-table td:nth-child(5){display:none;}
+  .bottom-nav{display:flex !important;}
+}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  z-index:50;padding:6px 0;}
+.bottom-nav-inner{display:flex;justify-content:space-around;}
+.bn-item{display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:6px 12px;font-size:10px;color:var(--text2);
+  cursor:pointer;border:none;background:none;}
+.bn-item.active{color:var(--accent);}
+.bn-item i{font-size:22px;}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🛡</div>
+      <div>
+        <div class="logo-text">Sentinel</div>
+        <div class="logo-sub">מערכת נוכחות</div>
+      </div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">ראשי</div>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-scan"></i>סריקה</a>
+    <a class="nav-item" href="search.html"><i class="ti ti-search"></i>חיפוש עובד</a>
+    <a class="nav-item active" href="dept.html"><i class="ti ti-users"></i>אנשי המסגרת</a>
+    <div class="nav-section">גישה</div>
+    <button class="nav-item" id="nav-temp-btn" onclick="openTempModal()" style="display:none">
+      <i class="ti ti-lock-open"></i>
+      <span id="nav-temp-label">בקש גישה זמנית</span>
+    </button>
+    <a class="nav-item" href="add-user.html"><i class="ti ti-user-plus"></i>הוסף משתמש</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-avatar" id="sb-avatar">?</div>
+    <div class="user-info">
+      <div class="user-name" id="sb-username"></div>
+      <div class="user-role">מנהל</div>
+    </div>
+    <button class="theme-btn" onclick="handleThemeToggle()">
+      <i class="ti ti-sun" id="theme-icon"></i>
+    </button>
+    <button class="theme-btn" onclick="api.logout()">
+      <i class="ti ti-logout"></i>
+    </button>
+  </div>
+</aside>
+
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bn-item" onclick="location.href='dashboard.html'">
+      <i class="ti ti-scan"></i>סריקה
+    </button>
+    <button class="bn-item" onclick="location.href='search.html'">
+      <i class="ti ti-search"></i>חיפוש
+    </button>
+    <button class="bn-item active" onclick="location.href='dept.html'">
+      <i class="ti ti-users"></i>מסגרת
+    </button>
+    <button class="bn-item" onclick="openAddModal()">
+      <i class="ti ti-user-plus"></i>הוסף
+    </button>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">
+      <i class="ti ti-users" style="font-size:22px;color:var(--accent)"></i>
+      אנשי המסגרת
+      <span class="dept-tag" id="dept-tag"></span>
+    </div>
+    <button class="btn-add" onclick="openAddModal()">
+      <i class="ti ti-user-plus"></i> הוסף עובד
+    </button>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-label">נוכחים</div>
+      <div class="stat-val val-green" id="s-present">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">לא נוכחים</div>
+      <div class="stat-val val-red" id="s-absent">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">סה"כ</div>
+      <div class="stat-val val-accent" id="s-total">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">QR פעיל</div>
+      <div class="stat-val" id="s-qr">—</div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input type="text" id="search-input" placeholder="חיפוש לפי שם..."
+        oninput="filterTable()">
+    </div>
+    <button class="btn-add" onclick="loadEmployees()" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border)">
+      <i class="ti ti-refresh"></i>
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <table class="emp-table">
+      <thead>
+        <tr>
+          <th>עובד</th>
+          <th>סטטוס</th>
+          <th>QR</th>
+          <th>סורק אחרון</th>
+          <th>עדכון אחרון</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="emp-tbody">
+        <tr><td colspan="6" class="empty-msg">טוען...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Add employee modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3><i class="ti ti-user-plus" style="vertical-align:-2px;color:var(--accent)"></i> הוספת עובד</h3>
+    <p>העובד יתווסף למסגרת שלך. QR יופק על ידי מנהל המערכת.</p>
+    <label>שם מלא</label>
+    <input type="text" id="add-name" placeholder="שם העובד">
+    <label>שירות / יחידה</label>
+    <input type="text" id="add-service" placeholder="שם השירות">
+    <div class="modal-actions">
+      <button class="btn-confirm" id="add-btn" onclick="confirmAdd()">
+        <i class="ti ti-check" style="vertical-align:-2px"></i> הוסף
+      </button>
+      <button class="btn-dismiss" onclick="closeModal('add-modal')">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- Deactivate modal -->
+<div class="modal-overlay" id="deactivate-modal">
+  <div class="modal">
+    <h3><i class="ti ti-shield-off" style="vertical-align:-2px;color:var(--amber)"></i> השבתת עובד</h3>
+    <p id="deactivate-text"></p>
+    <p style="font-size:12px;color:var(--text3)">
+      QR הקוד יתנקה — העובד יסומן כלא נוכח. ניתן להפעיל מחדש דרך יצירת QR חדש.
+    </p>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn-confirm" style="background:var(--amber)" id="deactivate-btn"
+        onclick="confirmDeactivate()">
+        השבת
+      </button>
+      <button class="btn-dismiss" onclick="closeModal('deactivate-modal')">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3><i class="ti ti-trash" style="vertical-align:-2px;color:var(--red)"></i> מחיקת עובד</h3>
+    <p id="delete-text"></p>
+    <p style="font-size:12px;color:var(--red-t);background:var(--red-l);
+      padding:10px;border-radius:8px;">
+      פעולה זו בלתי הפיכה — העובד יוסר לצמיתות מהמערכת.
+    </p>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn-confirm red" id="delete-btn" onclick="confirmDelete()">
+        מחק לצמיתות
+      </button>
+      <button class="btn-dismiss" onclick="closeModal('delete-modal')">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- Temp access modal -->
+<div class="modal-overlay" id="temp-modal">
+  <div class="modal">
+    <h3>🔓 בקשת גישה זמנית</h3>
+    <p>גישה לכל המסגרות למשך 24 שעות מרגע האישור</p>
+    <label>סיבת הבקשה</label>
+    <textarea id="temp-reason" placeholder="תאר את הצורך..."
+      style="width:100%;padding:10px 14px;border:1px solid var(--border);
+      border-radius:10px;font-size:14px;outline:none;resize:vertical;
+      min-height:80px;background:var(--surface);color:var(--text);
+      margin-bottom:12px;font-family:inherit"></textarea>
+    <div class="modal-actions">
+      <button class="btn-confirm" id="temp-btn" onclick="submitTempRequest()">שלח בקשה</button>
+      <button class="btn-dismiss" onclick="closeModal('temp-modal')">ביטול</button>
+    </div>
+    <div id="temp-status" style="margin-top:10px;font-size:13px;text-align:center"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+window.api = api;
+
+// ── Theme ─────────────────────────────────────────────────
+const th = initTheme();
+document.documentElement.setAttribute("data-theme", th);
+updateThemeIcon(th);
+window.handleThemeToggle = function() { updateThemeIcon(toggleTheme()); };
+function updateThemeIcon(t) {
+  const ic = document.getElementById("theme-icon");
+  if (ic) ic.className = t==="dark"?"ti ti-moon":"ti ti-sun";
+}
+
+// ── Auth ──────────────────────────────────────────────────
+const user = requireAuth("manager");
+if (!user) throw new Error("not authed");
+document.getElementById("sb-avatar").textContent   = user.username.slice(0,2).toUpperCase();
+document.getElementById("sb-username").textContent = user.username;
+document.getElementById("dept-tag").textContent    = user.dept||"";
+document.getElementById("nav-temp-btn").style.display = "flex";
+
+// ── State ─────────────────────────────────────────────────
+let allEmployees = [];
+let pendingRow   = null;
+let pendingName  = "";
+
+// ── Load employees ────────────────────────────────────────
+async function loadEmployees() {
+  try {
+    const { employees=[] } = await api.getDeptEmployees();
+    allEmployees = employees;
+    renderTable(employees);
+    updateStats(employees);
+  } catch(e) {
+    document.getElementById("emp-tbody").innerHTML =
+      `<tr><td colspan="6" class="empty-msg">שגיאה: ${e.message}</td></tr>`;
+  }
+}
+
+function updateStats(emps) {
+  const present = emps.filter(e=>e.status.toLowerCase()==="green").length;
+  const withQr  = emps.filter(e=>e.hasQr).length;
+  document.getElementById("s-present").textContent = present;
+  document.getElementById("s-absent").textContent  = emps.length - present;
+  document.getElementById("s-total").textContent   = emps.length;
+  document.getElementById("s-qr").textContent      = withQr;
+}
+
+function renderTable(emps) {
+  const tbody = document.getElementById("emp-tbody");
+  if (!emps.length) {
+    tbody.innerHTML=`<tr><td colspan="6" class="empty-msg">
+      <i class="ti ti-users" style="font-size:32px;display:block;margin-bottom:8px;color:var(--text3)"></i>
+      אין עובדים במסגרת עדיין
+    </td></tr>`; return;
+  }
+  tbody.innerHTML = emps.map(emp => {
+    const ini = emp.name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+    const ok  = emp.status.toLowerCase()==="green";
+    const loc = emp.location ? ` · ${emp.location}` : "";
+    return `
+      <tr>
+        <td>
+          <div class="emp-name-cell">
+            <div class="emp-avatar">${ini}</div>
+            <div>
+              <div class="emp-name">${emp.name}</div>
+              <div class="emp-service">${emp.service}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <span class="status-pill ${ok?"pill-green":"pill-red"}">
+            <i class="ti ti-${ok?"circle-check":"circle-x"}" style="font-size:12px"></i>
+            ${ok?"נוכח":"לא נוכח"}${!ok?loc:""}
+          </span>
+        </td>
+        <td>
+          <span class="qr-pill ${emp.hasQr?"qr-active":"qr-none"}">
+            <i class="ti ti-${emp.hasQr?"qrcode":"qrcode"}" style="font-size:11px"></i>
+            ${emp.hasQr?"פעיל":"ללא QR"}
+          </span>
+        </td>
+        <td class="scanner-meta">${emp.lastScannedBy||"—"}</td>
+        <td class="scanner-meta">${emp.lastUpdated||"—"}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn-icon warn" title="השבת QR"
+              onclick="openDeactivate(${emp.rowIndex},'${emp.name.replace(/'/g,"\\'")}')">
+              <i class="ti ti-shield-off"></i>
+            </button>
+            <button class="btn-icon danger" title="מחק עובד"
+              onclick="openDelete(${emp.rowIndex},'${emp.name.replace(/'/g,"\\'")}')">
+              <i class="ti ti-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`;
+  }).join("");
+}
+
+// ── Filter ────────────────────────────────────────────────
+window.filterTable = function() {
+  const q = document.getElementById("search-input").value.toLowerCase();
+  renderTable(q ? allEmployees.filter(e =>
+    e.name.toLowerCase().includes(q) ||
+    e.service.toLowerCase().includes(q)
+  ) : allEmployees);
+};
+
+// ── Add employee ──────────────────────────────────────────
+window.openAddModal = function() {
+  document.getElementById("add-name").value = "";
+  document.getElementById("add-service").value = "";
+  const btn = document.getElementById("add-btn");
+  btn.disabled=false; btn.innerHTML='<i class="ti ti-check" style="vertical-align:-2px"></i> הוסף';
+  document.getElementById("add-modal").classList.add("show");
+  setTimeout(()=>document.getElementById("add-name").focus(),100);
+};
+window.confirmAdd = async function() {
+  const name    = document.getElementById("add-name").value.trim();
+  const service = document.getElementById("add-service").value.trim();
+  const btn     = document.getElementById("add-btn");
+  if (!name||!service) { showToast("נא למלא שם ושירות","err"); return; }
+  btn.disabled=true; btn.innerHTML='שולח...';
+  try {
+    await api.addDeptEmployee(name, service);
+    showToast(`✅ ${name} נוסף למסגרת`);
+    closeModal("add-modal");
+    loadEmployees();
+  } catch(e) {
+    showToast(e.message||"שגיאה","err");
+    btn.disabled=false;
+    btn.innerHTML='<i class="ti ti-check" style="vertical-align:-2px"></i> הוסף';
+  }
+};
+
+// ── Deactivate ────────────────────────────────────────────
+window.openDeactivate = function(rowIndex, name) {
+  pendingRow=rowIndex; pendingName=name;
+  document.getElementById("deactivate-text").textContent =
+    `להשבית את ${name}? QR הקוד יתנקה.`;
+  const btn=document.getElementById("deactivate-btn");
+  btn.disabled=false; btn.textContent="השבת";
+  document.getElementById("deactivate-modal").classList.add("show");
+};
+window.confirmDeactivate = async function() {
+  const btn=document.getElementById("deactivate-btn");
+  btn.disabled=true; btn.textContent="מבצע...";
+  try {
+    await api.deactivateDeptEmployee(pendingRow, pendingName);
+    showToast(`✅ ${pendingName} הושבת`);
+    closeModal("deactivate-modal");
+    loadEmployees();
+  } catch(e) {
+    showToast(e.message||"שגיאה","err");
+    btn.disabled=false; btn.textContent="השבת";
+  }
+};
+
+// ── Delete ────────────────────────────────────────────────
+window.openDelete = function(rowIndex, name) {
+  pendingRow=rowIndex; pendingName=name;
+  document.getElementById("delete-text").textContent =
+    `למחוק את ${name} לצמיתות מהמסגרת?`;
+  const btn=document.getElementById("delete-btn");
+  btn.disabled=false; btn.textContent="מחק לצמיתות";
+  document.getElementById("delete-modal").classList.add("show");
+};
+window.confirmDelete = async function() {
+  const btn=document.getElementById("delete-btn");
+  btn.disabled=true; btn.textContent="מוחק...";
+  try {
+    await api.deleteDeptEmployee(pendingRow, pendingName);
+    showToast(`🗑 ${pendingName} נמחק`);
+    closeModal("delete-modal");
+    loadEmployees();
+  } catch(e) {
+    showToast(e.message||"שגיאה","err");
+    btn.disabled=false; btn.textContent="מחק לצמיתות";
+  }
+};
+
+// ── Temp access ───────────────────────────────────────────
+window.openTempModal = function() {
+  document.getElementById("temp-reason").value="";
+  document.getElementById("temp-status").textContent="";
+  const btn=document.getElementById("temp-btn");
+  btn.disabled=false; btn.textContent="שלח בקשה";
+  document.getElementById("temp-modal").classList.add("show");
+};
+window.submitTempRequest = async function() {
+  const reason=document.getElementById("temp-reason").value.trim();
+  const btn=document.getElementById("temp-btn");
+  const stat=document.getElementById("temp-status");
+  if (!reason){stat.textContent="נא לציין סיבה";stat.style.color="var(--red)";return;}
+  btn.disabled=true; btn.textContent="שולח...";
+  try {
+    await api.requestTempAccess(reason);
+    stat.textContent="✅ הבקשה נשלחה";stat.style.color="var(--green)";
+    document.getElementById("nav-temp-label").textContent="⏳ ממתין לאישור";
+    document.getElementById("nav-temp-btn").disabled=true;
+    setTimeout(()=>closeModal("temp-modal"),2000);
+  } catch(e) {
+    stat.textContent=e.message||"שגיאה";stat.style.color="var(--red)";
+    btn.disabled=false; btn.textContent="שלח בקשה";
+  }
+};
+
+// ── Helpers ───────────────────────────────────────────────
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove("show");
+};
+function showToast(msg, type="ok") {
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.className=`toast show ${type}`;
+  setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+loadEmployees();
+setInterval(loadEmployees, 30000);
+</script>
+</body>
+</html>

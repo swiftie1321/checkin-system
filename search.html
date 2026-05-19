@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sentinel — חיפוש</title>
+<title>CheckIn — חיפוש</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -50,7 +50,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);color:var(--text);min-height:100vh;display:flex;
   transition:background 0.2s,color 0.2s;}
 
-/* ── Sidebar (shared) ── */
+/* ── Sidebar ── */
 .sidebar{width:var(--sidebar-w);background:var(--surface);
   border-left:1px solid var(--border);height:100vh;
   position:fixed;right:0;top:0;display:flex;flex-direction:column;z-index:50;}
@@ -84,86 +84,139 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .theme-btn:hover{background:var(--surface2);}
 
 /* ── Main ── */
-.main{margin-right:var(--sidebar-w);flex:1;padding:24px 20px;max-width:720px;}
+.main{margin-right:var(--sidebar-w);flex:1;padding:24px 20px;max-width:740px;}
 .page-title{font-size:20px;font-weight:700;color:var(--text);
   display:flex;align-items:center;gap:10px;margin-bottom:20px;}
 
 /* ── Search bar ── */
 .search-bar{display:flex;align-items:center;gap:10px;
   background:var(--surface);border:1px solid var(--border);
-  border-radius:14px;padding:12px 16px;margin-bottom:20px;
-  box-shadow:var(--shadow);}
-.search-bar i{font-size:20px;color:var(--text3);flex-shrink:0;}
+  border-radius:14px;padding:12px 16px;margin-bottom:20px;box-shadow:var(--shadow);}
+.search-bar i.si{font-size:20px;color:var(--text3);flex-shrink:0;}
 .search-bar input{border:none;background:transparent;font-size:16px;
-  color:var(--text);outline:none;flex:1;}
+  color:var(--text);outline:none;flex:1;font-family:inherit;}
 .search-bar input::placeholder{color:var(--text3);}
-.search-bar .clear-btn{background:none;border:none;cursor:pointer;
-  color:var(--text3);font-size:16px;padding:2px;display:none;}
-.search-bar .clear-btn.show{display:block;}
+.clear-btn{background:none;border:none;cursor:pointer;color:var(--text3);
+  font-size:16px;padding:2px;display:none;transition:color 0.15s;}
+.clear-btn.show{display:block;}
+.clear-btn:hover{color:var(--text2);}
 
-/* ── Empty / hint state ── */
+/* ── States ── */
 .hint-state{text-align:center;padding:60px 20px;color:var(--text3);}
-.hint-state i{font-size:48px;display:block;margin-bottom:12px;}
+.hint-state i{font-size:48px;display:block;margin-bottom:12px;color:var(--text3);}
 .hint-state p{font-size:14px;line-height:1.6;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite;}
 
-/* ── Results sections ── */
+/* ── Section title ── */
 .section-title{font-size:12px;font-weight:600;color:var(--text3);
-  text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;}
+  text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;}
 
-/* ── Employee result card ── */
+/* ── Employee card ── */
 .emp-card{background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius);padding:20px;margin-bottom:12px;
   box-shadow:var(--shadow);}
-.emp-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.emp-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
 .emp-avatar{width:48px;height:48px;border-radius:50%;background:var(--accent-l);
   color:var(--accent);display:flex;align-items:center;justify-content:center;
   font-size:18px;font-weight:700;flex-shrink:0;}
 .emp-name{font-size:17px;font-weight:700;color:var(--text);}
 .emp-meta{font-size:13px;color:var(--text2);margin-top:3px;}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
 .status-pill{display:inline-flex;align-items:center;gap:4px;
-  padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;
-  margin-top:4px;}
+  padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
 .pill-green{background:var(--green-l);color:var(--green-t);}
 .pill-red{background:var(--red-l);color:var(--red-t);}
-.qr-pill{background:var(--surface2);color:var(--text3);
-  padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;
-  display:inline-flex;align-items:center;gap:3px;margin-top:4px;}
+.qr-pill{display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
 .qr-active{background:var(--green-l);color:var(--green-t);}
+.qr-none{background:var(--surface2);color:var(--text3);}
 
-/* Mini chart */
-.mini-chart-wrap{height:120px;margin:14px 0 10px;}
+/* ── 7-day chart ── */
+.chart-section{margin-bottom:16px;}
+.chart-label{font-size:11px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+.chart-wrap{position:relative;height:110px;}
 
-/* History list */
+/* ── History ── */
+.hist-section{border-top:1px solid var(--border);padding-top:12px;margin-top:4px;}
 .hist-title{font-size:11px;font-weight:600;color:var(--text3);
   text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
-.hist-item{display:flex;align-items:center;gap:10px;padding:7px 0;
-  border-bottom:1px solid var(--border);font-size:13px;}
+.hist-item{display:flex;align-items:flex-start;gap:10px;
+  padding:7px 0;border-bottom:1px solid var(--border);}
 .hist-item:last-child{border-bottom:none;}
-.h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
 .h-dot.green{background:var(--green);}
 .h-dot.red{background:var(--red);}
 .h-dot.warning{background:var(--amber);}
+.h-dot.remote{background:var(--accent);}
 .h-body{flex:1;}
-.h-status{font-weight:600;color:var(--text);}
+.h-status{font-size:13px;font-weight:600;color:var(--text);}
 .h-meta{font-size:11px;color:var(--text3);margin-top:1px;}
+
+/* ── Management buttons ── */
+.mgmt-row{display:flex;gap:8px;flex-wrap:wrap;
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.btn-mgmt{display:flex;align-items:center;gap:6px;padding:8px 14px;
+  border:none;border-radius:10px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:opacity 0.2s;}
+.btn-mgmt:hover{opacity:0.85;}
+.btn-mgmt.remote{background:var(--accent-l);color:var(--accent);}
+.btn-mgmt.warn{background:var(--amber-l);color:#92400E;}
+.btn-mgmt.danger{background:var(--red-l);color:var(--red-t);}
 
 /* ── User result card ── */
 .user-card{background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:16px;margin-bottom:8px;
+  border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;
   box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
-.user-avatar-sm{width:38px;height:38px;border-radius:50%;
-  background:var(--accent-l);color:var(--accent);
-  display:flex;align-items:center;justify-content:center;
+.user-av{width:38px;height:38px;border-radius:50%;background:var(--accent-l);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
   font-size:13px;font-weight:700;flex-shrink:0;}
 .user-body{flex:1;}
 .user-name{font-size:14px;font-weight:600;color:var(--text);}
-.user-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.user-meta-txt{font-size:12px;color:var(--text2);margin-top:2px;}
 .role-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
 .role-admin{background:var(--amber-l);color:#92400E;}
 .role-manager{background:var(--accent-l);color:var(--accent);}
 .role-security{background:var(--green-l);color:var(--green-t);}
 
-.empty-msg{color:var(--text3);text-align:center;padding:20px;font-size:13px;}
+/* ── Modals ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:300;justify-content:center;align-items:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:20px;padding:24px;
+  width:100%;max-width:400px;border:1px solid var(--border);
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.modal p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
+.modal label{display:block;font-size:13px;color:var(--text2);
+  font-weight:500;margin-bottom:6px;}
+.modal select{width:100%;padding:10px 14px;border:1px solid var(--border);
+  border-radius:10px;font-size:14px;outline:none;
+  background:var(--surface);color:var(--text);
+  margin-bottom:12px;font-family:inherit;}
+.modal select:focus{border-color:var(--accent);}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-confirm{padding:12px;background:var(--accent);color:#fff;border:none;
+  border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+  transition:opacity 0.2s;}
+.btn-confirm:disabled{opacity:0.5;}
+.btn-confirm.green{background:var(--green);}
+.btn-confirm.red{background:var(--red);}
+.btn-confirm.amber{background:var(--amber);}
+.btn-dismiss{padding:12px;background:var(--surface2);color:var(--text2);
+  border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
+.modal-status{margin-top:10px;font-size:13px;text-align:center;}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  color:#fff;padding:11px 22px;border-radius:12px;font-size:14px;
+  opacity:0;transition:opacity 0.3s;pointer-events:none;
+  white-space:nowrap;z-index:999;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;}
+.toast.ok{background:#1A1D2E;}
+.toast.err{background:var(--red);}
 
 /* ── Mobile ── */
 @media(max-width:768px){
@@ -187,16 +240,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
-      <div class="logo-icon">🛡</div>
+      <div class="logo-icon">✅</div>
       <div>
-        <div class="logo-text">Sentinel</div>
+        <div class="logo-text">CheckIn</div>
         <div class="logo-sub">מערכת נוכחות</div>
       </div>
     </div>
   </div>
   <nav class="nav">
     <div class="nav-section">ראשי</div>
-    <a class="nav-item" href="dashboard.html"><i class="ti ti-scan"></i>סריקה</a>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-layout-dashboard"></i>דשבורד</a>
     <a class="nav-item active" href="search.html"><i class="ti ti-search"></i>חיפוש עובד</a>
     <a class="nav-item" href="dept.html" id="nav-dept" style="display:none">
       <i class="ti ti-users"></i>אנשי המסגרת
@@ -210,6 +263,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     <div class="nav-section" id="nav-section-admin" style="display:none">ניהול</div>
     <a class="nav-item" href="admin.html" id="nav-admin" style="display:none">
       <i class="ti ti-settings"></i>ניהול מערכת
+    </a>
+    <a class="nav-item" href="add-user.html" id="nav-adduser" style="display:none">
+      <i class="ti ti-user-plus"></i>הוסף משתמש
     </a>
   </nav>
   <div class="sidebar-footer">
@@ -230,7 +286,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bn-item" onclick="location.href='dashboard.html'">
-      <i class="ti ti-scan"></i>סריקה
+      <i class="ti ti-layout-dashboard"></i>דשבורד
     </button>
     <button class="bn-item active" onclick="location.href='search.html'">
       <i class="ti ti-search"></i>חיפוש
@@ -252,17 +308,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     חיפוש עובד
   </div>
 
-  <!-- Search bar -->
   <div class="search-bar">
-    <i class="ti ti-search"></i>
-    <input type="text" id="search-input" placeholder="הקלד שם עובד, מסגרת או שירות..."
+    <i class="ti ti-search si"></i>
+    <input type="text" id="search-input"
+      placeholder="הקלד שם עובד, מסגרת או שירות..."
       oninput="onSearchInput(this.value)" autocomplete="off">
     <button class="clear-btn" id="clear-btn" onclick="clearSearch()">
       <i class="ti ti-x"></i>
     </button>
   </div>
 
-  <!-- Results -->
   <div id="results">
     <div class="hint-state">
       <i class="ti ti-search"></i>
@@ -271,8 +326,70 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   </div>
 </main>
 
+<!-- Remote status modal -->
+<div class="modal-overlay" id="remote-modal">
+  <div class="modal">
+    <h3>🖥️ שינוי סטטוס מרחוק</h3>
+    <p id="remote-modal-text"></p>
+    <div id="remote-loc-wrap" style="display:none">
+      <label>מיקום יציאה</label>
+      <select id="remote-loc-select">
+        <option value="">בחר מיקום...</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirm green" id="remote-green-btn"
+        onclick="confirmRemote('Green')">
+        <i class="ti ti-check" style="vertical-align:-2px"></i> נוכח
+      </button>
+      <button class="btn-confirm red" id="remote-red-btn"
+        onclick="handleRemoteRed()">
+        <i class="ti ti-x" style="vertical-align:-2px"></i> לא נוכח
+      </button>
+    </div>
+    <button class="btn-dismiss" style="width:100%;margin-top:10px"
+      onclick="closeModal('remote-modal')">ביטול</button>
+    <div class="modal-status" id="remote-modal-status"></div>
+  </div>
+</div>
+
+<!-- Deactivate confirm modal -->
+<div class="modal-overlay" id="deactivate-modal">
+  <div class="modal">
+    <h3><i class="ti ti-shield-off" style="vertical-align:-2px;color:var(--amber)"></i> השבתת עובד</h3>
+    <p id="deactivate-modal-text"></p>
+    <p style="font-size:12px;color:var(--text3)">
+      QR הקוד יתנקה — העובד יסומן כלא נוכח.
+    </p>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn-confirm amber" id="deactivate-confirm-btn"
+        onclick="confirmDeactivate()">השבת</button>
+      <button class="btn-dismiss" onclick="closeModal('deactivate-modal')">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3><i class="ti ti-trash" style="vertical-align:-2px;color:var(--red)"></i> מחיקת עובד</h3>
+    <p id="delete-modal-text"></p>
+    <p style="font-size:12px;color:var(--red-t);background:var(--red-l);
+      padding:10px;border-radius:8px;">
+      פעולה זו בלתי הפיכה — העובד יוסר לצמיתות מהמערכת.
+    </p>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn-confirm red" id="delete-confirm-btn"
+        onclick="confirmDelete()">מחק לצמיתות</button>
+      <button class="btn-dismiss" onclick="closeModal('delete-modal')">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script type="module">
-import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js?v=3";
 window.api = api;
 
 // ── Theme ─────────────────────────────────────────────────
@@ -281,8 +398,8 @@ document.documentElement.setAttribute("data-theme", th);
 updateThemeIcon(th);
 window.handleThemeToggle = function() { updateThemeIcon(toggleTheme()); };
 function updateThemeIcon(t) {
-  const ic=document.getElementById("theme-icon");
-  if(ic) ic.className=t==="dark"?"ti ti-moon":"ti ti-sun";
+  const ic = document.getElementById("theme-icon");
+  if (ic) ic.className = t==="dark" ? "ti ti-moon" : "ti ti-sun";
 }
 
 // ── Auth ──────────────────────────────────────────────────
@@ -293,92 +410,150 @@ document.getElementById("sb-username").textContent = user.username;
 document.getElementById("sb-role").textContent     =
   {admin:"מנהל מערכת",manager:"מנהל",security:"אבטחה"}[user.role]||user.role;
 
-// Nav visibility
+// Role-based nav
 if (user.role==="manager") {
-  document.getElementById("nav-dept").style.display  = "flex";
-  document.getElementById("bn-dept").style.display   = "flex";
+  document.getElementById("nav-dept").style.display ="flex";
+  document.getElementById("bn-dept").style.display  ="flex";
 }
 if (user.role==="security"||user.role==="admin") {
-  document.getElementById("nav-stats").style.display    = "flex";
-  document.getElementById("nav-analytics").style.display= "flex";
+  document.getElementById("nav-stats").style.display   ="flex";
+  document.getElementById("nav-analytics").style.display="flex";
+}
+if (user.role==="admin"||user.role==="manager") {
+  document.getElementById("nav-adduser").style.display="flex";
 }
 if (user.role==="admin") {
-  document.getElementById("nav-section-admin").style.display = "block";
-  document.getElementById("nav-admin").style.display         = "flex";
-  document.getElementById("bn-admin").style.display          = "flex";
+  document.getElementById("nav-section-admin").style.display="block";
+  document.getElementById("nav-admin").style.display         ="flex";
+  document.getElementById("bn-admin").style.display          ="flex";
 }
+
+// ── Load locations for remote modal ───────────────────────
+let locations = [];
+api.getLocations().then(d => {
+  locations = d.locations||[];
+  const sel = document.getElementById("remote-loc-select");
+  locations.forEach(loc => {
+    const opt = document.createElement("option");
+    opt.value=loc; opt.textContent=loc; sel.appendChild(opt);
+  });
+}).catch(()=>{});
+
+// ── Chart helpers ─────────────────────────────────────────
+const isDark  = () => document.documentElement.getAttribute("data-theme")==="dark";
+const gc      = () => isDark()?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)";
+const tc      = () => isDark()?"#6B7280":"#9CA3AF";
+const miniCharts = {};
 
 // ── Search ────────────────────────────────────────────────
 let searchTimeout = null;
-let miniCharts    = {};
+let lastQuery     = "";
 
 window.onSearchInput = function(val) {
-  document.getElementById("clear-btn").className =
-    val ? "clear-btn show" : "clear-btn";
+  document.getElementById("clear-btn").className = val ? "clear-btn show" : "clear-btn";
   clearTimeout(searchTimeout);
   if (val.length < 2) {
-    document.getElementById("results").innerHTML = `
-      <div class="hint-state">
-        <i class="ti ti-search"></i>
-        <p>הקלד לפחות 2 תווים כדי לחפש</p>
-      </div>`;
-    return;
+    showHint(); return;
   }
-  document.getElementById("results").innerHTML = `
-    <div class="hint-state">
-      <i class="ti ti-loader" style="animation:spin 1s linear infinite"></i>
-      <p>מחפש...</p>
-    </div>`;
+  showLoading();
   searchTimeout = setTimeout(() => doSearch(val), 350);
 };
 
 window.clearSearch = function() {
   document.getElementById("search-input").value = "";
   document.getElementById("clear-btn").className = "clear-btn";
+  lastQuery = "";
+  showHint();
+};
+
+function showHint() {
   document.getElementById("results").innerHTML = `
     <div class="hint-state">
       <i class="ti ti-search"></i>
       <p>הקלד לפחות 2 תווים כדי לחפש</p>
     </div>`;
-};
+}
+
+function showLoading() {
+  document.getElementById("results").innerHTML = `
+    <div class="hint-state">
+      <i class="ti ti-loader spin"></i>
+      <p>מחפש...</p>
+    </div>`;
+}
 
 async function doSearch(q) {
+  lastQuery = q;
   try {
     const data = await api.search(q);
-    renderResults(data);
+    renderResults(data, q);
   } catch(e) {
-    document.getElementById("results").innerHTML =
-      `<div class="hint-state"><i class="ti ti-alert-circle"></i><p>${e.message}</p></div>`;
+    document.getElementById("results").innerHTML = `
+      <div class="hint-state">
+        <i class="ti ti-alert-circle"></i>
+        <p>${e.message||"שגיאה בחיפוש"}</p>
+      </div>`;
   }
 }
 
-function renderResults({ employees=[], users=[] }) {
+// ── Render ────────────────────────────────────────────────
+function renderResults({ employees=[], users=[] }, q) {
   const container = document.getElementById("results");
   if (!employees.length && !users.length) {
     container.innerHTML = `
       <div class="hint-state">
         <i class="ti ti-mood-empty"></i>
-        <p>לא נמצאו תוצאות</p>
+        <p>לא נמצאו תוצאות עבור "<strong>${q}</strong>"</p>
       </div>`; return;
   }
 
+  // Destroy old charts
+  Object.values(miniCharts).forEach(c => { try { c.destroy(); } catch{} });
+  Object.keys(miniCharts).forEach(k => delete miniCharts[k]);
+
   let html = "";
 
+  // Employees
   if (employees.length) {
     html += `<div class="section-title" style="margin-bottom:12px">
       <i class="ti ti-users" style="vertical-align:-2px"></i>
       עובדים (${employees.length})
     </div>`;
+
     employees.forEach((emp, idx) => {
       const ini = emp.name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
       const ok  = emp.status.toLowerCase()==="green";
-      const loc = !ok&&emp.location ? ` · ${emp.location}` : "";
+      const loc = !ok && emp.location ? ` · ${emp.location}` : "";
+      const safeName = emp.name.replace(/'/g,"\\'");
+
+      // Management buttons — manager: own dept only; admin: any
+      const canManage = user.role==="admin" ||
+        (user.role==="manager" && emp.dept===user.dept);
+
+      const mgmtHtml = canManage ? `
+        <div class="mgmt-row">
+          <button class="btn-mgmt remote"
+            onclick="openRemote(${emp.rowIndex},'${safeName}','${emp.status}')">
+            <i class="ti ti-refresh-alert"></i> שינוי סטטוס
+          </button>
+          <button class="btn-mgmt warn"
+            onclick="openDeactivate(${emp.rowIndex},'${safeName}')">
+            <i class="ti ti-shield-off"></i> השבת
+          </button>
+          <button class="btn-mgmt danger"
+            onclick="openDelete(${emp.rowIndex},'${safeName}')">
+            <i class="ti ti-trash"></i> מחק
+          </button>
+        </div>` : "";
+
+      // History
       const history = emp.history||[];
       const histHtml = history.length ? history.map(h => {
         const hok   = h.status.toLowerCase()==="green";
         const hwarn = h.type==="WARNING";
-        const dot   = hwarn?"warning":hok?"green":"red";
-        const lbl   = hwarn?"⚠️ אזהרה":hok?"✅ כניסה":"🔴 יציאה";
+        const hrem  = h.type==="REMOTE_UPDATE";
+        const dot   = hwarn?"warning":hrem?"remote":hok?"green":"red";
+        const lbl   = hwarn?"⚠️ אזהרה":hrem?"🖥️ שינוי מרחוק":hok?"✅ כניסה":"🔴 יציאה";
         const hloc  = h.location ? ` · ${h.location}` : "";
         return `<div class="hist-item">
           <div class="h-dot ${dot}"></div>
@@ -390,35 +565,43 @@ function renderResults({ employees=[], users=[] }) {
       }).join("") : `<div style="font-size:13px;color:var(--text3);padding:8px 0">אין היסטוריה</div>`;
 
       html += `
-        <div class="emp-card">
+        <div class="emp-card" id="empcard-${idx}">
           <div class="emp-header">
             <div class="emp-avatar">${ini}</div>
-            <div>
+            <div style="flex:1;min-width:0">
               <div class="emp-name">${emp.name}</div>
               <div class="emp-meta">${emp.dept} · ${emp.service}</div>
-              <span class="status-pill ${ok?"pill-green":"pill-red"}">
-                <i class="ti ti-${ok?"circle-check":"circle-x"}" style="font-size:12px"></i>
-                ${ok?"נוכח":"לא נוכח"}${loc}
-              </span>
-              <span class="qr-pill ${emp.hasQr?"qr-active":""}">
-                <i class="ti ti-qrcode" style="font-size:11px"></i>
-                ${emp.hasQr?"QR פעיל":"ללא QR"}
-              </span>
+              <div class="pills">
+                <span class="status-pill ${ok?"pill-green":"pill-red"}">
+                  <i class="ti ti-${ok?"circle-check":"circle-x"}" style="font-size:12px"></i>
+                  ${ok?"נוכח":"לא נוכח"}${loc}
+                </span>
+                <span class="qr-pill ${emp.hasQr?"qr-active":"qr-none"}">
+                  <i class="ti ti-qrcode" style="font-size:11px"></i>
+                  ${emp.hasQr?"QR פעיל":"ללא QR"}
+                </span>
+              </div>
             </div>
           </div>
 
-          <!-- Mini presence chart -->
-          <div class="mini-chart-wrap">
-            <canvas id="mini-chart-${idx}"></canvas>
+          <div class="chart-section">
+            <div class="chart-label">כניסות ויציאות — 7 ימים אחרונים</div>
+            <div class="chart-wrap">
+              <canvas id="chart-${idx}"></canvas>
+            </div>
           </div>
 
-          <!-- History -->
-          <div class="hist-title">היסטוריה אחרונה</div>
-          ${histHtml}
+          <div class="hist-section">
+            <div class="hist-title">היסטוריה אחרונה</div>
+            ${histHtml}
+          </div>
+
+          ${mgmtHtml}
         </div>`;
     });
   }
 
+  // Users (admin only)
   if (users.length && user.role==="admin") {
     html += `<div class="section-title" style="margin:16px 0 10px">
       <i class="ti ti-user" style="vertical-align:-2px"></i>
@@ -427,10 +610,10 @@ function renderResults({ employees=[], users=[] }) {
     users.forEach(u => {
       html += `
         <div class="user-card">
-          <div class="user-avatar-sm">${u.username.slice(0,2).toUpperCase()}</div>
+          <div class="user-av">${u.username.slice(0,2).toUpperCase()}</div>
           <div class="user-body">
             <div class="user-name">${u.username}</div>
-            <div class="user-meta">${u.dept||"כל המסגרות"}</div>
+            <div class="user-meta-txt">${u.dept||"כל המסגרות"}</div>
           </div>
           <span class="role-pill role-${u.role}">
             ${{admin:"מנהל מערכת",manager:"מנהל",security:"אבטחה"}[u.role]||u.role}
@@ -441,36 +624,53 @@ function renderResults({ employees=[], users=[] }) {
 
   container.innerHTML = html;
 
-  // Render mini charts after DOM update
-  const isDark = ()=>document.documentElement.getAttribute("data-theme")==="dark";
-  const gc     = ()=>isDark()?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)";
-  const tc     = ()=>isDark()?"#6B7280":"#9CA3AF";
-
+  // Build 7-day line charts after DOM update
   employees.forEach((emp, idx) => {
-    const canvas = document.getElementById(`mini-chart-${idx}`);
+    const canvas = document.getElementById(`chart-${idx}`);
     if (!canvas) return;
-    const history = emp.history||[];
 
-    // Count checkins vs checkouts from history
-    const labels  = history.map((_,i)=>`${i+1}`).reverse();
-    const statuses= [...history].reverse();
-    const greens  = statuses.map(h=>h.status.toLowerCase()==="green"?1:0);
-    const reds    = statuses.map(h=>h.status.toLowerCase()==="red"?1:0);
+    const dailyMap = emp.dailyMap||{};
+    // Build last 7 days array
+    const days = [];
+    for (let i=6; i>=0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate()-i);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      days.push({
+        label: `${d.getDate()}/${d.getMonth()+1}`,
+        checkins:  (dailyMap[key]?.checkins  || 0),
+        checkouts: (dailyMap[key]?.checkouts || 0),
+      });
+    }
 
-    if (miniCharts[idx]) miniCharts[idx].destroy();
     miniCharts[idx] = new Chart(canvas.getContext("2d"), {
-      type:"bar",
+      type:"line",
       data:{
-        labels,
+        labels: days.map(d=>d.label),
         datasets:[
-          { label:"כניסה", data:greens,
-            backgroundColor:"rgba(34,197,94,0.7)", borderRadius:4 },
-          { label:"יציאה", data:reds,
-            backgroundColor:"rgba(239,68,68,0.7)", borderRadius:4 }
+          {
+            label:"כניסות",
+            data: days.map(d=>d.checkins),
+            borderColor:"#22C55E",
+            backgroundColor:"rgba(34,197,94,0.1)",
+            tension:0.4, fill:true,
+            pointRadius:3, pointBackgroundColor:"#22C55E",
+            borderWidth:2,
+          },
+          {
+            label:"יציאות",
+            data: days.map(d=>d.checkouts),
+            borderColor:"#EF4444",
+            backgroundColor:"rgba(239,68,68,0.08)",
+            tension:0.4, fill:true,
+            pointRadius:3, pointBackgroundColor:"#EF4444",
+            borderWidth:2,
+          }
         ]
       },
       options:{
         responsive:true, maintainAspectRatio:false,
+        interaction:{mode:"index",intersect:false},
         plugins:{
           legend:{position:"bottom",labels:{color:tc(),font:{size:11},boxWidth:8}},
           tooltip:{rtl:true}
@@ -485,10 +685,114 @@ function renderResults({ employees=[], users=[] }) {
   });
 }
 
-// Spinner
-const s=document.createElement("style");
-s.textContent="@keyframes spin{to{transform:rotate(360deg)}}";
-document.head.appendChild(s);
+// ── Remote status ─────────────────────────────────────────
+let remoteTarget = {};
+
+window.openRemote = function(rowIndex, name, status) {
+  remoteTarget = { rowIndex, name, status };
+  const ok = status.toLowerCase()==="green";
+  document.getElementById("remote-modal-text").textContent =
+    `${name} — סטטוס נוכחי: ${ok?"✅ נוכח":"🔴 לא נוכח"}`;
+  document.getElementById("remote-loc-wrap").style.display = "none";
+  document.getElementById("remote-loc-select").value       = "";
+  document.getElementById("remote-modal-status").textContent = "";
+  const bg = document.getElementById("remote-green-btn");
+  const br = document.getElementById("remote-red-btn");
+  bg.disabled=false; br.disabled=false;
+  br.innerHTML='<i class="ti ti-x" style="vertical-align:-2px"></i> לא נוכח';
+  br.onclick = handleRemoteRed;
+  document.getElementById("remote-modal").classList.add("show");
+};
+
+window.handleRemoteRed = function() {
+  document.getElementById("remote-loc-wrap").style.display = "block";
+  const br = document.getElementById("remote-red-btn");
+  br.innerHTML='<i class="ti ti-check" style="vertical-align:-2px"></i> אשר יציאה';
+  br.onclick = () => confirmRemote("Red");
+};
+
+window.confirmRemote = async function(status) {
+  const loc  = document.getElementById("remote-loc-select").value;
+  const stat = document.getElementById("remote-modal-status");
+  if (status==="Red" && !loc) {
+    stat.textContent="נא לבחור מיקום"; stat.style.color="var(--red)"; return;
+  }
+  const bg=document.getElementById("remote-green-btn");
+  const br=document.getElementById("remote-red-btn");
+  bg.disabled=true; br.disabled=true; stat.textContent="";
+  try {
+    await api.updateStatusRemote(remoteTarget.rowIndex, status, loc||"");
+    showToast(`✅ ${remoteTarget.name} — ${status==="Green"?"נוכח":"לא נוכח"}`);
+    closeModal("remote-modal");
+    doSearch(lastQuery);
+  } catch(e) {
+    stat.textContent=e.message||"שגיאה"; stat.style.color="var(--red)";
+    bg.disabled=false; br.disabled=false;
+  }
+};
+
+// ── Deactivate ────────────────────────────────────────────
+let deactivateTarget = {};
+
+window.openDeactivate = function(rowIndex, name) {
+  deactivateTarget = { rowIndex, name };
+  document.getElementById("deactivate-modal-text").textContent =
+    `להשבית את ${name}? QR הקוד יתנקה.`;
+  const btn=document.getElementById("deactivate-confirm-btn");
+  btn.disabled=false; btn.textContent="השבת";
+  document.getElementById("deactivate-modal").classList.add("show");
+};
+
+window.confirmDeactivate = async function() {
+  const btn=document.getElementById("deactivate-confirm-btn");
+  btn.disabled=true; btn.textContent="מבצע...";
+  try {
+    await api.deactivateDeptEmployee(deactivateTarget.rowIndex, deactivateTarget.name);
+    showToast(`✅ ${deactivateTarget.name} הושבת`);
+    closeModal("deactivate-modal");
+    doSearch(lastQuery);
+  } catch(e) {
+    showToast(e.message||"שגיאה","err");
+    btn.disabled=false; btn.textContent="השבת";
+  }
+};
+
+// ── Delete ────────────────────────────────────────────────
+let deleteTarget = {};
+
+window.openDelete = function(rowIndex, name) {
+  deleteTarget = { rowIndex, name };
+  document.getElementById("delete-modal-text").textContent =
+    `למחוק את ${name} לצמיתות מהמסגרת?`;
+  const btn=document.getElementById("delete-confirm-btn");
+  btn.disabled=false; btn.textContent="מחק לצמיתות";
+  document.getElementById("delete-modal").classList.add("show");
+};
+
+window.confirmDelete = async function() {
+  const btn=document.getElementById("delete-confirm-btn");
+  btn.disabled=true; btn.textContent="מוחק...";
+  try {
+    await api.deleteDeptEmployee(deleteTarget.rowIndex, deleteTarget.name);
+    showToast(`🗑 ${deleteTarget.name} נמחק`);
+    closeModal("delete-modal");
+    doSearch(lastQuery);
+  } catch(e) {
+    showToast(e.message||"שגיאה","err");
+    btn.disabled=false; btn.textContent="מחק לצמיתות";
+  }
+};
+
+// ── Helpers ───────────────────────────────────────────────
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove("show");
+};
+
+function showToast(msg, type="ok") {
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.className=`toast show ${type}`;
+  setTimeout(()=>t.classList.remove("show"), 2500);
+}
 </script>
 </body>
 </html>

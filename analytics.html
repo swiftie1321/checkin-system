@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sentinel — אנליטיקס</title>
+<title>CheckIn — אנליטיקס</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -90,25 +90,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 .page-title{font-size:20px;font-weight:700;color:var(--text);
   display:flex;align-items:center;gap:10px;}
 
-/* ── Date range picker ── */
-.date-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.date-input-wrap{display:flex;align-items:center;gap:6px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;padding:8px 12px;}
-.date-input-wrap i{font-size:15px;color:var(--text3);}
-.date-input-wrap input{border:none;background:transparent;font-size:13px;
-  color:var(--text);outline:none;direction:ltr;}
-.date-sep{font-size:13px;color:var(--text3);}
-.btn-apply{display:flex;align-items:center;gap:6px;padding:9px 16px;
-  background:var(--accent);color:#fff;border:none;border-radius:10px;
-  font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
-.btn-apply:hover{opacity:0.9;}
-.preset-btns{display:flex;gap:6px;}
-.preset-btn{padding:7px 12px;background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;
-  transition:all 0.15s;}
+/* ── Filter bar ── */
+.filter-bar{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;
+  box-shadow:var(--shadow);}
+.filter-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.preset-btns{display:flex;gap:6px;flex-shrink:0;}
+.preset-btn{padding:7px 12px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:8px;font-size:12px;
+  color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:inherit;}
 .preset-btn:hover,.preset-btn.active{background:var(--accent-l);
   color:var(--accent);border-color:var(--accent);}
+.filter-sep{font-size:13px;color:var(--text3);flex-shrink:0;}
+.date-wrap{display:flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:9px;padding:7px 12px;}
+.date-wrap i{font-size:14px;color:var(--text3);}
+.date-wrap input{border:none;background:transparent;font-size:13px;
+  color:var(--text);outline:none;direction:ltr;max-width:120px;}
+.filter-input{flex:1;min-width:120px;display:flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:9px;padding:7px 12px;}
+.filter-input i{font-size:14px;color:var(--text3);}
+.filter-input input,.filter-input select{border:none;background:transparent;
+  font-size:13px;color:var(--text);outline:none;width:100%;font-family:inherit;}
+.btn-apply{display:flex;align-items:center;gap:6px;padding:8px 16px;
+  background:var(--accent);color:#fff;border:none;border-radius:9px;
+  font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.2s;
+  flex-shrink:0;}
+.btn-apply:hover{opacity:0.9;}
 
 /* ── Cards ── */
 .card{background:var(--surface);border:1px solid var(--border);
@@ -119,31 +129,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   justify-content:space-between;gap:8px;}
 .card-title-left{display:flex;align-items:center;gap:8px;}
 .card-title i{font-size:18px;color:var(--accent);}
-.chart-wrap{position:relative;height:240px;}
-.chart-wrap-tall{position:relative;height:300px;}
+.chart-wrap-tall{position:relative;height:280px;}
+.empty-msg{color:var(--text3);text-align:center;padding:24px;font-size:13px;}
 
-/* ── Absent table ── */
-.absent-table{width:100%;border-collapse:collapse;}
-.absent-table th{text-align:right;padding:9px 12px;font-size:12px;
-  font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);}
-.absent-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;}
-.absent-table tr:last-child td{border-bottom:none;}
-.dept-label{font-weight:600;color:var(--text);}
-.loc-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;
-  border-radius:20px;font-size:11px;font-weight:600;margin:2px;
-  background:var(--accent-l);color:var(--accent);}
-.bar-wrap{display:flex;align-items:center;gap:8px;}
-.mini-bar{flex:1;height:6px;border-radius:3px;background:var(--surface2);}
-.mini-fill{height:100%;border-radius:3px;}
-
-.empty-msg{color:var(--text3);text-align:center;padding:20px;font-size:13px;}
-.loading{color:var(--text3);text-align:center;padding:40px;font-size:13px;}
+/* ── Pie grid ── */
+.pie-grid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;}
+.pie-item{display:flex;flex-direction:column;align-items:center;
+  background:var(--surface2);border-radius:12px;padding:14px 16px;
+  min-width:160px;flex:1;max-width:210px;}
+.pie-dept-label{font-size:13px;font-weight:600;color:var(--text);
+  margin-bottom:12px;text-align:center;}
+.pie-wrap{position:relative;height:150px;width:150px;}
 
 /* ── Mobile ── */
 @media(max-width:768px){
   .sidebar{display:none;}
   .main{margin-right:0;padding:16px 14px 80px;}
-  .date-bar{flex-direction:column;align-items:stretch;}
+  .filter-row{flex-direction:column;align-items:stretch;}
   .bottom-nav{display:flex !important;}
 }
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;
@@ -162,19 +164,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
-      <div class="logo-icon">🛡</div>
+      <div class="logo-icon">✅</div>
       <div>
-        <div class="logo-text">Sentinel</div>
+        <div class="logo-text">CheckIn</div>
         <div class="logo-sub">מערכת נוכחות</div>
       </div>
     </div>
   </div>
   <nav class="nav">
     <div class="nav-section">ראשי</div>
-    <a class="nav-item" href="dashboard.html"><i class="ti ti-scan"></i>סריקה</a>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-layout-dashboard"></i>דשבורד</a>
     <a class="nav-item" href="search.html"><i class="ti ti-search"></i>חיפוש עובד</a>
-    <a class="nav-item" href="stats.html" id="nav-stats"><i class="ti ti-chart-bar"></i>סטטיסטיקות</a>
-    <a class="nav-item active" href="analytics.html"><i class="ti ti-chart-line"></i>אנליטיקס</a>
+    <a class="nav-item" href="stats.html" id="nav-stats">
+      <i class="ti ti-chart-bar"></i>סטטיסטיקות
+    </a>
+    <a class="nav-item active" href="analytics.html">
+      <i class="ti ti-chart-line"></i>אנליטיקס
+    </a>
     <div class="nav-section" id="nav-section-admin" style="display:none">ניהול</div>
     <a class="nav-item" href="admin.html" id="nav-admin" style="display:none">
       <i class="ti ti-settings"></i>ניהול מערכת
@@ -198,7 +204,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bn-item" onclick="location.href='dashboard.html'">
-      <i class="ti ti-scan"></i>סריקה
+      <i class="ti ti-layout-dashboard"></i>דשבורד
     </button>
     <button class="bn-item" onclick="location.href='stats.html'">
       <i class="ti ti-chart-bar"></i>סטטיסטיקות
@@ -219,25 +225,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       <i class="ti ti-chart-line" style="font-size:22px;color:var(--accent)"></i>
       אנליטיקס
     </div>
+    <span id="range-label" style="font-size:12px;color:var(--text3)"></span>
   </div>
 
-  <!-- Date range -->
-  <div class="card" style="padding:14px 20px;margin-bottom:16px">
-    <div class="date-bar">
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <div class="filter-row">
+      <!-- Presets -->
       <div class="preset-btns">
-        <button class="preset-btn active" id="preset-today" onclick="setPreset('today')">היום</button>
-        <button class="preset-btn" id="preset-week"  onclick="setPreset('week')">שבוע</button>
-        <button class="preset-btn" id="preset-month" onclick="setPreset('month')">חודש</button>
+        <button class="preset-btn active" id="preset-today"
+          onclick="setPreset('today')">היום</button>
+        <button class="preset-btn" id="preset-week"
+          onclick="setPreset('week')">שבוע</button>
+        <button class="preset-btn" id="preset-month"
+          onclick="setPreset('month')">חודש</button>
       </div>
-      <div class="date-sep">או</div>
-      <div class="date-input-wrap">
+      <span class="filter-sep">או</span>
+      <!-- Date range -->
+      <div class="date-wrap">
         <i class="ti ti-calendar"></i>
         <input type="date" id="date-from">
       </div>
-      <div class="date-sep">עד</div>
-      <div class="date-input-wrap">
+      <span class="filter-sep">עד</span>
+      <div class="date-wrap">
         <i class="ti ti-calendar"></i>
         <input type="date" id="date-to">
+      </div>
+      <!-- Name filter -->
+      <div class="filter-input" style="min-width:130px">
+        <i class="ti ti-user"></i>
+        <input type="text" id="filter-name" placeholder="שם עובד...">
+      </div>
+      <!-- Dept filter -->
+      <div class="filter-input" style="min-width:130px">
+        <i class="ti ti-building"></i>
+        <select id="filter-dept">
+          <option value="">כל המסגרות</option>
+        </select>
       </div>
       <button class="btn-apply" onclick="loadAnalytics()">
         <i class="ti ti-refresh"></i> טען
@@ -245,39 +269,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     </div>
   </div>
 
-  <!-- Line chart: check-ins over time -->
+  <!-- Line chart: activity timeline -->
   <div class="card">
     <div class="card-title">
       <div class="card-title-left">
         <i class="ti ti-chart-line"></i>
         כניסות ויציאות לאורך זמן
       </div>
-      <span id="line-range" style="font-size:12px;color:var(--text3)"></span>
+      <span id="line-subtitle" style="font-size:11px;color:var(--text3)"></span>
     </div>
     <div class="chart-wrap-tall">
       <canvas id="line-chart"></canvas>
     </div>
   </div>
 
-  <!-- Horizontal stacked bar: absences by dept -->
+  <!-- Donut charts per dept -->
   <div class="card">
     <div class="card-title">
       <div class="card-title-left">
-        <i class="ti ti-building"></i>
-        נעדרים לפי מסגרת וסיבה
+        <i class="ti ti-chart-donut"></i>
+        נעדרים לפי מסגרת
       </div>
-      <span style="font-size:12px;color:var(--text3)">מצב נוכחי</span>
+      <span style="font-size:11px;color:var(--text3)">מצב נוכחי</span>
     </div>
-    <div id="bar-container">
-      <div class="chart-wrap-tall">
-        <canvas id="bar-chart"></canvas>
-      </div>
+    <div id="pie-container">
+      <div class="empty-msg">טוען...</div>
     </div>
   </div>
 </main>
 
 <script type="module">
-import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js";
+import { api, requireAuth, initTheme, toggleTheme } from "./js/api.js?v=3";
 window.api = api;
 
 // ── Theme ─────────────────────────────────────────────────
@@ -303,13 +325,13 @@ document.getElementById("sb-role").textContent     =
   {admin:"מנהל מערכת",security:"אבטחה"}[user.role]||user.role;
 if (user.role==="admin") {
   document.getElementById("nav-section-admin").style.display="block";
-  document.getElementById("nav-admin").style.display="flex";
-  document.getElementById("bn-admin").style.display="flex";
+  document.getElementById("nav-admin").style.display         ="flex";
+  document.getElementById("bn-admin").style.display          ="flex";
 }
 
-// ── Date presets ──────────────────────────────────────────
+// ── Date helpers ──────────────────────────────────────────
+const fmt = d => d.toISOString().split("T")[0];
 const today = new Date();
-const fmt   = d => d.toISOString().split("T")[0];
 
 window.setPreset = function(p) {
   document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
@@ -326,11 +348,19 @@ window.setPreset = function(p) {
 document.getElementById("date-from").value = fmt(today);
 document.getElementById("date-to").value   = fmt(today);
 
-// ── Chart instances ───────────────────────────────────────
-let lineChart = null, barChart = null;
-const isDark  = ()=>document.documentElement.getAttribute("data-theme")==="dark";
-const gc      = ()=>isDark()?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)";
-const tc      = ()=>isDark()?"#6B7280":"#9CA3AF";
+// Clear preset highlight when dates change manually
+["date-from","date-to"].forEach(id => {
+  document.getElementById(id).addEventListener("change", () => {
+    document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
+  });
+});
+
+// ── Chart state ───────────────────────────────────────────
+let lineChart = null;
+const pieCharts = {};
+const isDark  = () => document.documentElement.getAttribute("data-theme")==="dark";
+const gc      = () => isDark()?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)";
+const tc      = () => isDark()?"#6B7280":"#9CA3AF";
 
 const PALETTE = [
   "#6366F1","#22C55E","#F59E0B","#EF4444","#14B8A6",
@@ -341,42 +371,99 @@ const PALETTE = [
 window.loadAnalytics = async function() {
   const from = document.getElementById("date-from").value;
   const to   = document.getElementById("date-to").value;
-  document.getElementById("line-range").textContent =
+  const name = document.getElementById("filter-name").value.trim();
+  const dept = document.getElementById("filter-dept").value;
+
+  // Update range label
+  document.getElementById("range-label").textContent =
     from===to ? from : `${from} — ${to}`;
 
   try {
-    const data = await api.getAnalytics(from, to);
-    renderLineChart(data.hourly||{});
-    renderBarChart(data.absentByDept||{});
+    const data = await api.getAnalytics(from, to, name, dept);
+
+    // Populate dept dropdown on first load / when new depts appear
+    if (data.allDepts?.length) {
+      const sel = document.getElementById("filter-dept");
+      const existing = new Set([...sel.options].map(o=>o.value));
+      data.allDepts.forEach(d => {
+        if (!existing.has(d)) {
+          const opt = document.createElement("option");
+          opt.value=d; opt.textContent=d; sel.appendChild(opt);
+        }
+      });
+    }
+
+    renderLineChart(data.minutely||{}, from, to);
+    renderPieCharts(data.absentByDept||{});
+
   } catch(e) {
-    console.error(e);
+    document.getElementById("line-subtitle").textContent = "שגיאה: "+e.message;
   }
 };
 
-// ── Line chart ────────────────────────────────────────────
-function renderLineChart(hourly) {
-  const labels   = Object.keys(hourly).sort();
-  const checkins = labels.map(k=>hourly[k].checkins);
-  const checkouts= labels.map(k=>hourly[k].checkouts);
+// ── Line chart — per-minute granularity ───────────────────
+function renderLineChart(minutely, from, to) {
+  const isMultiDay = from !== to;
 
-  const shortLabels = labels.map(l => {
-    const parts = l.split(" ");
-    return parts.length===2 ? parts[1] : l;
+  // Sort keys chronologically
+  const keys = Object.keys(minutely).sort();
+
+  if (!keys.length) {
+    if (lineChart) { lineChart.destroy(); lineChart=null; }
+    // Draw empty state on canvas
+    const ctx = document.getElementById("line-chart").getContext("2d");
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    ctx.fillStyle = tc();
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("אין נתוני סריקה בטווח שנבחר",
+      ctx.canvas.width/2, ctx.canvas.height/2);
+    document.getElementById("line-subtitle").textContent = "אין נתונים";
+    return;
+  }
+
+  // Build display labels — HH:MM for single day, DD/MM HH:MM for multi-day
+  const labels   = keys.map(k => {
+    const parts = k.split(" "); // "YYYY-MM-DD HH:MM"
+    if (isMultiDay && parts.length===2) {
+      const [y,m,d] = parts[0].split("-");
+      return `${d}/${m} ${parts[1]}`;
+    }
+    return parts[1]||k; // just HH:MM
   });
+  const checkins  = keys.map(k => minutely[k].checkins||0);
+  const checkouts = keys.map(k => minutely[k].checkouts||0);
+
+  document.getElementById("line-subtitle").textContent =
+    `${keys.length} רגעי פעילות`;
 
   if (lineChart) lineChart.destroy();
   lineChart = new Chart(
     document.getElementById("line-chart").getContext("2d"), {
     type:"line",
     data:{
-      labels: shortLabels,
+      labels,
       datasets:[
-        { label:"כניסות",  data:checkins,
-          borderColor:"#22C55E", backgroundColor:"rgba(34,197,94,0.1)",
-          tension:0.4, fill:true, pointRadius:3, pointBackgroundColor:"#22C55E" },
-        { label:"יציאות",  data:checkouts,
-          borderColor:"#EF4444", backgroundColor:"rgba(239,68,68,0.08)",
-          tension:0.4, fill:true, pointRadius:3, pointBackgroundColor:"#EF4444" }
+        {
+          label:"כניסות",
+          data: checkins,
+          borderColor:"#22C55E",
+          backgroundColor:"rgba(34,197,94,0.1)",
+          tension:0.3, fill:true,
+          pointRadius: keys.length > 60 ? 0 : 3,
+          pointBackgroundColor:"#22C55E",
+          borderWidth:2,
+        },
+        {
+          label:"יציאות",
+          data: checkouts,
+          borderColor:"#EF4444",
+          backgroundColor:"rgba(239,68,68,0.07)",
+          tension:0.3, fill:true,
+          pointRadius: keys.length > 60 ? 0 : 3,
+          pointBackgroundColor:"#EF4444",
+          borderWidth:2,
+        }
       ]
     },
     options:{
@@ -387,66 +474,102 @@ function renderLineChart(hourly) {
         tooltip:{rtl:true}
       },
       scales:{
-        x:{grid:{color:gc()},ticks:{color:tc(),font:{size:11},maxRotation:45}},
-        y:{grid:{color:gc()},ticks:{color:tc(),font:{size:11},stepSize:1,
-          callback:v=>Number.isInteger(v)?v:""}}
+        x:{
+          grid:{color:gc()},
+          ticks:{
+            color:tc(), font:{size:10}, maxRotation:45,
+            // Show fewer labels when dense
+            maxTicksLimit: isMultiDay ? 12 : 20,
+            autoSkip:true,
+          }
+        },
+        y:{
+          grid:{color:gc()},
+          ticks:{color:tc(),font:{size:11},stepSize:1,
+            callback:v=>Number.isInteger(v)?v:""},
+          beginAtZero:true,
+        }
       }
     }
   });
 }
 
-// ── Horizontal stacked bar ────────────────────────────────
-// Y axis = departments, segments = absence locations
-function renderBarChart(absentByDept) {
-  const depts = Object.keys(absentByDept);
+// ── Pie charts per dept ───────────────────────────────────
+function renderPieCharts(absentByDept) {
+  const container = document.getElementById("pie-container");
+
+  // Destroy existing
+  Object.values(pieCharts).forEach(c=>{ try{c.destroy();}catch{} });
+  Object.keys(pieCharts).forEach(k=>delete pieCharts[k]);
+
+  const depts = Object.keys(absentByDept).filter(d =>
+    Object.values(absentByDept[d]).some(v=>v>0)
+  );
+
   if (!depts.length) {
-    if (barChart) { barChart.destroy(); barChart=null; }
-    document.getElementById("bar-container").innerHTML =
-      '<div class="empty-msg">כולם נוכחים 🎉</div>';
+    container.innerHTML='<div class="empty-msg">כולם נוכחים 🎉</div>';
     return;
   }
-  // Restore canvas if it was replaced
-  if (!document.getElementById("bar-chart")) {
-    document.getElementById("bar-container").innerHTML =
-      '<div class="chart-wrap-tall"><canvas id="bar-chart"></canvas></div>';
-  }
 
-  // Collect all unique locations
-  const allLocs = [...new Set(
-    Object.values(absentByDept).flatMap(d=>Object.keys(d))
-  )];
+  // Build DOM
+  container.innerHTML = `<div class="pie-grid">
+    ${depts.map(d => {
+      const safeId = d.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_\u0590-\u05FF]/g,"");
+      return `
+        <div class="pie-item">
+          <div class="pie-dept-label">${d}</div>
+          <div class="pie-wrap">
+            <canvas id="pie-${safeId}"></canvas>
+          </div>
+        </div>`;
+    }).join("")}
+  </div>`;
 
-  const datasets = allLocs.map((loc, i) => ({
-    label: loc,
-    data:  depts.map(d => absentByDept[d]?.[loc]||0),
-    backgroundColor: PALETTE[i % PALETTE.length],
-    borderRadius: 4,
-  }));
+  // Render each donut
+  depts.forEach(dept => {
+    const safeId = dept.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9_\u0590-\u05FF]/g,"");
+    const canvas = document.getElementById(`pie-${safeId}`);
+    if (!canvas) return;
 
-  if (barChart) barChart.destroy();
-  barChart = new Chart(
-    document.getElementById("bar-chart").getContext("2d"), {
-    type:"bar",
-    data:{ labels:depts, datasets },
-    options:{
-      indexAxis:"y",   // horizontal bars — depts on Y axis
-      responsive:true, maintainAspectRatio:false,
-      interaction:{mode:"index",intersect:false},
-      plugins:{
-        legend:{position:"bottom",labels:{color:tc(),font:{size:12},boxWidth:10}},
-        tooltip:{rtl:true}
+    const locs   = Object.keys(absentByDept[dept]);
+    const values = Object.values(absentByDept[dept]);
+    const total  = values.reduce((a,b)=>a+b,0);
+
+    pieCharts[safeId] = new Chart(canvas.getContext("2d"), {
+      type:"doughnut",
+      data:{
+        labels: locs.map(l=>`${l} (${absentByDept[dept][l]})`),
+        datasets:[{
+          data: values,
+          backgroundColor: PALETTE.slice(0, locs.length),
+          borderWidth: 3,
+          borderColor: isDark() ? "#1A1D2E" : "#FFFFFF",
+        }]
       },
-      scales:{
-        x:{stacked:true,grid:{color:gc()},
-          ticks:{color:tc(),font:{size:11},stepSize:1,
-            callback:v=>Number.isInteger(v)?v:""}},
-        y:{stacked:true,grid:{color:gc()},
-          ticks:{color:tc(),font:{size:12}}}
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        cutout:"60%",
+        plugins:{
+          legend:{
+            position:"bottom",
+            labels:{color:tc(),font:{size:10},boxWidth:8}
+          },
+          tooltip:{
+            rtl:true,
+            callbacks:{
+              label: ctx => {
+                const pct = total ? Math.round(ctx.parsed/total*100) : 0;
+                return ` ${ctx.label} — ${pct}%`;
+              }
+            }
+          }
+        }
       }
-    }
+    });
   });
 }
 
+// Initial load
 loadAnalytics();
 </script>
 </body>
